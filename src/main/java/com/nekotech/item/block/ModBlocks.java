@@ -32,6 +32,12 @@ public class ModBlocks {
     ));
 
 
+    public static final Block bellows = register("bellows",
+            new BellowsBlock(AbstractBlock.Settings.create()
+                    .strength(1.5f)
+            )
+    );
+
     public static void registerBlockItems(String id, Block block){
         Item item = Registry.register(Registries.ITEM, Identifier.of(NekoTechnology.MOD_ID, id), new BlockItem(block, new Item.Settings()));
         if(item instanceof BlockItem){
