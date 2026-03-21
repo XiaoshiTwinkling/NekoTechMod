@@ -58,6 +58,7 @@ public class ModItemGroups {
                             entries.add(ModItems.NEKO_COPPER_CHESTPLATE);
                             entries.add(ModItems.NEKO_COPPER_LEGGINGS);
                             entries.add(ModItems.NEKO_COPPER_BOOTS);
+                            entries.add(ModItems.neko_box);
                         })).build());
 
         Registry.register(Registries.ITEM_GROUP, NekoTech_BLOCKS,
@@ -67,6 +68,7 @@ public class ModItemGroups {
                         .entries(((displayContext, entries) -> {
                             entries.add(ModBlocks.basic_storage_enclosure);
                             entries.add(ModBlocks.basic_alloy_furnace);
+                            entries.add(ModBlocks.cushion_block);
 
                         })).build());
 

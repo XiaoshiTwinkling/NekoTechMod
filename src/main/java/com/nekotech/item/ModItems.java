@@ -49,6 +49,7 @@ public class ModItems {
             new Item.Settings().maxDamage(ArmorItem.Type.HELMET.getMaxDamage(37)),"neko_copper_leggings"));
     public static final Item NEKO_COPPER_BOOTS = registerItems("neko_copper_boots", new ModArmorItem(ModArmorMaterials.NEKO_COPPER, ArmorItem.Type.BOOTS,
             new Item.Settings().maxDamage(ArmorItem.Type.HELMET.getMaxDamage(37)),"neko_copper_boots"));
+    public static final Item neko_box = registerItems("neko_box", new CatBoxItem(new Item.Settings()));
 
 
     private static Item registerItems(String id, Item item){

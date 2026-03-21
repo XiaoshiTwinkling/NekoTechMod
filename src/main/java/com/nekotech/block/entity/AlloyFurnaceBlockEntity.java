@@ -1,6 +1,6 @@
 package com.nekotech.block.entity;
 
-import com.nekotech.NekoTechnology;
+import com.nekotech.block.entity.machines.MachineBlockEntity;
 import com.nekotech.data.AlloyFurnaceData;
 import com.nekotech.item.custom.AlloyFurnace;
 import com.nekotech.recipe.AlloyRecipe;
@@ -8,7 +8,6 @@ import com.nekotech.screen.AlloyFurnaceScreenHandler;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
@@ -20,7 +19,6 @@ import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.text.Text;
 import net.minecraft.util.Pair;
@@ -29,7 +27,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class AlloyFurnaceBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory<AlloyFurnaceData>, ImplementedInventory {
+public class AlloyFurnaceBlockEntity extends MachineBlockEntity implements ExtendedScreenHandlerFactory<AlloyFurnaceData>, ImplementedInventory {
 
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(5, ItemStack.EMPTY);
 
@@ -159,7 +157,6 @@ public class AlloyFurnaceBlockEntity extends BlockEntity implements ExtendedScre
             fuelTime--;
             shouldMarkDirty = true;
         }
-        NekoTechnology.LOGGER.info("Fuel time: " + fuelTime);
 
         // 2. 检查当前配方
         AlloyRecipe.RecipeDefinition recipe = getMatchingRecipe();

@@ -2,6 +2,7 @@ package com.nekotech.block.entity;
 
 import com.mojang.datafixers.types.Type;
 import com.nekotech.NekoTechnology;
+import com.nekotech.block.entity.machines.CushionBlockEntity;
 import com.nekotech.item.block.ModBlocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -19,6 +20,8 @@ public class ModBlockEntities {
 
     public static BlockEntityType<AlloyFurnaceBlockEntity> basic_alloy_furnace=
             create("basic_alloy_furnace", BlockEntityType.Builder.create(AlloyFurnaceBlockEntity::new, ModBlocks.basic_alloy_furnace));
+
+
 
 
     private static <T extends BlockEntity> BlockEntityType<T> create(String id, BlockEntityType.Builder<T> builder){
