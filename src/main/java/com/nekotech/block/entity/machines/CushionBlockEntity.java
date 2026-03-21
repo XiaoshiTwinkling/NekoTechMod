@@ -104,8 +104,11 @@ public class CushionBlockEntity extends BlockWithEntity {
         if (world.isClient()) {
             return;
         }
+        NekoTechnology.LOGGER.info("111");
+        if(hasCatAbove(world, pos)){
+            NekoTechnology.LOGGER.info("Suc");
+        }
 
-        NekoTechnology.LOGGER.info((String)hasCatAbove(world, pos));
     }
 
 
