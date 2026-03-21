@@ -169,7 +169,7 @@ public class AlloyFurnaceBlockEntity extends CatNeedMachineBlockEntity implement
         }
 
         // 3. 处理合成逻辑
-        if (hasValidRecipe && canMachineRun()) {
+        if (hasValidRecipe) {
             if (maxProgress != recipe.cookTime) {
                 maxProgress = recipe.cookTime;
                 shouldMarkDirty = true;

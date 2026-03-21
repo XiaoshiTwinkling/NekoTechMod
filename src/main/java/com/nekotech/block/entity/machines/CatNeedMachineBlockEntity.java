@@ -62,7 +62,6 @@ public abstract class CatNeedMachineBlockEntity extends BlockEntity {
     }
     //判断这个机器是否可以运行
     public boolean canMachineRun() {
-        NekoTechnology.LOGGER.info("111");
         return hasCushionWithCatAround();
     }
 }
