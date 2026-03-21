@@ -1,14 +1,11 @@
 package com.nekotech.block.entity.machines;
 
 import com.mojang.serialization.MapCodec;
-import com.nekotech.NekoTechnology;
-import com.nekotech.block.entity.ModBlockEntities;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.passive.CatEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -98,17 +95,6 @@ public class CushionBlockEntity extends BlockWithEntity {
         );
 
         return !cats.isEmpty();
-    }
-
-    public void tick(World world, BlockPos pos, BlockState state) {
-        if (world.isClient()) {
-            return;
-        }
-        NekoTechnology.LOGGER.info("111");
-        if(hasCatAbove(world, pos)){
-            NekoTechnology.LOGGER.info("Suc");
-        }
-
     }
 
 
