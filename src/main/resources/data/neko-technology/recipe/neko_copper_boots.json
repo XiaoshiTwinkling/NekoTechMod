@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "Neko",
+  "key": {
+    "B": {
+      "item": "neko-technology:neko_copper_plate"
+    }
+  },
+  "pattern": [
+    "B B",
+    "B B"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neko-technology:neko_copper_boots"
+  }
+}

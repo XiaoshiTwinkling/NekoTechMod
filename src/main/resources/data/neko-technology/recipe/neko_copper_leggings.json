@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "Neko",
+  "key": {
+    "A": {
+      "item": "neko-technology:neko_silk"
+    },
+    "B": {
+      "item": "neko-technology:neko_copper_plate"
+    },
+    "C": {
+      "item": "neko-technology:neko_web"
+    }
+  },
+  "pattern": [
+    "BCB",
+    "BAB",
+    "B B"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neko-technology:neko_copper_leggings"
+  }
+}

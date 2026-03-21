@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "Neko",
+  "key": {
+    "B": {
+      "item": "neko-technology:neko_hair"
+    },
+    "C": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    " C ",
+    "BBB",
+    "BBB"
+
+
+  ],
+  "result": {
+    "count": 1,
+    "id": "neko-technology:neko_silk"
+  }
+}

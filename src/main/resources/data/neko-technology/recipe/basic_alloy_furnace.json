@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "Neko",
+  "key": {
+    "A": {
+      "item": "neko-technology:neko_web"
+    },
+    "B": {
+      "item": "neko-technology:basic_storage_enclosure"
+    },
+    "C": {
+      "item": "neko-technology:pig_iron_plate"
+    },
+    "D": {
+      "item": "minecraft:blast_furnace"
+    },
+    "E": {
+      "item": "minecraft:cauldron"
+    }
+  },
+  "pattern": [
+    "CAC",
+    "CBC",
+    "DED"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neko-technology:basic_alloy_furnace"
+  }
+}

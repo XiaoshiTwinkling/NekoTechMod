@@ -1,0 +1,41 @@
+{
+	"schemaVersion": 1,
+	"id": "neko-technology",
+	"version": "${version}",
+	"name": "Neko Technology",
+	"description": "Meow Meow Technology o(=•ェ•=)m",
+	"authors": [
+		"Xiaoshi_"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/neko-technology/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.nekotech.NekoTechnology"
+		],
+		"client": [
+			"com.nekotech.NekoTechnologyClient"
+		],
+		"fabric-datagen": [
+			"com.nekotech.NekoTechnologyDataGenerator"
+		]
+	},
+	"mixins": [
+		"neko-technology.mixins.json",
+		{
+			"config": "neko-technology.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.18.4",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}

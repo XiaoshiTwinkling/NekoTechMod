@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "cookingtime": 100,
+  "experience": 0.2,
+  "group": "food",
+  "ingredient": {
+    "item": "minecraft:cooked_salmon"
+  },
+  "result": {
+    "id": "neko-technology:burnt_fish"
+  }
+}

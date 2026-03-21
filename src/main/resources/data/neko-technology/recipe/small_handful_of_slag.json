@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "Neko",
+  "key": {
+    "B": {
+      "item": "neko-technology:slag"
+    }
+  },
+  "pattern": [
+    "B"
+  ],
+  "result": {
+    "count": 4,
+    "id": "neko-technology:small_handful_of_slag"
+  }
+}

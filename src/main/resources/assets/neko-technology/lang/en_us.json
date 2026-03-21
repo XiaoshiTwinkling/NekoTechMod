@@ -1,0 +1,14 @@
+{
+  "itemGroup.nekotech_ingredients" : "NekoTech Ingredients",
+  "itemGroup.nekotech_tools": "NekoTech Tools",
+
+  "item.neko-technology.neko_silk" : "Neko Silk",
+  "item.neko-technology.neko_hair" : "Neko Hair",
+  "item.neko-technology.enhanced_neko_hair" : "Enhanced Neko Hair",
+  "item.neko-technology.stone_powder": "Stone Powder",
+  "item.neko-technology.neko_feather": "Neko Feather",
+  "item.neko-technology.neko_arrow": "Neko Arrow",
+  "item.neko-technology.dried_fish": "Dried Fish",
+  "item.neko-technology.burnt_fish": "Burnt Fish",
+  "item.neko-technology.tin_can": "Tin can"
+}

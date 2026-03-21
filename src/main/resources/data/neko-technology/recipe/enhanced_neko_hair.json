@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "Neko",
+  "key": {
+    "A": {
+      "item": "neko-technology:stone_powder"
+    },
+    "B": {
+      "item": "neko-technology:neko_hair"
+    },
+    "C": {
+      "item": "neko-technology:neko_silk"
+    }
+  },
+  "pattern": [
+    "BBB",
+    "ACA",
+    "BBB"
+  ],
+  "result": {
+    "count": 2,
+    "id": "neko-technology:enhanced_neko_hair"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "Neko",
+  "key": {
+    "B": {
+      "item": "neko-technology:pig_iron_plate"
+    },
+    "C": {
+      "item": "neko-technology:hammer"
+    }
+  },
+  "pattern": [
+    "BCB",
+    "BBB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neko-technology:tin_can"
+  }
+}

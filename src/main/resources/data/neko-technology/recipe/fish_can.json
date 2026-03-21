@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "Neko",
+  "key": {
+    "B": {
+      "item": "neko-technology:tin_can"
+    },
+    "C": {
+      "item": "neko-technology:dried_fish"
+    }
+  },
+  "pattern": [
+    "CCC",
+    " B "
+  ],
+  "result": {
+    "count": 1,
+    "id": "neko-technology:fish_can"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "Neko",
+  "key": {
+    "B": {
+      "item": "minecraft:stick"
+    },
+    "C": {
+      "item": "neko-technology:pig_iron_ingot"
+    }
+  },
+  "pattern": [
+    "CCC",
+    "CBC",
+    " B "
+  ],
+  "result": {
+    "count": 1,
+    "id": "neko-technology:hammer"
+  }
+}

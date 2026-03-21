@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "cookingtime": 800,
+  "experience": 0.5,
+  "group": "Neko",
+  "ingredient": {
+    "item": "minecraft:iron_ingot"
+  },
+  "result": {
+    "id": "neko-technology:pig_iron_ingot"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smoking",
+  "cookingtime": 100,
+  "experience": 0.1,
+  "group": "food",
+  "ingredient": {
+    "item": "neko-technology:dried_fish"
+  },
+  "result": {
+    "id": "neko-technology:burnt_fish"
+  }
+}
