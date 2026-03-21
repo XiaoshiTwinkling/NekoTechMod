@@ -1,7 +1,6 @@
 package com.nekotech.block.entity;
 
 import com.nekotech.block.entity.machines.CatNeedMachineBlockEntity;
-import com.nekotech.block.entity.machines.MachineBlockEntity;
 import com.nekotech.data.AlloyFurnaceData;
 import com.nekotech.item.custom.AlloyFurnace;
 import com.nekotech.recipe.AlloyRecipe;
@@ -263,8 +262,6 @@ public class AlloyFurnaceBlockEntity extends CatNeedMachineBlockEntity implement
                 getStack(OUTPUT_SLOT_2).increment(slagOutput.getCount());
             }
         }
-
-        // TODO: 发放经验
     }
 
     // 重置进度
