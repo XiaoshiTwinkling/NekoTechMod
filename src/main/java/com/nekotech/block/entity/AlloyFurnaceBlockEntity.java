@@ -1,5 +1,6 @@
 package com.nekotech.block.entity;
 
+import com.nekotech.block.entity.machines.CatNeedMachineBlockEntity;
 import com.nekotech.block.entity.machines.MachineBlockEntity;
 import com.nekotech.data.AlloyFurnaceData;
 import com.nekotech.item.custom.AlloyFurnace;
@@ -27,7 +28,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class AlloyFurnaceBlockEntity extends MachineBlockEntity implements ExtendedScreenHandlerFactory<AlloyFurnaceData>, ImplementedInventory {
+public class AlloyFurnaceBlockEntity extends CatNeedMachineBlockEntity implements ExtendedScreenHandlerFactory<AlloyFurnaceData>, ImplementedInventory {
 
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(5, ItemStack.EMPTY);
 
@@ -168,7 +169,7 @@ public class AlloyFurnaceBlockEntity extends MachineBlockEntity implements Exten
         }
 
         // 3. 处理合成逻辑
-        if (hasValidRecipe) {
+        if (hasValidRecipe && canMachineRun()) {
             if (maxProgress != recipe.cookTime) {
                 maxProgress = recipe.cookTime;
                 shouldMarkDirty = true;

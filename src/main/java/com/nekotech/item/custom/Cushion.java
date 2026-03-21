@@ -1,4 +1,4 @@
-package com.nekotech.block.entity.machines;
+package com.nekotech.item.custom;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.*;
@@ -12,16 +12,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class CushionBlockEntity extends BlockWithEntity {
+public class Cushion extends Block{
 
     // 碰撞箱：和下半砖相同（8像素高）
     private static final VoxelShape SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 8.0, 16.0);
 
-    public CushionBlockEntity(Settings settings) {
+    public Cushion(Settings settings) {
         super(settings);
     }
-
-
 
     @Override
     protected MapCodec<? extends BlockWithEntity> getCodec() {
@@ -97,12 +95,6 @@ public class CushionBlockEntity extends BlockWithEntity {
         return !cats.isEmpty();
     }
 
-
-    @Nullable
-    @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return null;  // 这个方块不需要方块实体
-    }
 
     @Override
     public BlockRenderType getRenderType(BlockState state) {

@@ -2,16 +2,16 @@ package com.nekotech.block.entity.machines;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.inventory.Inventories;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.math.BlockPos;
+
 
 /*
 这是模组中所有用电机器的基类
  */
 
-public class ElectricalMachineBlockEntity extends MachineBlockEntity{
+public class ElectricalMachineBlockEntity extends CatNeedMachineBlockEntity{
 
     public ElectricalMachineBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);

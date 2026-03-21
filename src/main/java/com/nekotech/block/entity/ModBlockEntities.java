@@ -2,7 +2,6 @@ package com.nekotech.block.entity;
 
 import com.mojang.datafixers.types.Type;
 import com.nekotech.NekoTechnology;
-import com.nekotech.block.entity.machines.CushionBlockEntity;
 import com.nekotech.item.block.ModBlocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -11,7 +10,6 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
-import net.minecraft.util.collection.DefaultedList;
 
 public class ModBlockEntities {
 

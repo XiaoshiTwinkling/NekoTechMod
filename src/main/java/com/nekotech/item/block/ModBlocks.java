@@ -2,9 +2,9 @@ package com.nekotech.item.block;
 
 import com.nekotech.NekoTechnology;
 import com.nekotech.block.entity.ModBlockEntities;
-import com.nekotech.block.entity.machines.CushionBlockEntity;
 import com.nekotech.item.custom.AlloyFurnace;
 import com.nekotech.item.custom.BoxBlock;
+import com.nekotech.item.custom.Cushion;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -24,14 +24,13 @@ public class ModBlocks {
     public static final Block basic_storage_enclosure= register("basic_storage_enclosure", new BoxBlock(AbstractBlock.Settings.copy(Blocks.CHEST)
             .strength(1.5F, 6.0F), () -> ModBlockEntities.basic_storage_enclosure));
 
-    public static final Block cushion_block = register("cushion_block",
-            new CushionBlockEntity(
-                    FabricBlockSettings.create()
-                            .strength(0.5f)
-                            .sounds(BlockSoundGroup.WOOL)
-                            .nonOpaque()
-            )
-    );
+    public static final Block cushion_block= register("cushion_block", new Cushion(
+            FabricBlockSettings.create()
+                    .strength(0.3f)  // 软垫子
+                    .sounds(BlockSoundGroup.WOOL)
+                    .nonOpaque()
+    ));
+
 
     public static void registerBlockItems(String id, Block block){
         Item item = Registry.register(Registries.ITEM, Identifier.of(NekoTechnology.MOD_ID, id), new BlockItem(block, new Item.Settings()));
