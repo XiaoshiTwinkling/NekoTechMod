@@ -2,10 +2,8 @@ package com.nekotech.item.block;
 
 import com.nekotech.NekoTechnology;
 import com.nekotech.block.entity.ModBlockEntities;
-import com.nekotech.item.custom.AlloyFurnace;
-import com.nekotech.item.custom.Bellows;
-import com.nekotech.item.custom.BoxBlock;
-import com.nekotech.item.custom.Cushion;
+import com.nekotech.block.entity.machines.HeaterBlockEntity;
+import com.nekotech.item.custom.*;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -32,6 +30,8 @@ public class ModBlocks {
                     .nonOpaque()
     ));
 
+    public static final Block heater= register("heater", new Heater(AbstractBlock.Settings.create()
+            .strength(1.5F, 6.0F)));
 
     public static final Block bellows = register("bellows",
             new Bellows(AbstractBlock.Settings.create()

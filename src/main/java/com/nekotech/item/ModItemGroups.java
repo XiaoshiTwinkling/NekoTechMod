@@ -70,6 +70,7 @@ public class ModItemGroups {
                             entries.add(ModBlocks.basic_alloy_furnace);
                             entries.add(ModBlocks.cushion_block);
                             entries.add(ModBlocks.bellows);
+                            entries.add(ModBlocks.heater);
 
                         })).build());
 
