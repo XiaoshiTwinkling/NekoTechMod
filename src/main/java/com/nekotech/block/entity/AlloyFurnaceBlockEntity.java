@@ -124,6 +124,12 @@ public class AlloyFurnaceBlockEntity extends CatNeedMachineBlockEntity implement
             return;
         }
 
+        if (!canMachineRun()) {
+            fuelTime = 0;
+            resetProgress();
+            return;
+        }
+
         boolean shouldMarkDirty = false;
 
         boolean isLit = fuelTime > 0;

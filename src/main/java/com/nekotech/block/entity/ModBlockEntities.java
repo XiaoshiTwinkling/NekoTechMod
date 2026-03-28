@@ -20,6 +20,20 @@ public class ModBlockEntities {
     public static BlockEntityType<AlloyFurnaceBlockEntity> basic_alloy_furnace=
             create("basic_alloy_furnace", BlockEntityType.Builder.create(AlloyFurnaceBlockEntity::new, ModBlocks.basic_alloy_furnace));
 
+    public static BlockEntityType<BellowsBlockEntity> bellows =
+            create("bellows",
+                    BlockEntityType.Builder.create(
+                            BellowsBlockEntity::new,
+                            ModBlocks.bellows
+                    ));
+    public static BlockEntityType<CushionBlockEntity> cushion =
+            create("cushion",
+                    BlockEntityType.Builder.create(
+                            CushionBlockEntity::new,
+                            ModBlocks.cushion_block
+                    ));
+
+
 
 
     private static <T extends BlockEntity> BlockEntityType<T> create(String id, BlockEntityType.Builder<T> builder){
