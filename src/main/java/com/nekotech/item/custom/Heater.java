@@ -97,12 +97,11 @@ public class Heater extends BlockWithEntity {
         return CODEC;
     }
 
-    @Override
-    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
-            World world, BlockState state, BlockEntityType<T> type) {
-
-        return (world1, pos, state1, blockEntity) -> {
-            HeaterBlockEntity.tick(world1, pos, state1, (HeaterBlockEntity) blockEntity);
-        };
+    @Nullable
+    @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(
+            World world, BlockState state, BlockEntityType<T> type
+    ) {
+        return validateTicker(type, ModBlockEntities.heater,
+                HeaterBlockEntity::tick);
     }
 }

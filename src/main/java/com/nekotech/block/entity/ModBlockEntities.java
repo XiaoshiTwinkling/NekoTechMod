@@ -20,8 +20,8 @@ public class ModBlockEntities {
     public static BlockEntityType<AlloyFurnaceBlockEntity> basic_alloy_furnace=
             create("basic_alloy_furnace", BlockEntityType.Builder.create(AlloyFurnaceBlockEntity::new, ModBlocks.basic_alloy_furnace));
 
-    public static BlockEntityType<AlloyFurnaceBlockEntity> heater=
-            create("heater", BlockEntityType.Builder.create(AlloyFurnaceBlockEntity::new, ModBlocks.heater));
+    public static BlockEntityType<HeaterBlockEntity> heater=
+            create("heater", BlockEntityType.Builder.create(HeaterBlockEntity::new, ModBlocks.heater));
 
     public static BlockEntityType<BellowsBlockEntity> bellows =
             create("bellows",

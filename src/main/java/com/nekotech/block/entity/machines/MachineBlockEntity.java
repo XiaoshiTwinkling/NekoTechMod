@@ -6,6 +6,7 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 /*
 这是模组中所有机器的基类
@@ -13,14 +14,38 @@ import net.minecraft.util.math.BlockPos;
 
 public abstract class MachineBlockEntity extends BlockEntity {
 
+    private static final int LAZY_TICK_INTERVAL = 80;
+    private int lazyTickTimer = 0;
+
     // 构造函数
     public MachineBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
 
     // 保存数据
-    protected abstract void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookupt);
+    protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup){
+        super.writeNbt(nbt, registryLookup);
+    };
 
     // 加载数据
-    public abstract void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup);
+    protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup){
+        super.readNbt(nbt, registryLookup);
+    };
+
+    //lazytick的计时器函数
+    protected void baseTick(World world, BlockPos pos, BlockState state) {
+        if (world.isClient) {
+            return;
+        }
+
+        lazyTickTimer++;
+        if (lazyTickTimer >= LAZY_TICK_INTERVAL) {
+            lazyTickTimer = 0;
+
+            lazytick(world, pos, state);
+        }
+    }
+
+    //这个函数每4s调用一次
+    public abstract void lazytick(World world, BlockPos pos, BlockState state);
 }

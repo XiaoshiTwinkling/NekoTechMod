@@ -21,7 +21,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class HeaterBlockEntity extends BlockEntity implements SidedInventory {
+public class HeaterBlockEntity extends MachineBlockEntity implements SidedInventory {
     private static final int FUEL_SLOT = 0;
     private static final int MAX_BURN_TIME = 100; // 示例值
     private static final float MAX_TEMPERATURE = 400.0f;
@@ -193,6 +193,11 @@ public class HeaterBlockEntity extends BlockEntity implements SidedInventory {
         isLit = nbt.getBoolean("IsLit");
     }
 
+    @Override
+    public void lazytick(World world, BlockPos pos, BlockState state) {
+
+    }
+
 
     public DefaultedList<ItemStack> getItems() {
         return fuelSlots;
@@ -219,10 +224,10 @@ public class HeaterBlockEntity extends BlockEntity implements SidedInventory {
     //@Environment(EnvType.SERVER)
     public void serverTick(World world, BlockPos pos, BlockState state) {
         if (world.isClient) return;
-        boolean shouldBeLit = isHeating();
+
 
         if(getStack(FUEL_SLOT).getCount() > 0){
-            if(!isHeating()){
+            if(burnTime <= 1){
                 getStack(FUEL_SLOT).decrement(1);
                 startBurning();
             } else {
@@ -239,7 +244,7 @@ public class HeaterBlockEntity extends BlockEntity implements SidedInventory {
         NekoTechnology.LOGGER.info(String.valueOf(burnTime));
         NekoTechnology.LOGGER.info(String.valueOf(temperature));
 
-
+        boolean shouldBeLit = isHeating();
         this.isLit = shouldBeLit;
         // 更新方块状态
         BlockState currentState = world.getBlockState(pos);
@@ -275,6 +280,6 @@ public class HeaterBlockEntity extends BlockEntity implements SidedInventory {
     }
 
     public boolean isHeating() {
-        return this.burnTime > 1;
+        return this.burnTime > 0;
     }
 }
