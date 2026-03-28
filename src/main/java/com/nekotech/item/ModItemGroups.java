@@ -69,6 +69,7 @@ public class ModItemGroups {
                             entries.add(ModBlocks.basic_storage_enclosure);
                             entries.add(ModBlocks.basic_alloy_furnace);
                             entries.add(ModBlocks.cushion_block);
+                            entries.add(ModBlocks.bellows);
 
                         })).build());
 

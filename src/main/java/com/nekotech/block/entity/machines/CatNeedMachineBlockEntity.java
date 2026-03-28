@@ -1,6 +1,7 @@
 package com.nekotech.block.entity.machines;
 
 import com.nekotech.NekoTechnology;
+import com.nekotech.block.entity.CushionBlockEntity;
 import com.nekotech.item.block.ModBlocks;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -17,51 +18,83 @@ import java.util.List;
 
 public abstract class CatNeedMachineBlockEntity extends BlockEntity {
 
-    // 构造函数
+    private BlockPos boundCushion = null;
+
     public CatNeedMachineBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
 
-    public boolean hasCatOnCushion(BlockPos cushionPos) {
-        if (world == null) {
-            return false;
+    public boolean canMachineRun() {
+        if (world == null || world.isClient) return false;
+
+        CushionBlockEntity cushion = getBoundCushion();
+
+        if (cushion != null) {
+            return cushion.hasCatCached();
         }
 
-        BlockPos abovePos = cushionPos.up();
+        cushion = findAndBindCushion();
 
-        List<CatEntity> cats = world.getEntitiesByClass(
-                CatEntity.class,
-                new net.minecraft.util.math.Box(abovePos),
-                cat -> cat != null && cat.isAlive()
-        );
-
-        return !cats.isEmpty();
+        return cushion != null && cushion.hasCatCached();
     }
 
-    //用来判断机器四周有没有坐垫，且坐垫上有猫
-    public boolean hasCushionWithCatAround() {
-        if (world == null) {
-            return false;
+    private CushionBlockEntity getBoundCushion() {
+        if (boundCushion == null) return null;
+
+        BlockEntity be = world.getBlockEntity(boundCushion);
+
+        if (be instanceof CushionBlockEntity cushion) {
+            if (cushion.isRegistered(this)) {
+                return cushion;
+            }
         }
 
-        Direction[] directions = {Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST};
+        boundCushion = null;
+        return null;
+    }
 
-        for (Direction dir : directions) {
+    private CushionBlockEntity findAndBindCushion() {
+        CushionBlockEntity cushion = findAvailableCushion();
+
+        if (cushion == null) return null;
+
+        if (cushion.tryRegister(this)) {
+            boundCushion = cushion.getPos();
+            return cushion;
+        }
+
+        return null;
+    }
+
+    @Override
+    public void markRemoved() {
+        super.markRemoved();
+
+        if (world == null || boundCushion == null) return;
+
+        BlockEntity be = world.getBlockEntity(boundCushion);
+
+        if (be instanceof CushionBlockEntity cushion) {
+            cushion.unregisterMachine(this);
+        }
+
+        boundCushion = null;
+    }
+
+    protected CushionBlockEntity findAvailableCushion() {
+        if (world == null) return null;
+
+        for (Direction dir : Direction.Type.HORIZONTAL) {
             BlockPos checkPos = pos.offset(dir);
-            BlockState state = world.getBlockState(checkPos);
+            BlockEntity be = world.getBlockEntity(checkPos);
 
-            if (state.getBlock() == ModBlocks.cushion_block) {
-                // 检查坐垫上是否有猫
-                if (hasCatOnCushion(checkPos)) {
-                    return true;
+            if (be instanceof CushionBlockEntity cushion) {
+                if (!cushion.isFull()) {
+                    return cushion;
                 }
             }
         }
 
-        return false;
-    }
-    //判断这个机器是否可以运行
-    public boolean canMachineRun() {
-        return hasCushionWithCatAround();
+        return null;
     }
 }

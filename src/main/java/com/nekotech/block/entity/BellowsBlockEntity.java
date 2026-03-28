@@ -81,7 +81,7 @@ public class BellowsBlockEntity extends BlockEntity {
     private static boolean hasCatNearby(World world, BlockPos pos) {
         return !world.getEntitiesByClass(
                 net.minecraft.entity.passive.CatEntity.class,
-                new net.minecraft.util.math.Box(pos).expand(5),
+                new net.minecraft.util.math.Box(pos).expand(1),
                 cat -> true
         ).isEmpty();
     }
@@ -111,10 +111,5 @@ public class BellowsBlockEntity extends BlockEntity {
     @Nullable
     public Packet<ClientPlayPacketListener> toUpdatePacket() {
         return BlockEntityUpdateS2CPacket.create(this);
-    }
-
-    // ===== 给 BER 用 =====
-    public boolean isWorking() {
-        return working;
     }
 }

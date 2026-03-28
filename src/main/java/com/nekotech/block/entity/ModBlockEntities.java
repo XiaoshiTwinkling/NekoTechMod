@@ -25,6 +25,14 @@ public class ModBlockEntities {
                             BellowsBlockEntity::new,
                             ModBlocks.bellows
                     ));
+    public static BlockEntityType<CushionBlockEntity> cushion =
+            create("cushion",
+                    BlockEntityType.Builder.create(
+                            CushionBlockEntity::new,
+                            ModBlocks.cushion_block
+                    ));
+
+
 
 
 

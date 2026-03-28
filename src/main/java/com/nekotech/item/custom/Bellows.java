@@ -1,4 +1,4 @@
-package com.nekotech.item.block;
+package com.nekotech.item.custom;
 
 import com.mojang.serialization.MapCodec;
 import com.nekotech.block.entity.BellowsBlockEntity;
@@ -13,17 +13,15 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class BellowsBlock extends BlockWithEntity {
+public class Bellows extends BlockWithEntity {
 
-    public static final MapCodec<BellowsBlock> CODEC = createCodec(BellowsBlock::new);
-
-    public BellowsBlock(Settings settings) {
+    public Bellows(Settings settings) {
         super(settings.nonOpaque());
     }
 
     @Override
     protected MapCodec<? extends BlockWithEntity> getCodec() {
-        return CODEC;
+        return null;
     }
 
     @Override

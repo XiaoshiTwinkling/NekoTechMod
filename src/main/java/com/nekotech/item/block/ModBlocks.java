@@ -3,6 +3,7 @@ package com.nekotech.item.block;
 import com.nekotech.NekoTechnology;
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.item.custom.AlloyFurnace;
+import com.nekotech.item.custom.Bellows;
 import com.nekotech.item.custom.BoxBlock;
 import com.nekotech.item.custom.Cushion;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -33,7 +34,7 @@ public class ModBlocks {
 
 
     public static final Block bellows = register("bellows",
-            new BellowsBlock(AbstractBlock.Settings.create()
+            new Bellows(AbstractBlock.Settings.create()
                     .strength(1.5f)
             )
     );
