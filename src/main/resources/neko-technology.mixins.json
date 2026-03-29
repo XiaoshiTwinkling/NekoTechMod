@@ -3,8 +3,9 @@
 	"package": "com.nekotech.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"CatEntityMixin",
-		"AbstractFurnaceBlockEntityMixin"
+      "CatEntityMixin",
+      "AbstractFurnaceBlockEntityMixin",
+      "HeaterBrickChangeMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

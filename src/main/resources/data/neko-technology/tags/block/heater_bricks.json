@@ -1,0 +1,31 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:bricks",
+    "minecraft:brick_slab",
+
+    "minecraft:stone_bricks",
+    "minecraft:stone_brick_slab",
+
+    "minecraft:nether_bricks",
+    "minecraft:nether_brick_slab",
+
+    "minecraft:end_stone_bricks",
+    "minecraft:end_stone_brick_slab",
+
+    "minecraft:deepslate_bricks",
+    "minecraft:deepslate_brick_slab",
+
+    "minecraft:mud_bricks",
+    "minecraft:mud_brick_slab",
+
+    "minecraft:prismarine_bricks",
+    "minecraft:prismarine_brick_slab",
+
+    "minecraft:purpur_block",
+    "minecraft:purpur_slab",
+
+    "minecraft:quartz_block",
+    "minecraft:quartz_slab"
+  ]
+}

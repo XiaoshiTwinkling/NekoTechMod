@@ -53,27 +53,17 @@ public class Heater extends BlockWithEntity {
     }
 
     @Override
-    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-        if (world.isClient()) {
-            return ActionResult.SUCCESS;
-        }
+    protected ActionResult onUse(BlockState state, World world, BlockPos pos,
+                                 PlayerEntity player, BlockHitResult hit) {
 
         BlockEntity be = world.getBlockEntity(pos);
+
         if (be instanceof HeaterBlockEntity heater) {
-            Hand hand = player.getActiveHand();
-            ItemStack held = player.getStackInHand(hand);
+            ItemStack stack = player.getStackInHand(player.getActiveHand());
 
-            if (!held.isEmpty()) {
-                if (heater.addFuel(held)) {
-                    if (!player.isCreative()) {
-                        held.decrement(1);
-                    }
-                    world.playSound(null, pos, SoundEvents.BLOCK_CAMPFIRE_CRACKLE,
-                            SoundCategory.BLOCKS, 0.5f, 1.0f);
-
-                    return ActionResult.CONSUME;
-                }
-            }
+            return heater.handleRightClick(player, stack)
+                    ? ActionResult.SUCCESS
+                    : ActionResult.PASS;
         }
 
         return ActionResult.PASS;

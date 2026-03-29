@@ -12,6 +12,7 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.SimpleRegistry;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 
@@ -39,11 +40,13 @@ public class ModBlocks {
             )
     );
 
-    public static final Block alloy_pot = new AlloyPot(
-            Block.Settings.create()
-                    .strength(3.5f)
-                    .requiresTool()
-                    .nonOpaque()
+    public static final Block alloy_pot = register("alloy_pot",
+            new AlloyPot(
+                    Block.Settings.create()
+                            .strength(3.5f)
+                            .requiresTool()
+                            .nonOpaque()
+            )
     );
 
     public static void registerBlockItems(String id, Block block){
@@ -60,4 +63,5 @@ public class ModBlocks {
     public static void registerModBlocks(){
         NekoTechnology.LOGGER.info("Registering Mod Blocks");
     }
+
 }

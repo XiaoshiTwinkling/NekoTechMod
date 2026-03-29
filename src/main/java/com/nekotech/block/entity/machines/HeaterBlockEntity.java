@@ -1,15 +1,14 @@
 package com.nekotech.block.entity.machines;
 
-import com.nekotech.NekoTechnology;
 import com.nekotech.block.entity.ModBlockEntities;
-import net.minecraft.block.Block;
+import com.nekotech.modTags.ModTags;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SidedInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.RegistryWrapper;
@@ -21,7 +20,9 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class HeaterBlockEntity extends MachineBlockEntity implements SidedInventory {
+import java.util.Map;
+
+public class HeaterBlockEntity extends MachineBlockEntity implements SidedInventory, TakeFreelyInventory  {
     private static final int FUEL_SLOT = 0;
     private static final int MAX_BURN_TIME = 600;
     private static final float MAX_TEMPERATURE = 400.0f;
@@ -34,10 +35,37 @@ public class HeaterBlockEntity extends MachineBlockEntity implements SidedInvent
     private float temperature_rising_rate = TEMPERATURE_RISING_RATE;
     private float max_temperature = MAX_TEMPERATURE ;
 
+    private static final float BRICK_HEAT_RATE_BONUS = 0.02f;
+
+    private static final float FUEL_TIME_MULTIPLIER = 600f / 1600f;
+
     private int burnTime = 0;
     private int maxBurnTime = 0;
 
     private boolean isLit = false;
+
+    private static final Map<Item, Integer> FUEL_MAP =
+            AbstractFurnaceBlockEntity.createFuelTimeMap();
+
+    @Override
+    public int getInventorySize() {
+        return fuelSlots.size();
+    }
+
+    @Override
+    public void markDirty() {
+        super.markDirty();
+    }
+
+    @Override
+    public BlockPos getPos() {
+        return this.pos;
+    }
+
+    @Override
+    public World getWorld() {
+        return this.world;
+    }
 
     public HeaterBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.heater, pos, state);
@@ -80,7 +108,9 @@ public class HeaterBlockEntity extends MachineBlockEntity implements SidedInvent
 
     @Override
     public boolean canInsert(int slot, ItemStack stack, @Nullable Direction dir) {
-        return slot == FUEL_SLOT && isFuel(stack);
+        return slot == FUEL_SLOT
+                && isFuel(stack)
+                && !isFull();
     }
 
     @Override
@@ -122,43 +152,22 @@ public class HeaterBlockEntity extends MachineBlockEntity implements SidedInvent
 
     //可汗大点兵
     private boolean isBrick(BlockState state) {
-        Block block = state.getBlock();
-        return block == Blocks.BRICKS ||              // 砖块
-                block == Blocks.NETHER_BRICKS ||      // 下界砖块
-                block == Blocks.END_STONE_BRICKS ||   // 末地石砖
-                block == Blocks.STONE_BRICKS ||       // 石砖
-                block == Blocks.DEEPSLATE_BRICKS ||   // 深板岩砖
-                block == Blocks.MUD_BRICKS ||         // 泥砖
-                block == Blocks.QUARTZ_BLOCK ||       // 石英块
-                block == Blocks.PURPUR_BLOCK ||       // 紫珀块
-                block == Blocks.PRISMARINE_BRICKS;    // 海晶石砖
-    }
-
-    public boolean addFuel(ItemStack stack) {
-        if (isFuel(stack) && !isFull()) {
-            ItemStack current = getStack(FUEL_SLOT);
-            if (current.isEmpty()) {
-                setStack(FUEL_SLOT, stack.copyWithCount(1));
-            } else {
-                current.increment(1);
-            }
-            return true;
-        }
-        return false;
+        return state.isIn(ModTags.Blocks.HEATER_BRICKS);
     }
 
     private boolean isFuel(ItemStack stack) {
-        // 只允许煤炭
-        return stack.getItem() == Items.COAL;
+        return getFuelTime(stack) > 0;
     }
 
     private boolean isFull() {
         return getStack(FUEL_SLOT).getCount() >= getMaxCountPerStack();
     }
 
-    private void startBurning() {
-        if (!isHeating()) {
-            burnTime = maxBurnTime = MAX_BURN_TIME;
+    private void startBurning(ItemStack fuelStack) {
+        int vanillaFuelTime = getFuelTime(fuelStack);
+
+        if (vanillaFuelTime > 0) {
+            burnTime = maxBurnTime = (int)(vanillaFuelTime * FUEL_TIME_MULTIPLIER);
             markDirty();
         }
     }
@@ -229,12 +238,39 @@ public class HeaterBlockEntity extends MachineBlockEntity implements SidedInvent
         isLit = nbt.getBoolean("IsLit");
     }
 
+    @Override
+    public void onItemPut(PlayerEntity player, ItemStack stack, int slot) {
+        markDirty();
 
+        if (world != null && !world.isClient) {
+            world.playSound(null, pos,
+                    SoundEvents.BLOCK_CAMPFIRE_CRACKLE,
+                    SoundCategory.BLOCKS,
+                    0.5f, 1.0f);
+        }
+    }
+
+    @Override
+    public void onItemTaken(PlayerEntity player, ItemStack stack, int slot) {
+        markDirty();
+
+        if (world != null && !world.isClient) {
+            world.playSound(null, pos,
+                    SoundEvents.BLOCK_FIRE_EXTINGUISH,
+                    SoundCategory.BLOCKS,
+                    0.5f, 1.0f);
+        }
+    }
 
     @Override
     public void lazytick(World world, BlockPos pos, BlockState state) {
         final int countBricks = countBricksInRange(world, pos);
-        max_temperature = MAX_TEMPERATURE + countBricks * BRICK_TEMPERATURE_BONUS ;
+
+        // 温度上限
+        max_temperature = MAX_TEMPERATURE + countBricks * BRICK_TEMPERATURE_BONUS;
+
+        // 升温速度
+        temperature_rising_rate = TEMPERATURE_RISING_RATE + countBricks * BRICK_HEAT_RATE_BONUS;
     }
 
     public DefaultedList<ItemStack> getItems() {
@@ -265,25 +301,18 @@ public class HeaterBlockEntity extends MachineBlockEntity implements SidedInvent
 
         baseTick(world, pos, state); //启动lazytick
 
-        if(getStack(FUEL_SLOT).getCount() > 0){
-            if(!isHeating()){
-                if(getStack(FUEL_SLOT).getCount()>=1){
-                    getStack(FUEL_SLOT).decrement(1);;
-                    startBurning();
-                    if(getStack(FUEL_SLOT).getCount()==0){
-                        getStack(FUEL_SLOT).setCount(0);
-                    }
-                } else {
-                    getStack(FUEL_SLOT).setCount(0);
-                }
-
+        if (getStack(FUEL_SLOT).getCount() > 0) {
+            if (!isHeating()) {
+                ItemStack fuelStack = getStack(FUEL_SLOT);
+                startBurning(fuelStack);
+                fuelStack.decrement(1);
             } else {
                 temperatureRising();
-                burnTime --;
+                burnTime--;
             }
         } else {
             temperatureRising();
-            if(isHeating())burnTime --;
+            if (isHeating()) burnTime--;
         }
 
         if(temperature > 10){
@@ -330,5 +359,21 @@ public class HeaterBlockEntity extends MachineBlockEntity implements SidedInvent
 
     public boolean isHeating() {
         return this.burnTime > 0;
+    }
+
+
+    private int getFuelTime(ItemStack stack) {
+        return FUEL_MAP.getOrDefault(stack.getItem(), 0);
+    }
+
+    public void onStructureChanged() {
+        if (world == null || world.isClient) return;
+
+        int countBricks = countBricksInRange(world, pos);
+
+        max_temperature = MAX_TEMPERATURE + countBricks * BRICK_TEMPERATURE_BONUS;
+        temperature_rising_rate = TEMPERATURE_RISING_RATE + countBricks * BRICK_HEAT_RATE_BONUS;
+
+        markDirty();
     }
 }

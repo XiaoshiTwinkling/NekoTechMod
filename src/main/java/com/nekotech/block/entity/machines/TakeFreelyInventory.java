@@ -20,6 +20,10 @@ public interface TakeFreelyInventory {
      * @return 是否处理成功
      */
     default boolean handleRightClick(PlayerEntity player, ItemStack stack) {
+        if (player.getWorld().isClient) {
+            return true;
+        }
+
         if (player.isSneaking()) {
             // 蹲下右键取出所有物品
             return takeOutAllItems(player);
@@ -37,35 +41,45 @@ public interface TakeFreelyInventory {
             return false;
         }
 
+        //改为先尝试合并再找空槽位，并修改了尝试合并导致的错误应用
+
         for (int i = 0; i < getInventorySize(); i++) {
             ItemStack slotStack = getStack(i);
-            if (slotStack.isEmpty() && canInsert(stack, i)) {
-                ItemStack copy = stack.copy();
-                copy.setCount(1);
-                setStack(i, copy);
-                if (!player.getAbilities().creativeMode) {
-                    stack.decrement(1);
-                }
 
-                onItemPut(player, stack, i);
-                return true;
-            }
-            else if (ItemStack.areItemsEqual(slotStack, stack) &&
-                    slotStack.getCount() < slotStack.getMaxCount() &&
-                    canInsert(stack, i)) {
+            if (!slotStack.isEmpty()
+                    && ItemStack.areItemsAndComponentsEqual(slotStack, stack)
+                    && slotStack.getCount() < slotStack.getMaxCount()
+                    && canInsert(stack, i)) {
+
                 slotStack.increment(1);
 
                 if (!player.getAbilities().creativeMode) {
                     stack.decrement(1);
                 }
 
-                onItemPut(player, stack, i);
+                onItemPut(player, slotStack.copy(), i);
+                return true;
+            }
+        }
+
+        for (int i = 0; i < getInventorySize(); i++) {
+            if (getStack(i).isEmpty() && canInsert(stack, i)) {
+                ItemStack copy = stack.copy();
+                copy.setCount(1);
+                setStack(i, copy);
+
+                if (!player.getAbilities().creativeMode) {
+                    stack.decrement(1);
+                }
+
+                onItemPut(player, copy, i);
                 return true;
             }
         }
 
         return false;
     }
+
 
     /**
      * 取出所有物品
@@ -79,12 +93,19 @@ public interface TakeFreelyInventory {
 
         for (int i = 0; i < getInventorySize(); i++) {
             ItemStack slotStack = getStack(i);
+
             if (!slotStack.isEmpty() && canExtract(slotStack, i)) {
-                if (!player.getInventory().insertStack(slotStack.copy())) {
-                    player.dropItem(slotStack.copy(), false);
+
+                ItemStack copy = slotStack.copy();
+
+                if (!player.getInventory().insertStack(copy)) {
+                    player.dropItem(copy, false);
                 }
 
                 setStack(i, ItemStack.EMPTY);
+
+                markDirty();
+
                 tookSomething = true;
 
                 onItemTaken(player, slotStack, i);
@@ -115,7 +136,12 @@ public interface TakeFreelyInventory {
     /**
      * 检查物品栏是否为空喵
      */
-    boolean isEmpty();
+    default boolean isEmpty() {
+        for (int i = 0; i < getInventorySize(); i++) {
+            if (!getStack(i).isEmpty()) return false;
+        }
+        return true;
+    }
 
     /**
      * 标记数据已修改喵

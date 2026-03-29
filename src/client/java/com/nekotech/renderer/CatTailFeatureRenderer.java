@@ -41,10 +41,6 @@ public class CatTailFeatureRenderer extends FeatureRenderer<AbstractClientPlayer
         // 腰部位置（裤子）
         matrices.translate(0.0, 0.6, 0.15);
 
-        if (player.isSneaking()) {
-            matrices.translate(0.0, -0.2, -0.1);
-        }
-
         tail.render(matrices, vertices, light, player, age, limbAngle, limbDistance);
 
         matrices.pop();
