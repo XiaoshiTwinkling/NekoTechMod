@@ -33,18 +33,21 @@ public class TailRenderer {
 
         // 根部
         float r1 = MathHelper.sin(t) * 8F + limbDistance * 12F;
-        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(r1));
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(5F)); // 上翘
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(r1));   // 原摆动
         renderSegment(matrices, vertices.getBuffer(RenderLayer.getEntityCutout(TEX_1)), light);
         matrices.translate(0, 0, 3F / 16F);
 
         // 中段
         float r2 = MathHelper.sin(t + 0.5F) * 12F;
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(10F));
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(r2));
         renderSegment(matrices, vertices.getBuffer(RenderLayer.getEntityCutout(TEX_2)), light);
         matrices.translate(0, 0, 3F / 16F);
 
         // 尾尖
         float r3 = MathHelper.sin(t + 1.0F) * 16F;
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(20F));
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(r3));
         renderSegment(matrices, vertices.getBuffer(RenderLayer.getEntityCutout(TEX_3)), light);
 
