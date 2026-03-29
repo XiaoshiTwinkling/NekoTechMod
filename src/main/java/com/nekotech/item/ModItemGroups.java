@@ -71,6 +71,7 @@ public class ModItemGroups {
                             entries.add(ModBlocks.cushion_block);
                             entries.add(ModBlocks.bellows);
                             entries.add(ModBlocks.heater);
+                            entries.add(ModBlocks.alloy_pot);
 
                         })).build());
 

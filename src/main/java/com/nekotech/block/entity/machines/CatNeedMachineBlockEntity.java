@@ -1,12 +1,9 @@
 package com.nekotech.block.entity.machines;
 
-import com.nekotech.NekoTechnology;
 import com.nekotech.block.entity.CushionBlockEntity;
-import com.nekotech.item.block.ModBlocks;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.passive.CatEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
@@ -16,7 +13,7 @@ import java.util.List;
 这是模组中所有需要猫猫管理的机器的基类
  */
 
-public abstract class CatNeedMachineBlockEntity extends BlockEntity {
+public abstract class CatNeedMachineBlockEntity extends MachineBlockEntity {
 
     private BlockPos boundCushion = null;
 

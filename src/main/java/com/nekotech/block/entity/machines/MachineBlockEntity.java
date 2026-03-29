@@ -14,8 +14,8 @@ import net.minecraft.world.World;
 
 public abstract class MachineBlockEntity extends BlockEntity {
 
-    private static final int LAZY_TICK_INTERVAL = 80;
-    private int lazyTickTimer = 0;
+    private static final int LAZY_TICK_INTERVAL = 200;
+    private int lazyTickTimer = LAZY_TICK_INTERVAL - 1;
 
     // 构造函数
     public MachineBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -37,15 +37,13 @@ public abstract class MachineBlockEntity extends BlockEntity {
         if (world.isClient) {
             return;
         }
-
         lazyTickTimer++;
         if (lazyTickTimer >= LAZY_TICK_INTERVAL) {
             lazyTickTimer = 0;
-
             lazytick(world, pos, state);
         }
     }
 
-    //这个函数每4s调用一次
+    //这个函数每10s调用一次
     public abstract void lazytick(World world, BlockPos pos, BlockState state);
 }

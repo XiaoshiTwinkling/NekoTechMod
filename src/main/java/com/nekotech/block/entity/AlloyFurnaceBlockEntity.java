@@ -329,5 +329,10 @@ public class AlloyFurnaceBlockEntity extends CatNeedMachineBlockEntity implement
         fuelTime = nbt.getInt("fuelTime");
         maxFuelTime = nbt.getInt("maxFuelTime");
     }
+
+    @Override
+    public void lazytick(World world, BlockPos pos, BlockState state) {
+
+    }
 }
 

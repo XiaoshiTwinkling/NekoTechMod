@@ -39,6 +39,13 @@ public class ModBlocks {
             )
     );
 
+    public static final Block alloy_pot = new AlloyPot(
+            Block.Settings.create()
+                    .strength(3.5f)
+                    .requiresTool()
+                    .nonOpaque()
+    );
+
     public static void registerBlockItems(String id, Block block){
         Item item = Registry.register(Registries.ITEM, Identifier.of(NekoTechnology.MOD_ID, id), new BlockItem(block, new Item.Settings()));
         if(item instanceof BlockItem){

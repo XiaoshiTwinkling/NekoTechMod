@@ -20,11 +20,15 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class Heater extends BlockWithEntity {
     public static final BooleanProperty LIT = Properties.LIT;
+
+    public static final VoxelShape SHAPE = Block.createCuboidShape(1, 0, 1, 15, 15, 15);
 
     public static final MapCodec<Heater> CODEC = createCodec(Heater::new);
 
@@ -41,6 +45,11 @@ public class Heater extends BlockWithEntity {
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
         return getDefaultState();
+    }
+
+    @Override
+    protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context){
+        return SHAPE;
     }
 
     @Override

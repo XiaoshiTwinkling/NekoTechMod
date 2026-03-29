@@ -5,6 +5,7 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 
 /*
@@ -43,5 +44,10 @@ public class ElectricalMachineBlockEntity extends CatNeedMachineBlockEntity{
     public void readNbt(NbtCompound nbt,RegistryWrapper.WrapperLookup registryLookup) {
         super.readNbt(nbt,registryLookup);
         nekoFlux = nbt.getFloat("NekoFlux");
+    }
+
+    @Override
+    public void lazytick(World world, BlockPos pos, BlockState state) {
+
     }
 }
