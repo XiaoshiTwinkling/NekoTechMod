@@ -293,9 +293,6 @@ public class HeaterBlockEntity extends MachineBlockEntity implements SidedInvent
         }
         markDirty(world, pos, state);
 
-        NekoTechnology.LOGGER.info(String.valueOf(burnTime));
-        NekoTechnology.LOGGER.info(String.valueOf(temperature));
-
         boolean shouldBeLit = isHeating();
         this.isLit = shouldBeLit;
         // 更新方块状态

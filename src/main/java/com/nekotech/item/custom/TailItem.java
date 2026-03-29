@@ -3,7 +3,6 @@ package com.nekotech.item.custom;
 import com.mojang.serialization.Codec;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Equipment;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -12,15 +11,18 @@ import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
-public class HatItem extends Item implements Equipment {
-    protected final Type type;
-    public HatItem(Type type, Settings settings) {
+public class TailItem extends Item implements Equipment {
+
+    private final Type type;
+
+    public TailItem(Type type, Settings settings) {
         super(settings);
         this.type = type;
     }
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+        // 复用原版装备逻辑（自动穿戴 + 替换 + 同步）
         return this.equipAndSwap(this, world, user, hand);
     }
 
@@ -28,35 +30,25 @@ public class HatItem extends Item implements Equipment {
     public EquipmentSlot getSlotType() {
         return this.type.getEquipmentSlot();
     }
-    public static enum Type implements StringIdentifiable {
-        HAT(EquipmentSlot.HEAD, 11, "hat");
+
+    // ===== 类型定义（可扩展多个饰品类型）=====
+    public enum Type implements StringIdentifiable {
+
+        TAIL(EquipmentSlot.LEGS, "tail");
 
         public static final Codec<Type> CODEC =
                 StringIdentifiable.createBasicCodec(Type::values);
-        private final EquipmentSlot equipmentSlot;
+
+        private final EquipmentSlot slot;
         private final String name;
-        private final int baseMaxDamage;
 
-        private Type(final EquipmentSlot equipmentSlot, final int baseMaxDamage, final String name) {
-            this.equipmentSlot = equipmentSlot;
+        Type(EquipmentSlot slot, String name) {
+            this.slot = slot;
             this.name = name;
-            this.baseMaxDamage = baseMaxDamage;
-        }
-
-        public int getMaxDamage(int multiplier) {
-            return this.baseMaxDamage * multiplier;
         }
 
         public EquipmentSlot getEquipmentSlot() {
-            return this.equipmentSlot;
-        }
-
-        public String getName() {
-            return this.name;
-        }
-
-        public boolean isTrimmable() {
-            return false;
+            return this.slot;
         }
 
         @Override
