@@ -1,6 +1,5 @@
 package com.nekotech.item;
 
-
 import com.nekotech.NekoTechnology;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
@@ -8,19 +7,18 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.CatEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
@@ -29,16 +27,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Field;
-import java.nio.file.attribute.UserPrincipalLookupService;
 import java.util.List;
 import java.util.Optional;
 
-public class CatBoxItem extends Item{
+public class CatBoxItem extends Item {
+
     public CatBoxItem(Item.Settings settings) {
         super(settings.maxCount(1));  // 纸箱只能堆叠1个
     }
@@ -63,7 +58,6 @@ public class CatBoxItem extends Item{
     public static void saveCatData(ItemStack stack, NbtCompound catData) {
         NbtCompound rootNbt = new NbtCompound();
         rootNbt.put("StoredCat", catData);
-
         stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(rootNbt));
     }
 
@@ -77,7 +71,7 @@ public class CatBoxItem extends Item{
         ItemStack stack = user.getStackInHand(hand);
 
         if (world.isClient()) {
-            return TypedActionResult.success(stack, world.isClient());
+            return TypedActionResult.success(stack, true);
         }
 
         Optional<NbtCompound> catData = getCatData(stack);
@@ -87,13 +81,13 @@ public class CatBoxItem extends Item{
             if(isLookingAtBlock(user,3)){
                 return releaseCat(world, user, stack, catData.get());
             }
-
         } else {
-            // 空纸箱，尝试收猫
-            if(getCatInFront(user,3)){
-                return tryCatchCat(world, user, stack, hand);
+            CatEntity cat = raycastCat(user, 3.0);
+            if (cat != null) {
+                return tryCatchCat(world, user, stack, cat);
             }
         }
+
         return TypedActionResult.pass(stack);
     }
 
@@ -109,173 +103,80 @@ public class CatBoxItem extends Item{
         return hitResult.getType() == HitResult.Type.BLOCK;
     }
 
-    public static boolean isLookingAtCat(PlayerEntity player, double maxDistance) {
-        HitResult hit = player.raycast(maxDistance, 0.0f, false);
-        System.out.println("Hit type: " + hit.getType());
-        if (hit.getType() == HitResult.Type.ENTITY) {
-            Entity target = ((EntityHitResult) hit).getEntity();
-            return target instanceof CatEntity;
-        }
-        return false;
-    }
+    public static CatEntity raycastCat(PlayerEntity player, double maxDistance) {
+        Vec3d start = player.getCameraPosVec(1.0F);
+        Vec3d direction = player.getRotationVec(1.0F);
+        Vec3d end = start.add(direction.multiply(maxDistance));
 
-    public static boolean getCatInFront(PlayerEntity player, double maxDistance) {
-        Vec3d lookVec = player.getRotationVec(1.0F);
-        Vec3d playerPos = player.getEyePos();
+        Box searchBox = player.getBoundingBox()
+                .stretch(direction.multiply(maxDistance))
+                .expand(1.0D);
 
-        Box searchBox = new Box(
-                playerPos.x - maxDistance,
-                playerPos.y - maxDistance,
-                playerPos.z - maxDistance,
-                playerPos.x + maxDistance,
-                playerPos.y + maxDistance,
-                playerPos.z + maxDistance
-        );
-
-        List<CatEntity> cats = player.getWorld().getEntitiesByClass(
-                CatEntity.class,
+        EntityHitResult result = ProjectileUtil.getEntityCollision(
+                player.getWorld(),
+                player,
+                start,
+                end,
                 searchBox,
-                cat -> cat != null && cat.isAlive()
+                entity -> entity instanceof CatEntity && entity.isAlive()
         );
 
-        for (CatEntity cat : cats) {
-            Vec3d toCat = cat.getPos().subtract(playerPos).normalize();
-            double dot = lookVec.dotProduct(toCat);
-
-            // 30度内
-            if (dot > 0.9) {  // cos(15°) = 0.9
-                return true;
-            }
+        if (result == null) {
+            return null;
         }
 
-        return false;
+        Entity entity = result.getEntity();
+        return entity instanceof CatEntity cat ? cat : null;
     }
 
-    private static int getCatTypeByReflection(CatEntity cat) {
-        try {
-            // 尝试获取 variant 字段
-            Field variantField = CatEntity.class.getDeclaredField("variant");
-            variantField.setAccessible(true);
-            Object variant = variantField.get(cat);
+    //删除一些有可能会出bug的数据
+    public static NbtCompound sanitizeCatNbt(NbtCompound nbt) {
+        // 唯一标识
+        nbt.remove("UUID");
 
-            if (variant instanceof Integer) {
-                return (Integer) variant;
-            }
-            else if (variant instanceof RegistryEntry<?>) {
-                RegistryEntry<?> entry = (RegistryEntry<?>) variant;
-                if (entry.getKey().isPresent()) {
-                    Identifier id = entry.getKey().get().getValue();
-                    return variantIdToInt(id);
-                }
-            }
-        } catch (NoSuchFieldException e) {
-        } catch (IllegalAccessException e) {
-        } catch (Exception e) {
-        }
+        // 位置运动
+        nbt.remove("Pos");
+        nbt.remove("Motion");
+        nbt.remove("Rotation");
 
-        return -1;  // 表示获取失败
-    }
+        // 维度世界
+        nbt.remove("Dimension");
+        nbt.remove("WorldUUID");
 
-    public static int variantIdToInt(Identifier variantId) {
-        String path = variantId.getPath().toLowerCase();
+        // 实体类型标识
+        nbt.remove("id");
 
-        return switch (path) {
-            case "tabby" -> 0;           // 花猫
-            case "black" -> 1;           // 黑猫
-            case "red" -> 2;             // 姜黄猫
-            case "siamese" -> 3;         // 暹罗猫
-            case "british_shorthair" -> 4;  // 英国短毛猫
-            case "calico" -> 5;          // 玳瑁猫
-            case "persian" -> 6;         // 波斯猫
-            case "ragdoll" -> 7;         // 布偶猫
-            case "white" -> 8;           // 白猫
-            case "jellie" -> 9;          // 果冻猫
-            case "all_black" -> 10;      // 全黑猫
-            default -> 0;                // 默认花猫
-        };
-    }
+        nbt.remove("Passengers");
+        nbt.remove("Leash");
 
-    public static int getCatType(CatEntity cat) {
-        if (cat == null) {
-            return 0;  // 默认花猫
-        }
-
-        int result = getCatTypeByReflection(cat);
-        if (result >= 0) {
-            return result;
-        }
-        // 默认返回花猫
-        return 0;
-    }
-
-    public static boolean setCatType(CatEntity cat, int catType) {
-        if (cat == null) return false;
-
-        // 确保品种在有效范围内
-        if (catType < 0 || catType > 10) {
-            catType = 0;
-        }
-
-        try {
-            // 方法1: 尝试直接设置 variant 字段
-            Field variantField = CatEntity.class.getDeclaredField("variant");
-            variantField.setAccessible(true);
-            variantField.set(cat, catType);
-            return true;
-
-        } catch (NoSuchFieldException e) {
-            // 字段不存在
-        } catch (Exception e) {
-            // 其他异常
-        }
-
-        // 如果直接设置失败，通过NBT方式
-        try {
-            NbtCompound nbt = new NbtCompound();
-            cat.writeNbt(nbt);
-            nbt.putInt("CatType", catType);
-            cat.readNbt(nbt);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+        return nbt;
     }
 
     private TypedActionResult<ItemStack> tryCatchCat(World world, PlayerEntity player,
-                                                     ItemStack stack, Hand hand) {
-        Box searchBox = player.getBoundingBox().expand(3.0);
-        List<CatEntity> nearbyCats = world.getEntitiesByType(EntityType.CAT, searchBox,
-                cat -> cat != null && cat.isAlive());
-
-        if (!nearbyCats.isEmpty()) {
-            CatEntity cat = nearbyCats.get(0);
-
-            // 保存猫数据
-            NbtCompound catData = new NbtCompound();
-            catData.putInt("Variant", getCatType(cat));
-
-            if (cat.hasCustomName()) {
-                catData.putString("CustomName", cat.getCustomName().getString());
-            }
-
-            catData.putFloat("Health", cat.getHealth());
-            catData.putBoolean("Sitting", cat.isInSittingPose());
-            catData.putBoolean("Tamed", cat.isTamed());
-
-            saveCatData(stack, catData);
-
-            // 播放音效
-            world.playSound(null, player.getX(), player.getY(), player.getZ(),
-                    SoundEvents.ENTITY_CAT_PURR, SoundCategory.NEUTRAL, 1.0F, 1.0F);
-
-            // 移除猫
-            cat.discard();
-
-            return TypedActionResult.success(stack, world.isClient());
+                                                     ItemStack stack, CatEntity cat) {
+        if (cat == null || !cat.isAlive()) {
+            return TypedActionResult.pass(stack);
         }
 
-        return TypedActionResult.pass(stack);
+        NbtCompound catData = new NbtCompound();
+        cat.writeNbt(catData);
+        sanitizeCatNbt(catData);
+
+        saveCatData(stack, catData);
+
+        world.playSound(
+                null,
+                player.getX(), player.getY(), player.getZ(),
+                SoundEvents.ENTITY_CAT_PURR,
+                SoundCategory.NEUTRAL,
+                1.0F, 1.0F
+        );
+
+        cat.discard();
+
+        return TypedActionResult.success(stack, world.isClient());
     }
+
     private BlockPos calculateSpawnPosition(BlockPos blockPos, Direction face) {
         // 根据指向的面计算放置位置
         return switch (face) {
@@ -293,7 +194,6 @@ public class CatBoxItem extends Item{
         double y = spawnPos.getY();
         double z = spawnPos.getZ();
 
-        // 根据面的不同微调位置
         return switch (face) {
             case UP -> new Vec3d(x, y, z);  // 上面
             case DOWN -> new Vec3d(x, y - 0.2, z);  // 下面，稍微往下
@@ -306,70 +206,45 @@ public class CatBoxItem extends Item{
 
     private TypedActionResult<ItemStack> releaseCat(World world, PlayerEntity player,
                                                     ItemStack stack, NbtCompound catData) {
+        if (!(world instanceof ServerWorld serverWorld)) {
+            return TypedActionResult.pass(stack);
+        }
 
-        if (world instanceof ServerWorld serverWorld) {
-            // 创建新猫
-            CatEntity cat = new CatEntity(EntityType.CAT, world);
+        HitResult hit = player.raycast(3.0, 0.0f, false);
+        if (!(hit instanceof BlockHitResult blockHit)) {
+            return TypedActionResult.pass(stack);
+        }
 
-            // 设置位置
-            HitResult hit = player.raycast(3.0, 0.0f, false);
+        BlockPos blockPos = blockHit.getBlockPos();
+        Direction face = blockHit.getSide();
 
-            BlockHitResult blockHit = (BlockHitResult) hit;
-            BlockPos blockPos = blockHit.getBlockPos();
-            Direction face = blockHit.getSide();
+        BlockPos spawnPos = calculateSpawnPosition(blockPos, face);
+        Vec3d spawnVec = getExactSpawnPosition(spawnPos, face);
 
-            // 计算放置位置（在方块面上）
-            BlockPos spawnPos = calculateSpawnPosition(blockPos, face);
+        NekoTechnology.LOGGER.info("Spawn cat at {}", spawnPos);
 
-            NekoTechnology.LOGGER.info(spawnPos.toString());
+        CatEntity cat = new CatEntity(EntityType.CAT, world);
 
-            Vec3d spawnVec = getExactSpawnPosition(spawnPos, face);
+        // 恢复数据
+        cat.readNbt(catData);
 
-            // 设置位置
-            cat.refreshPositionAndAngles(
-                    spawnVec.x + 0.5,
-                    spawnVec.y,
-                    spawnVec.z + 0.5,
-                    player.getYaw(),
-                    0.0F
-            );
+        cat.refreshPositionAndAngles(
+                spawnVec.x + 0.5,
+                spawnVec.y,
+                spawnVec.z + 0.5,
+                player.getYaw(),
+                0.0F
+        );
 
-            // 应用保存的数据
-            if (catData.contains("Variant", NbtElement.INT_TYPE)) {
-                setCatType(cat,catData.getInt("Variant"));
-            }
-
-            if (catData.contains("CustomName", NbtElement.STRING_TYPE)) {
-                String name = catData.getString("CustomName");
-                cat.setCustomName(Text.literal(name));
-            }
-
-            if (catData.contains("Health", NbtElement.FLOAT_TYPE)) {
-                cat.setHealth(catData.getFloat("Health"));
-            }
-
-            if (catData.contains("Sitting", NbtElement.BYTE_TYPE)) {
-                cat.setInSittingPose(catData.getBoolean("Sitting"));
-            }
-
-            if (catData.contains("Tamed", NbtElement.BYTE_TYPE)) {
-                cat.setTamed(catData.getBoolean("Tamed"), true);
-            }
-
-            // 生成猫
-            serverWorld.spawnEntityAndPassengers(cat);
+        serverWorld.spawnEntityAndPassengers(cat);
 
             // 播放音效
             world.playSound(null, spawnPos, SoundEvents.ENTITY_CAT_AMBIENT,
                     SoundCategory.NEUTRAL, 1.0F, 1.0F);
 
-            // 清除数据
-            clearCatData(stack);
+        clearCatData(stack);
 
-            return TypedActionResult.success(stack, world.isClient());
-        }
-
-        return TypedActionResult.pass(stack);
+        return TypedActionResult.success(stack, world.isClient());
     }
 
     @Override
