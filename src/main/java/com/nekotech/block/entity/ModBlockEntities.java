@@ -3,6 +3,7 @@ package com.nekotech.block.entity;
 import com.mojang.datafixers.types.Type;
 import com.nekotech.NekoTechnology;
 import com.nekotech.block.entity.machines.AlloyPotBlockEntity;
+import com.nekotech.block.entity.machines.BellowsBlockEntity;
 import com.nekotech.block.entity.machines.HeaterBlockEntity;
 import com.nekotech.item.block.ModBlocks;
 import net.minecraft.block.entity.BlockEntity;
@@ -17,9 +18,6 @@ public class ModBlockEntities {
 
     public static BlockEntityType<BoxBlockEntity> basic_storage_enclosure=
             create("basic_storage_enclosure", BlockEntityType.Builder.create(BoxBlockEntity::new, ModBlocks.basic_storage_enclosure));
-
-    public static BlockEntityType<AlloyFurnaceBlockEntity> basic_alloy_furnace=
-            create("basic_alloy_furnace", BlockEntityType.Builder.create(AlloyFurnaceBlockEntity::new, ModBlocks.basic_alloy_furnace));
 
     public static BlockEntityType<HeaterBlockEntity> heater=
             create("heater", BlockEntityType.Builder.create(HeaterBlockEntity::new, ModBlocks.heater));

@@ -46,4 +46,5 @@ public abstract class MachineBlockEntity extends BlockEntity {
 
     //这个函数每10s调用一次
     public abstract void lazytick(World world, BlockPos pos, BlockState state);
+
 }

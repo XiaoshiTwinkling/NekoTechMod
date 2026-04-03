@@ -49,6 +49,12 @@
 
   "block.neko-technology.basic_alloy_furnace": "基础猫猫合金炉",
   "block.neko-technology.basic_storage_enclosure": "基础猫猫存储机壳",
+  "block.neko-technology.heater": "加热炉",
+  "block.neko-technology.alloy_pot": "合金釜",
+
+  "message.nekotech.item_put": "%s 已放入喵~",
+  "message.nekotech.all_items_taken": "东西全部拿出来了喵~",
+
 
   "container.box": "猫猫存储机壳",
   "container.alloy_furnace": "猫猫合金炉"

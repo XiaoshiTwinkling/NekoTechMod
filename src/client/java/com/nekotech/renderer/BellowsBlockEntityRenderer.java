@@ -1,10 +1,9 @@
 package com.nekotech.renderer;
 
-import com.nekotech.block.entity.BellowsBlockEntity;
+import com.nekotech.block.entity.machines.BellowsBlockEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayers;
 import net.minecraft.client.render.VertexConsumerProvider;

@@ -243,10 +243,12 @@ public class HeaterBlockEntity extends MachineBlockEntity implements SidedInvent
         markDirty();
 
         if (world != null && !world.isClient) {
-            world.playSound(null, pos,
-                    SoundEvents.BLOCK_CAMPFIRE_CRACKLE,
-                    SoundCategory.BLOCKS,
-                    0.5f, 1.0f);
+            if(isFuel(stack)){
+                world.playSound(null, pos,
+                        SoundEvents.BLOCK_CAMPFIRE_CRACKLE,
+                        SoundCategory.BLOCKS,
+                        0.5f, 1.0f);
+            }
         }
     }
 

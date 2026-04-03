@@ -18,8 +18,6 @@ import net.minecraft.util.Identifier;
 
 public class ModBlocks {
 
-    public static final Block basic_alloy_furnace= register("basic_alloy_furnace", new AlloyFurnace(AbstractBlock.Settings.create()
-            .strength(1.5F, 6.0F)));
 
     public static final Block basic_storage_enclosure= register("basic_storage_enclosure", new BoxBlock(AbstractBlock.Settings.copy(Blocks.CHEST)
             .strength(1.5F, 6.0F), () -> ModBlockEntities.basic_storage_enclosure));

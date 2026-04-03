@@ -3,6 +3,7 @@ package com.nekotech.item.custom;
 import com.mojang.serialization.MapCodec;
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.block.entity.machines.AlloyPotBlockEntity;
+import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.entity.BlockEntity;
@@ -56,5 +57,10 @@ public class AlloyPot extends BlockWithEntity {
     ) {
         return validateTicker(type, ModBlockEntities.alloy_pot,
                 AlloyPotBlockEntity::tick);
+    }
+
+    @Override
+    public BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.MODEL;
     }
 }

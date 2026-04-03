@@ -1,7 +1,7 @@
 package com.nekotech.item.custom;
 
 import com.mojang.serialization.MapCodec;
-import com.nekotech.block.entity.BellowsBlockEntity;
+import com.nekotech.block.entity.machines.BellowsBlockEntity;
 import com.nekotech.block.entity.ModBlockEntities;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;

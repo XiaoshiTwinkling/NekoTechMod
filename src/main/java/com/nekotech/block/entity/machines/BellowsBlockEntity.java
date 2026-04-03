@@ -1,5 +1,6 @@
-package com.nekotech.block.entity;
+package com.nekotech.block.entity.machines;
 
+import com.nekotech.block.entity.ModBlockEntities;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;

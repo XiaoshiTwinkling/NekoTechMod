@@ -59,15 +59,15 @@ public class ModItemGroups {
                             entries.add(ModItems.NEKO_COPPER_LEGGINGS);
                             entries.add(ModItems.NEKO_COPPER_BOOTS);
                             entries.add(ModItems.neko_box);
+                            entries.add(ModItems.NEKO_TAIL);
                         })).build());
 
         Registry.register(Registries.ITEM_GROUP, NekoTech_BLOCKS,
                 ItemGroup.create(ItemGroup.Row.TOP, 7)
                         .displayName(Text.translatable("itemGroup.nekotech_blocks"))
-                        .icon(() -> new ItemStack(ModBlocks.basic_alloy_furnace))
+                        .icon(() -> new ItemStack(ModBlocks.heater))
                         .entries(((displayContext, entries) -> {
                             entries.add(ModBlocks.basic_storage_enclosure);
-                            entries.add(ModBlocks.basic_alloy_furnace);
                             entries.add(ModBlocks.cushion_block);
                             entries.add(ModBlocks.bellows);
                             entries.add(ModBlocks.heater);

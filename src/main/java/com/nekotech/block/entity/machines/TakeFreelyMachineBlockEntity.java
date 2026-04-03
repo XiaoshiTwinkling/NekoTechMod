@@ -1,7 +1,6 @@
 package com.nekotech.block.entity.machines;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
@@ -15,7 +14,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class TakeFreelyMachineBlockEntity extends MachineBlockEntity
+public class TakeFreelyMachineBlockEntity extends CatNeedMachineBlockEntity
         implements SidedInventory, TakeFreelyInventory{
 
     protected final DefaultedList<ItemStack> inventory;
