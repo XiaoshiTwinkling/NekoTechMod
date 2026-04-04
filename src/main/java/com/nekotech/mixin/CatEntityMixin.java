@@ -3,13 +3,17 @@ package com.nekotech.mixin;
 import com.nekotech.NekoTechnology;
 import com.nekotech.item.ModItems;
 import net.minecraft.entity.passive.CatEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(CatEntity.class)
 public class CatEntityMixin {
@@ -39,7 +43,6 @@ public class CatEntityMixin {
         }
     }
 
-    // 使用更简单的方法 - 直接修改实体的 NBT
     @Inject(method = "writeCustomDataToNbt", at = @At("HEAD"))
     private void onWriteCustomData(NbtCompound nbt, CallbackInfo ci) {
         nbt.putInt(DROP_TIMER_KEY, nekoDropTimer);
@@ -51,6 +54,18 @@ public class CatEntityMixin {
             nekoDropTimer = nbt.getInt(DROP_TIMER_KEY);
         } else {
             nekoDropTimer = 0;
+        }
+    }
+
+    @Inject(method = "interactMob", at = @At("HEAD"), cancellable = true)
+    private void onInteractMob(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
+
+        ItemStack stack = player.getStackInHand(hand);
+
+        if (stack.getItem().equals(ModItems.neko_box)) {
+            cir.setReturnValue(ActionResult.PASS);
+        } else {
+            cir.setReturnValue(ActionResult.SUCCESS);
         }
     }
 }

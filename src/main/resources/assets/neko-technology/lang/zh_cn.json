@@ -36,6 +36,7 @@
   "item.neko-technology.neko_box.empty": "§7空纸箱",
   "item.neko-technology.neko_box.get":"§8对着猫右键可以收起来",
   "item.neko-technology.thermometer": "小鱼干温度计",
+  "item.neko-technology.thermometer.tooltip": "用小鱼干做的可爱温度计~ 蹲下来可以测机器的温度喵~",
 
   "item.neko-technology.neko_ears": "猫耳饰品",
   "item.neko-technology.neko_ears.tooltip": "假装自己是猫猫喵~",

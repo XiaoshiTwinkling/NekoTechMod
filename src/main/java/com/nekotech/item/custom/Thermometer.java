@@ -2,6 +2,7 @@ package com.nekotech.item.custom;
 
 import com.nekotech.block.entity.machines.AlloyPotBlockEntity;
 import com.nekotech.block.entity.machines.HeaterBlockEntity;
+import com.nekotech.item.ModItem;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -16,9 +17,9 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class Thermometer extends Item {
-    public Thermometer(Settings settings) {
-        super(settings.maxCount(1));
+public class Thermometer extends ModItem {
+    public Thermometer(Settings settings, String tooltipTranslationKey) {
+        super(settings.maxCount(1), tooltipTranslationKey);
     }
 
     @Override
@@ -75,13 +76,9 @@ public class Thermometer extends Item {
                 return ActionResult.SUCCESS;
 
             } else {
-                // 不是加热器
-                sendErrorMessage(player, "这不是加热器方块");
                 return ActionResult.FAIL;
             }
         } else {
-            // 没有指向方块
-            sendErrorMessage(player, "请对准一个加热器方块");
             return ActionResult.FAIL;
         }
     }
