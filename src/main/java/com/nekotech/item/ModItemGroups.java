@@ -60,6 +60,7 @@ public class ModItemGroups {
                             entries.add(ModItems.NEKO_COPPER_BOOTS);
                             entries.add(ModItems.neko_box);
                             entries.add(ModItems.NEKO_TAIL);
+                            entries.add(ModItems.thermometer);
                         })).build());
 
         Registry.register(Registries.ITEM_GROUP, NekoTech_BLOCKS,

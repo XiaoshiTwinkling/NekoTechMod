@@ -206,8 +206,10 @@ public class HeaterBlockEntity extends MachineBlockEntity implements SidedInvent
                 temperature += getTemperatureRisingRate();
             }
         } else {
-            if(temperature >= 1){
+            if(temperature > 1){
                 temperature -= 1.0F;
+            } else {
+                temperature = 0F;
             }
         }
     }

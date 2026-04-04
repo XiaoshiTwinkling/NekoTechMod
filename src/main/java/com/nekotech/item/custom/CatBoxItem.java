@@ -1,4 +1,4 @@
-package com.nekotech.item;
+package com.nekotech.item.custom;
 
 import com.nekotech.NekoTechnology;
 import net.minecraft.component.DataComponentTypes;

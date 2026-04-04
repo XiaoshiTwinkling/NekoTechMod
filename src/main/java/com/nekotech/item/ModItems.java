@@ -1,10 +1,7 @@
 package com.nekotech.item;
 
 import com.nekotech.NekoTechnology;
-import com.nekotech.item.custom.Hammer;
-import com.nekotech.item.custom.HatItem;
-import com.nekotech.item.custom.ModArmorItem;
-import com.nekotech.item.custom.TailItem;
+import com.nekotech.item.custom.*;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.item.*;
@@ -51,6 +48,9 @@ public class ModItems {
     public static final Item NEKO_COPPER_BOOTS = registerItems("neko_copper_boots", new ModArmorItem(ModArmorMaterials.NEKO_COPPER, ArmorItem.Type.BOOTS,
             new Item.Settings().maxDamage(ArmorItem.Type.HELMET.getMaxDamage(37)),"neko_copper_boots"));
     public static final Item neko_box = registerItems("neko_box", new CatBoxItem(new Item.Settings()));
+    public static final Item thermometer = registerItems("thermometer", new Thermometer(new Item.Settings()));
+
+
 
     public static final Item NEKO_TAIL = registerItems(
             "neko_tail",

@@ -81,9 +81,14 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity{
         return null;
     }
 
-    private float getHeaterTemperature() {
+    public float getHeaterTemperature() {
         HeaterBlockEntity heater = getHeaterBelow();
         return heater != null ? heater.getTemperature() : 0f;
+    }
+
+    public float getHeaterMaxTemperature() {
+        HeaterBlockEntity heater = getHeaterBelow();
+        return heater != null ? heater.getMax_temperature() : 0f;
     }
 
     @Override
