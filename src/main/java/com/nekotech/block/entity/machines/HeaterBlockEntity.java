@@ -1,6 +1,7 @@
 package com.nekotech.block.entity.machines;
 
 import com.nekotech.block.entity.ModBlockEntities;
+import com.nekotech.item.block.Heater;
 import com.nekotech.modTags.ModTags;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
@@ -330,8 +331,8 @@ public class HeaterBlockEntity extends MachineBlockEntity implements SidedInvent
         this.isLit = shouldBeLit;
         // 更新方块状态
         BlockState currentState = world.getBlockState(pos);
-        if (currentState.contains(com.nekotech.item.custom.Heater.LIT)) {
-            world.setBlockState(pos, currentState.with(com.nekotech.item.custom.Heater.LIT, shouldBeLit));
+        if (currentState.contains(Heater.LIT)) {
+            world.setBlockState(pos, currentState.with(Heater.LIT, shouldBeLit));
         }
 
         this.markDirty();
@@ -342,7 +343,7 @@ public class HeaterBlockEntity extends MachineBlockEntity implements SidedInvent
 
         if (world != null) {
             BlockState state = world.getBlockState(pos);
-            if (state.contains(com.nekotech.item.custom.Heater.LIT) && state.get(com.nekotech.item.custom.Heater.LIT)) {
+            if (state.contains(Heater.LIT) && state.get(Heater.LIT)) {
 
                 if (world.getRandom().nextInt(3) == 0) {
                     double x = pos.getX() + 0.5 + (world.random.nextDouble() - 0.5) * 0.5;

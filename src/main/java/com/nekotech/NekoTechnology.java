@@ -5,6 +5,7 @@ import com.nekotech.handler.DriedFishTameHandler;
 import com.nekotech.item.ModItemGroups;
 import com.nekotech.item.ModItems;
 import com.nekotech.item.block.ModBlocks;
+import com.nekotech.recipe.ModRecipes;
 import com.nekotech.screen.ModScreenHandlers;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
@@ -34,6 +35,7 @@ public class NekoTechnology implements ModInitializer {
 		ModBlocks.registerModBlocks();
 		ModBlockEntities.registerBlockEntities();
 		ModScreenHandlers.registerScreenHandlers();
+        ModRecipes.init();
 
 
 		UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {

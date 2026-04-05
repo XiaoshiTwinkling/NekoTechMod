@@ -2,8 +2,6 @@ package com.nekotech.item.block;
 
 import com.nekotech.NekoTechnology;
 import com.nekotech.block.entity.ModBlockEntities;
-import com.nekotech.block.entity.machines.HeaterBlockEntity;
-import com.nekotech.item.custom.*;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -12,7 +10,6 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.registry.SimpleRegistry;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 

@@ -1,0 +1,19 @@
+{
+  "type": "neko-technology:alloy",
+  "input1": {
+    "item": "neko-technology:neko_hair"
+  },
+  "input2": {
+    "item": "minecraft:copper_ingot"
+  },
+  "result1": {
+    "id": "neko-technology:neko_copper_ingot",
+    "count": 1
+  },
+  "result2": {
+    "id": "neko-technology:slag",
+    "count": 1
+  },
+  "min_temperature": 0,
+  "cook_time": 20
+}

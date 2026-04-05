@@ -1,4 +1,4 @@
-package com.nekotech.item.custom;
+package com.nekotech.item.block;
 
 import com.mojang.serialization.MapCodec;
 import com.nekotech.block.entity.CushionBlockEntity;
@@ -6,15 +6,10 @@ import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.passive.CatEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class Cushion extends BlockWithEntity{
 

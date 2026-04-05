@@ -1,4 +1,4 @@
-package com.nekotech.item.custom;
+package com.nekotech.item.block;
 
 import com.mojang.serialization.MapCodec;
 import com.nekotech.block.entity.ModBlockEntities;
