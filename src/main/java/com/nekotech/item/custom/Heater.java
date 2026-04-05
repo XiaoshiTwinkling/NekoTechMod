@@ -3,6 +3,7 @@ package com.nekotech.item.custom;
 import com.mojang.serialization.MapCodec;
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.block.entity.machines.HeaterBlockEntity;
+import com.nekotech.item.block.DirectionalMachineBlock;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -20,12 +21,13 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class Heater extends BlockWithEntity {
+public class Heater extends DirectionalMachineBlock {
     public static final BooleanProperty LIT = Properties.LIT;
 
     public static final VoxelShape SHAPE = Block.createCuboidShape(1, 0, 1, 15, 15, 15);
@@ -39,12 +41,8 @@ public class Heater extends BlockWithEntity {
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        super.appendProperties(builder);
         builder.add(LIT);
-    }
-
-    @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return getDefaultState();
     }
 
     @Override
