@@ -1,7 +1,5 @@
 package com.nekotech.item.custom;
 
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 
 public class GogglesItem extends HatItem{
@@ -11,12 +9,8 @@ public class GogglesItem extends HatItem{
         super(type, settings);
     }
 
-    // 检查玩家是否戴着猫猫护目镜喵~
-    public static boolean isWearingCatGoggles(PlayerEntity player) {
-        if (player == null) return false;
-
-        ItemStack headSlot = player.getEquippedStack(EquipmentSlot.HEAD);
-        return !headSlot.isEmpty() &&
-                headSlot.getItem() instanceof GogglesItem;
+    public static boolean isWearingGoggles(net.minecraft.entity.player.PlayerEntity player) {
+        ItemStack headStack = player.getInventory().getArmorStack(3);
+        return headStack.getItem() instanceof GogglesItem;
     }
 }

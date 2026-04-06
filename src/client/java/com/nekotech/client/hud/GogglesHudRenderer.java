@@ -1,0 +1,75 @@
+package com.nekotech.client.hud;
+
+import com.nekotech.item.api.googles.GoogleAbstractHUD;
+import com.nekotech.item.api.googles.IHaveGoogleHUD;
+import com.nekotech.item.custom.GogglesItem;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
+
+/**
+ * 处理护目镜HUD的渲染喵~~~~~~~~~~~~~~~~~~~~~
+ * 终于到这一步了QWQWQWQQWQWQWQWQWQWQWQ
+ */
+public class GogglesHudRenderer implements HudRenderCallback {
+    private GoogleAbstractHUDClient currentHUD = null;
+
+    @Override
+    public void onHudRender(DrawContext drawContext, RenderTickCounter renderTickCounter) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client.player == null || client.world == null) {
+            currentHUD = null;
+            return;
+        }
+
+        //检查是否戴着护目镜喵
+        if (!GogglesItem.isWearingGoggles(client.player)) {
+            currentHUD = null;
+            return;
+        }
+
+        //获取准星目标喵
+        HitResult hit = client.crosshairTarget;
+        if (!(hit instanceof BlockHitResult blockHit)) {
+            currentHUD = null;
+            return;
+        }
+
+        //检查方块是否支持HUD喵
+        var blockEntity = client.world.getBlockEntity(blockHit.getBlockPos());
+        if (!(blockEntity instanceof IHaveGoogleHUD hudProvider)) {
+            currentHUD = null;
+            return;
+        }
+
+        //获取HUD数据喵
+        GoogleAbstractHUD hubData = hudProvider.getGoogleHUD(
+                client.world,
+                blockHit.getBlockPos(),
+                client.world.getBlockState(blockHit.getBlockPos())
+        );
+
+        //通过工厂创建客户端HUD喵
+        if (hubData != null) {
+            currentHUD = HudFactory.createHUD(hubData);
+        } else {
+            currentHUD = null;
+        }
+
+        //设置HUD位置喵（屏幕右上角）
+        if (currentHUD != null) {
+            int screenWidth = client.getWindow().getScaledWidth();
+            int x = screenWidth - currentHUD.width - 10;
+            int y = 10;
+            currentHUD.setPosition(x, y);
+
+            float tickDelta=renderTickCounter.getTickDelta(true);
+            //渲染HUD
+            currentHUD.render(drawContext, tickDelta);
+        }
+    }
+
+}
