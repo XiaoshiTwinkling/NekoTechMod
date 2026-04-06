@@ -1,5 +1,6 @@
 package com.nekotech.block.entity.machines;
 
+import com.nekotech.NekoTechnology;
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.item.block.ModBlocks;
 import com.nekotech.recipe.AlloyPot.AlloyPotRecipeInput;
@@ -62,11 +63,10 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity{
 
     @Override
     public boolean canExtract(ItemStack stack, int slot) {
-        // 输入槽不允许直接取（防止破坏配方）
+
         if (slot == INPUT_SLOT_1 || slot == INPUT_SLOT_2) {
             return false;
         }
-
         // 输出槽允许取
         return slot == OUTPUT_SLOT_1 || slot == OUTPUT_SLOT_2;
     }
@@ -133,6 +133,7 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity{
         if (!canWork(recipe)) {
             return;
         }
+
 
         alloyTimeTotal = recipe.cookTime();
         alloyProgress++;
@@ -232,6 +233,8 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity{
         HeaterBlockEntity heater = getHeaterBelow();
         return heater != null ? heater.getMax_temperature() : 0f;
     }
+
+
 
     @Override
     public void setStack(int slot, ItemStack stack) {

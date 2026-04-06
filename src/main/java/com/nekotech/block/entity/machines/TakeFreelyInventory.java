@@ -94,13 +94,15 @@ public interface TakeFreelyInventory {
 
         for (int i = 0; i < getInventorySize(); i++) {
 
-            ItemStack extracted = removeStack(i);
+            ItemStack extracted = getStack(i);
 
             if (!extracted.isEmpty() && canExtract(extracted, i)) {
 
                 if (!player.getInventory().insertStack(extracted)) {
                     player.dropItem(extracted, false);
                 }
+
+                removeStack(i);
 
                 tookSomething = true;
 
