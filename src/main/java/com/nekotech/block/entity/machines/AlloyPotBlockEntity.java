@@ -8,7 +8,9 @@ import com.nekotech.recipe.ModRecipes;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -22,6 +24,11 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity{
 
     private RecipeEntry<AlloyRecipe> cachedRecipe = null;
 
+    //客户端渲染用
+    private int bounceTick = 0;
+    private boolean bouncing = false;
+
+
     public static final int INPUT_SLOT_1 = 0;     // 输入槽1
     public static final int INPUT_SLOT_2 = 1;     // 输入槽2
 
@@ -31,7 +38,7 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity{
 
     private float temperature = 0;  // 当前温度
 
-    private int alloyProgress = 0;      // 当前合金进度
+    public int alloyProgress = 0;      // 当前合金进度
     private int alloyTimeTotal = 0;     // 总所需时间
 
     public static void tick(World world, BlockPos pos, BlockState state, AlloyPotBlockEntity blockEntity) {
@@ -86,7 +93,23 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity{
     }
 
     public void clientTick() {
-        // 客户端逻辑
+
+        boolean shouldBounce = alloyProgress > 0;
+
+        if (bouncing) {
+            bounceTick++;
+
+            if (bounceTick >= 20) { // 1秒
+                bounceTick = 0;
+                bouncing = false;
+            }
+        } else {
+            // 落地后才重新判断
+            if (shouldBounce) {
+                bouncing = true;
+                bounceTick = 0;
+            }
+        }
     }
 
     private void serverTick() {
@@ -119,7 +142,6 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity{
             cachedRecipe = null;
             resetProgress();
         }
-
 
         markDirty();
     }
@@ -229,6 +251,10 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity{
                 && getStack(INPUT_SLOT_2).isEmpty();
     }
 
+    public int getAlloyTimeTotal() {
+        return alloyTimeTotal;
+    }
+
 
     @Override
     public ItemStack removeStack(int slot, int amount) {
@@ -240,5 +266,17 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity{
         }
 
         return result;
+    }
+
+    @Override
+    protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        super.writeNbt(nbt, registryLookup);
+        nbt.putInt("Progress", alloyProgress);
+    }
+
+    @Override
+    protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        super.readNbt(nbt, registryLookup);
+        alloyProgress = nbt.getInt("Progress");
     }
 }
