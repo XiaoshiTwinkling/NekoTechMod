@@ -13,6 +13,7 @@ import net.minecraft.world.World;
  */
 public interface TakeFreelyInventory {
 
+
     /**
      * 处理玩家右键交互
      * @param player 玩家
@@ -92,23 +93,18 @@ public interface TakeFreelyInventory {
         boolean tookSomething = false;
 
         for (int i = 0; i < getInventorySize(); i++) {
-            ItemStack slotStack = getStack(i);
 
-            if (!slotStack.isEmpty() && canExtract(slotStack, i)) {
+            ItemStack extracted = removeStack(i);
 
-                ItemStack copy = slotStack.copy();
+            if (!extracted.isEmpty() && canExtract(extracted, i)) {
 
-                if (!player.getInventory().insertStack(copy)) {
-                    player.dropItem(copy, false);
+                if (!player.getInventory().insertStack(extracted)) {
+                    player.dropItem(extracted, false);
                 }
-
-                setStack(i, ItemStack.EMPTY);
-
-                markDirty();
 
                 tookSomething = true;
 
-                onItemTaken(player, slotStack, i);
+                onItemTaken(player, extracted, i);
             }
         }
 
@@ -176,7 +172,6 @@ public interface TakeFreelyInventory {
      * 物品放入时的回调喵
      */
     default void onItemPut(PlayerEntity player, ItemStack stack, int slot) {
-        markDirty();
         playInsertSound();
         sendStatusMessage(player, Text.translatable("message.nekotech.item_put", stack.getName()));
     }
@@ -185,7 +180,6 @@ public interface TakeFreelyInventory {
      * 物品取出时的回调喵
      */
     default void onItemTaken(PlayerEntity player, ItemStack stack, int slot) {
-        markDirty();
         playTakeSound();
     }
 
@@ -292,4 +286,8 @@ public interface TakeFreelyInventory {
         }
         return false;
     }
+
+    ItemStack removeStack(int slot);
+
+    ItemStack removeStack(int slot, int amount);
 }
