@@ -61,6 +61,7 @@ public class ModItemGroups {
                             entries.add(ModItems.neko_box);
                             entries.add(ModItems.NEKO_TAIL);
                             entries.add(ModItems.thermometer);
+                            entries.add(ModItems.neko_goggles);
                         })).build());
 
         Registry.register(Registries.ITEM_GROUP, NekoTech_BLOCKS,

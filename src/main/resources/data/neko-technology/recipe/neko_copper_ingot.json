@@ -14,6 +14,6 @@
     "id": "neko-technology:slag",
     "count": 1
   },
-  "min_temperature": 0,
+  "min_temperature": 300,
   "cook_time": 20
 }

@@ -1,0 +1,31 @@
+{
+  "replace": false,
+  "values": [
+    "neko-technology:neko_silk",
+    "neko-technology:neko_hair",
+    "neko-technology:enhanced_neko_hair",
+    "neko-technology:stone_powder",
+    "neko-technology:neko_feather",
+    "neko-technology:dried_fish",
+    "neko-technology:burnt_fish",
+    "neko-technology:tin_can",
+    "neko-technology:hammer",
+    "neko-technology:pig_iron_ingot",
+    "neko-technology:pig_iron_plate",
+    "neko-technology:fish_can",
+    "neko-technology:neko_web",
+    "neko-technology:neko_copper_ingot",
+    "neko-technology:slag",
+    "neko-technology:small_handful_of_slag",
+    "neko-technology:neko_copper_plate",
+    "neko-technology:neko_ears",
+    "neko-technology:neko_goggles",
+    "neko-technology:neko_copper_helmet",
+    "neko-technology:neko_copper_chestplate",
+    "neko-technology:neko_copper_leggings",
+    "neko-technology:neko_copper_boots",
+    "neko-technology:neko_box",
+    "neko-technology:thermometer",
+    "neko-technology:neko_tail"
+  ]
+}

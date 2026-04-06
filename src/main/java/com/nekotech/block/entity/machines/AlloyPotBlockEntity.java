@@ -117,6 +117,7 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity{
         if (alloyProgress >= alloyTimeTotal) {
             craft(recipe);
             cachedRecipe = null;
+            world.playSound(null, pos, net.minecraft.sound.SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, net.minecraft.sound.SoundCategory.BLOCKS, 0.6f, 1.2f);
             resetProgress();
         }
 

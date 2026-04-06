@@ -1,0 +1,34 @@
+{
+  "parent": "neko-technology:root",
+  "criteria": {
+    "get_neko_silk": {
+      "conditions": {
+        "items": [
+          {
+            "items": "neko-technology:neko_silk"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.neko_technology.get_neko_silk.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "neko-technology:neko_silk"
+    },
+    "title": {
+      "translate": "advancements.neko_technology.get_neko_silk.title"
+    }
+  },
+  "requirements": [
+    [
+      "get_neko_silk"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

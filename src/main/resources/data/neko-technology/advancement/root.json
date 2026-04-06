@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "id": "neko-technology:neko_hair"
+    },
+    "title": {
+      "translate": "advancements.neko_technology.root.title"
+    },
+    "description": {
+      "translate": "advancements.neko_technology.root.description"
+    },
+    "background": "minecraft:textures/block/copper_block.png",
+    "frame": "task",
+    "announce_to_chat": false,
+    "show_toast": false,
+    "hidden": false
+  },
+  "criteria": {
+    "has_neko_hair": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "neko-technology:neko_hair"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_neko_hair"
+    ]
+  ]
+}
