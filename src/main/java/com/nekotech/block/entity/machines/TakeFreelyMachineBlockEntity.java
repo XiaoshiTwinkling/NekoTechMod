@@ -7,6 +7,9 @@ import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
@@ -55,12 +58,24 @@ public class TakeFreelyMachineBlockEntity extends CatNeedMachineBlockEntity
 
     @Override
     public ItemStack removeStack(int slot, int amount) {
-        return Inventories.splitStack(inventory, slot, amount);
+        ItemStack stack = Inventories.splitStack(inventory, slot, amount);
+
+        if (!stack.isEmpty()) {
+            markDirty();
+        }
+
+        return stack;
     }
 
     @Override
     public ItemStack removeStack(int slot) {
-        return Inventories.removeStack(inventory, slot);
+        ItemStack stack = Inventories.removeStack(inventory, slot);
+
+        if (!stack.isEmpty()) {
+            markDirty();
+        }
+
+        return stack;
     }
 
     @Override
@@ -102,12 +117,17 @@ public class TakeFreelyMachineBlockEntity extends CatNeedMachineBlockEntity
     @Override
     protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         super.writeNbt(nbt, registryLookup);
-        Inventories.writeNbt(nbt, inventory,  false ,registryLookup);
+        Inventories.writeNbt(nbt, inventory, true, registryLookup);
     }
 
     @Override
     protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         super.readNbt(nbt, registryLookup);
+
+        for (int i = 0; i < inventory.size(); i++) {
+            inventory.set(i, ItemStack.EMPTY);
+        }
+
         Inventories.readNbt(nbt, inventory, registryLookup);
     }
 
@@ -122,6 +142,25 @@ public class TakeFreelyMachineBlockEntity extends CatNeedMachineBlockEntity
     }
 
     public void serverTick(World world, BlockPos pos, BlockState state) {
+    }
+
+    @Override
+    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
+        return createNbt(registryLookup);
+    }
+
+    @Override
+    public Packet<ClientPlayPacketListener> toUpdatePacket() {
+        return BlockEntityUpdateS2CPacket.create(this);
+    }
+
+    @Override
+    public void markDirty() {
+        super.markDirty();
+
+        if (world != null && !world.isClient) {
+            world.updateListeners(pos, getCachedState(), getCachedState(), 3);
+        }
     }
 
 
