@@ -2,6 +2,7 @@ package com.nekotech;
 
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.client.hud.GogglesHudRenderer;
+import com.nekotech.network.ClientHudNetworkHandler;
 import com.nekotech.renderer.AlloyPotBlockEntityRenderer;
 import com.nekotech.renderer.BellowsBlockEntityRenderer;
 import com.nekotech.renderer.CatTailFeatureRenderer;
@@ -29,6 +30,7 @@ public class NekoTechnologyClient implements ClientModInitializer {
                 AlloyPotBlockEntityRenderer::new
         );
 
+        ClientHudNetworkHandler.initialize();
         // 注册HUD渲染回调
         HudRenderCallback.EVENT.register(HUD_RENDERER);
 

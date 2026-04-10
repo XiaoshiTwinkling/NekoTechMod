@@ -1,6 +1,7 @@
 package com.nekotech.item.custom;
 
 import com.mojang.serialization.Codec;
+import com.nekotech.item.ModItem;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Equipment;
@@ -11,12 +12,12 @@ import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
-public class TailItem extends Item implements Equipment {
+public class TailItem extends ModItem implements Equipment {
 
     private final Type type;
 
-    public TailItem(Type type, Settings settings) {
-        super(settings);
+    public TailItem(Type type, Settings settings, String tooltipTranslationKey) {
+        super(settings, tooltipTranslationKey);
         this.type = type;
     }
 

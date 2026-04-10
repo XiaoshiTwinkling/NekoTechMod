@@ -4,9 +4,11 @@ import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.ContainerHUDData;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.InventoryProvider;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
@@ -56,18 +58,33 @@ public class BoxBlockEntity extends LootableContainerBlockEntity implements IHav
     @Override
     @Nullable
     public GoogleAbstractHUD getGoogleHUD(World world, BlockPos pos, BlockState state) {
-        // 只在服务端返回数据，客户端通过其他方式获取
-        if (world.isClient()) {
-            return null;
-        }
 
-        // 准备数据
-        Text title = Text.translatable("block.nekotech.example_chest");
         List<ItemStack> items = new ArrayList<>();
-        for (int i = 0; i < inventory.size(); i++) {
-            items.add(inventory.get(i).copy());
+
+        if (this instanceof Inventory inventory) {
+            for (int i = 0; i < inventory.size(); i++) {
+                ItemStack stack = inventory.getStack(i);
+                items.add(stack.copy()); // 复制一份，避免修改原物品
+            }
+        } else if (this instanceof ImplementedInventory implementedInventory) {
+            for (int i = 0; i < implementedInventory.size(); i++) {
+                ItemStack stack = implementedInventory.getStack(i);
+                items.add(stack.copy());
+            }
         }
 
-        return new ContainerHUDData(items, title, 9, 3);
+        boolean hasItems = false;
+        for (ItemStack stack : items) {
+            if (!stack.isEmpty()) {
+                hasItems = true;
+                break;
+            }
+        }
+
+        int columns = 9;  // 根据你的容器调整
+        int rows = 3;     // 根据你的容器调整
+        Text title = Text.translatable("container.your_container_name");
+
+        return new ContainerHUDData(items, title, columns, rows);
     }
 }

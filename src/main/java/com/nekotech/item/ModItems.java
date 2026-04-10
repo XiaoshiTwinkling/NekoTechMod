@@ -59,7 +59,8 @@ public class ModItems {
             "neko_tail",
             new TailItem(
                     TailItem.Type.TAIL,
-                    new Item.Settings().maxCount(1)
+                    new Item.Settings().maxCount(1),
+                    "neko_tail"
             )
     );
 

@@ -2,8 +2,11 @@ package com.nekotech.client.hud;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+
+import java.util.List;
 
 public abstract class GoogleAbstractHUDClient {
     protected int x = 0;
@@ -57,8 +60,46 @@ public abstract class GoogleAbstractHUDClient {
         context.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, text, x, y, color);
     }
 
-    protected void drawItemSlot(DrawContext context, int x, int y) {
-        context.drawTexture(Identifier.of("textures/gui/container/generic_54.png"),
-                x, y, 0, 0, ITEM_SLOT_SIZE, ITEM_SLOT_SIZE);
+    protected void drawItemSlot(DrawContext context, int x, int y, ItemStack stack) {
+        Identifier SLOT_TEXTURE = Identifier.ofVanilla("container/slot");
+        context.drawGuiTexture(SLOT_TEXTURE, x, y, 18, 18);
+        if (!stack.isEmpty()) {
+            // 绘制物品图标（居中）
+            context.drawItem(stack, x + 1, y + 1);
+
+            // 绘制物品数量（如果有）
+            if (stack.getCount() > 1) {
+                context.drawText(
+                        MinecraftClient.getInstance().textRenderer,
+                        String.valueOf(stack.getCount()),
+                        x + 16,
+                        y + 16,
+                        0xFFFFFF, // 白色
+                        true     // 带阴影
+                );
+            }
+        }
+    }
+
+    public void renderInventory(DrawContext context, int inventoryStartX, int inventoryStartY, int rows, int columns, List<ItemStack> items) {
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < columns; col++) {
+                // 计算当前槽位的屏幕坐标
+                int slotX = inventoryStartX + col * 18; // 每个槽位宽度 18
+                int slotY = inventoryStartY + row * 18; // 每个槽位高度 18
+
+                // 计算当前槽位的索引（从 0 开始）
+                int slotIndex = row * columns + col;
+
+                // 获取当前槽位的物品栈（确保 items 不为空且索引有效）
+                ItemStack stack = ItemStack.EMPTY; // 默认为空
+                if (items != null && slotIndex < items.size()) {
+                    stack = items.get(slotIndex);
+                }
+
+                // 调用 drawItemSlot 绘制当前槽位
+                drawItemSlot(context, slotX, slotY, stack);
+            }
+        }
     }
 }

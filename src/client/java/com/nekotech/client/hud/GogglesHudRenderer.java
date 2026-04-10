@@ -3,6 +3,8 @@ package com.nekotech.client.hud;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
 import com.nekotech.item.custom.GogglesItem;
+import com.nekotech.network.ClientHudNetworkHandler;
+import com.nekotech.network.HudDataCache;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -16,6 +18,7 @@ import net.minecraft.util.hit.HitResult;
  */
 public class GogglesHudRenderer implements HudRenderCallback {
     private GoogleAbstractHUDClient currentHUD = null;
+    private long lastRequestTime = 0;
 
     @Override
     public void onHudRender(DrawContext drawContext, RenderTickCounter renderTickCounter) {
@@ -38,38 +41,47 @@ public class GogglesHudRenderer implements HudRenderCallback {
             return;
         }
 
+        var pos = blockHit.getBlockPos();
+
         //检查方块是否支持HUD喵
-        var blockEntity = client.world.getBlockEntity(blockHit.getBlockPos());
-        if (!(blockEntity instanceof IHaveGoogleHUD hudProvider)) {
+        var blockEntity = client.world.getBlockEntity(pos);
+        if (!(blockEntity instanceof IHaveGoogleHUD)) {
+            currentHUD = null;
+            HudDataCache.removeHudData(pos);
+            return;
+        }
+
+        // 1. 获取缓存中的HUD数据
+        GoogleAbstractHUD hubData = HudDataCache.getHudData(pos);
+
+        // 2. 如果没有缓存或已过期，请求新数据
+        if (hubData == null || !HudDataCache.isDataValid(pos)) {
+            long now = System.currentTimeMillis();
+            if (now - lastRequestTime > 1000) { // 每秒最多请求一次
+                ClientHudNetworkHandler.requestHudData(pos);
+                lastRequestTime = now;
+            }
             currentHUD = null;
             return;
         }
 
-        //获取HUD数据喵
-        GoogleAbstractHUD hubData = hudProvider.getGoogleHUD(
-                client.world,
-                blockHit.getBlockPos(),
-                client.world.getBlockState(blockHit.getBlockPos())
-        );
-
-        //通过工厂创建客户端HUD喵
+        // 3. 通过工厂创建客户端HUD喵
         if (hubData != null) {
             currentHUD = HudFactory.createHUD(hubData);
         } else {
             currentHUD = null;
         }
 
-        //设置HUD位置喵（屏幕右上角）
+        // 4. 设置HUD位置喵（屏幕右上角）
         if (currentHUD != null) {
             int screenWidth = client.getWindow().getScaledWidth();
             int x = screenWidth - currentHUD.width - 10;
             int y = 10;
             currentHUD.setPosition(x, y);
 
-            float tickDelta=renderTickCounter.getTickDelta(true);
-            //渲染HUD
+            float tickDelta = renderTickCounter.getTickDelta(true);
+            // 渲染HUD
             currentHUD.render(drawContext, tickDelta);
         }
     }
-
 }

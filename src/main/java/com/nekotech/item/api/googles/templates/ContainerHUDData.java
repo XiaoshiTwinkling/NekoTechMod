@@ -20,10 +20,11 @@ public class ContainerHUDData extends GoogleAbstractHUD {
         this.title = title;
         this.columns = columns;
         this.rows = rows;
+        int titleHeight = title != null ? 20 : 6;
+        int bottomHeight = 20;
 
-        // 计算尺寸
-        this.width = 14 + columns * ITEM_SLOT_SIZE;
-        this.height = 14 + rows * ITEM_SLOT_SIZE + 20;
+        this.width = 14 + columns * ITEM_SLOT_SIZE;  // 原版是7+7+格子宽度
+        this.height = titleHeight + 14 + rows * ITEM_SLOT_SIZE + bottomHeight;
     }
 
     @Override

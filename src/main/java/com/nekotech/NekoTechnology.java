@@ -5,6 +5,7 @@ import com.nekotech.handler.DriedFishTameHandler;
 import com.nekotech.item.ModItemGroups;
 import com.nekotech.item.ModItems;
 import com.nekotech.item.block.ModBlocks;
+import com.nekotech.network.HudNetworkHandler;
 import com.nekotech.recipe.ModRecipes;
 import com.nekotech.screen.ModScreenHandlers;
 import net.fabricmc.api.ModInitializer;
@@ -36,7 +37,7 @@ public class NekoTechnology implements ModInitializer {
 		ModBlockEntities.registerBlockEntities();
 		ModScreenHandlers.registerScreenHandlers();
         ModRecipes.init();
-
+		HudNetworkHandler.initialize();
 
 		UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
 			// 调用自定义处理逻辑
