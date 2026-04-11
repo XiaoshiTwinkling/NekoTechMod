@@ -1,5 +1,6 @@
 package com.nekotech.client.hud;
 
+import com.nekotech.NekoTechnology;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
@@ -68,15 +69,14 @@ public abstract class GoogleAbstractHUDClient {
             context.drawItem(stack, x + 1, y + 1);
 
             // 绘制物品数量（如果有）
-            if (stack.getCount() > 1) {
-                context.drawText(
-                        MinecraftClient.getInstance().textRenderer,
-                        String.valueOf(stack.getCount()),
-                        x + 16,
-                        y + 16,
-                        0xFFFFFF, // 白色
-                        true     // 带阴影
-                );
+            int count = stack.getCount();
+            if (count > 1) {
+                String countText = String.valueOf(count);
+                var textRenderer = MinecraftClient.getInstance().textRenderer;
+                int textWidth = textRenderer.getWidth(countText);
+                int textX = x + 18 - textWidth - 1;
+                int textY = y + 18 - 8;
+                context.drawText(textRenderer, countText, textX, textY, 0xFFFFFF, true);
             }
         }
     }

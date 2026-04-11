@@ -1,5 +1,6 @@
 package com.nekotech.item.api.googles.templates;
 
+import com.nekotech.NekoTechnology;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
@@ -38,26 +39,16 @@ public class ContainerHUDData extends GoogleAbstractHUD {
     }
 
     @Override
-    public Map<String, Object> getRenderData() {
-        Map<String, Object> data = new HashMap<>();
+    public HashMap<String, Object> getRenderData() {
+
+        HashMap<String, Object> data = new HashMap<>();
         data.put("items", items);
         data.put("columns", columns);
         data.put("rows", rows);
-        data.put("totalItems", getTotalItems());
         return data;
     }
 
     public int getColumns() { return columns; }
     public int getRows() { return rows; }
     public List<ItemStack> getItems() { return items; }
-
-    private int getTotalItems() {
-        int total = 0;
-        for (ItemStack stack : items) {
-            if (!stack.isEmpty()) {
-                total += stack.getCount();
-            }
-        }
-        return total;
-    }
 }

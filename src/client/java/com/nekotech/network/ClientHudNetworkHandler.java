@@ -2,8 +2,6 @@ package com.nekotech.network;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.math.BlockPos;
 
 public class ClientHudNetworkHandler {
@@ -11,7 +9,7 @@ public class ClientHudNetworkHandler {
         // 注册接收HUD数据的处理器
         ClientPlayNetworking.registerGlobalReceiver(
                 HudNetworkPayloads.SEND_HUD_DATA,
-                (payload, context) -> handleHudData(payload, context)
+                ClientHudNetworkHandler::handleHudData
         );
     }
 
@@ -33,8 +31,6 @@ public class ClientHudNetworkHandler {
                 if (hudData != null) {
                     HudDataCache.storeHudData(pos, hudData);
                 }
-            } else {
-                com.nekotech.NekoTechnology.LOGGER.warn("客户端世界为 null，无法获取注册表");
             }
         });
     }

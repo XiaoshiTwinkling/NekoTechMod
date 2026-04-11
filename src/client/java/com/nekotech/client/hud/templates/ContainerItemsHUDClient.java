@@ -1,5 +1,6 @@
 package com.nekotech.client.hud.templates;
 
+import com.nekotech.NekoTechnology;
 import com.nekotech.client.hud.GoogleAbstractHUDClient;
 import com.nekotech.item.api.googles.templates.ContainerHUDData;
 import net.minecraft.client.MinecraftClient;
@@ -9,6 +10,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +33,7 @@ public class ContainerItemsHUDClient extends GoogleAbstractHUDClient {
     public void render(DrawContext context, float tickDelta) {
         if (hudData == null) return;
 
-        Map<String, Object> data = hudData.getRenderData();
+        HashMap<String, Object> data = hudData.getRenderData();
         List<ItemStack> items = (List<ItemStack>) data.get("items");
         int columns = (int) data.get("columns");
         int rows = (int) data.get("rows");
@@ -42,10 +44,6 @@ public class ContainerItemsHUDClient extends GoogleAbstractHUDClient {
             int titleY = y + 6;
             // 使用原版标题颜色（白色带黑色阴影）
             drawTextWithShadow(context, title, titleX, titleY, 0x404040);
-        }
-
-        if (items == null || items.isEmpty()) {
-            com.nekotech.NekoTechnology.LOGGER.warn("方块实体返回空物品列表");
         }
 
         renderInventory(context, x, y ,rows, columns, items);

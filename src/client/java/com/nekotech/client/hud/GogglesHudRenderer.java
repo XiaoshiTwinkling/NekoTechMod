@@ -11,6 +11,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
 
 /**
  * 处理护目镜HUD的渲染喵~~~~~~~~~~~~~~~~~~~~~
@@ -19,6 +20,7 @@ import net.minecraft.util.hit.HitResult;
 public class GogglesHudRenderer implements HudRenderCallback {
     private GoogleAbstractHUDClient currentHUD = null;
     private long lastRequestTime = 0;
+    private BlockPos lastRequestedPos = null;
 
     @Override
     public void onHudRender(DrawContext drawContext, RenderTickCounter renderTickCounter) {
@@ -51,19 +53,14 @@ public class GogglesHudRenderer implements HudRenderCallback {
             return;
         }
 
-        // 1. 获取缓存中的HUD数据
-        GoogleAbstractHUD hubData = HudDataCache.getHudData(pos);
-
-        // 2. 如果没有缓存或已过期，请求新数据
-        if (hubData == null || !HudDataCache.isDataValid(pos)) {
-            long now = System.currentTimeMillis();
-            if (now - lastRequestTime > 1000) { // 每秒最多请求一次
-                ClientHudNetworkHandler.requestHudData(pos);
-                lastRequestTime = now;
-            }
-            currentHUD = null;
-            return;
+        long now = System.currentTimeMillis();
+        if (now - lastRequestTime > 16) {  // 约60FPS，每帧请求一次
+            ClientHudNetworkHandler.requestHudData(pos);
+            lastRequestTime = now;
+            lastRequestedPos = pos;
         }
+
+        GoogleAbstractHUD hubData = HudDataCache.getHudData(pos);
 
         // 3. 通过工厂创建客户端HUD喵
         if (hubData != null) {
