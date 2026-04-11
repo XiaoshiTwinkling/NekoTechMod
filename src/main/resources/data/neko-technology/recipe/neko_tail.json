@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "Neko",
+  "key": {
+    "B": {
+      "item": "neko-technology:neko_silk"
+    },
+    "C": {
+      "item": "neko-technology:pig_iron_ingot"
+    }
+  },
+  "pattern": [
+    "C B",
+    "B B",
+    "BBB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neko-technology:neko_tail"
+  }
+}
