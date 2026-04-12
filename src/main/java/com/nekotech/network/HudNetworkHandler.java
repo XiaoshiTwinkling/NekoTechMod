@@ -4,6 +4,7 @@ import com.nekotech.NekoTechnology;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.ContainerHUDData;
+import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.ItemStack;
@@ -19,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class HudNetworkHandler {
     public static void initialize() {
@@ -90,6 +92,11 @@ public class HudNetworkHandler {
                     serializeContainerData(nbt, containerData, registries);
                 }
                 break;
+            case "info_box":
+                if (hud instanceof InfoBoxHUDData infoBoxData) {
+                    serializeInfoBoxData(nbt, infoBoxData, registries);
+                }
+                break;
         }
 
         return nbt;
@@ -148,6 +155,32 @@ public class HudNetworkHandler {
     }
 
     /**
+     * 序列化信息框数据
+     */
+    private static void serializeInfoBoxData(
+            NbtCompound nbt,
+            InfoBoxHUDData data,
+            RegistryWrapper.WrapperLookup registries
+    ) {
+        NbtCompound infoBoxNbt = new NbtCompound();
+
+        // 序列化标题
+        if (data.getTitle() != null) {
+            infoBoxNbt.putString("title", Text.Serialization.toJsonString(data.getTitle(), registries));
+        }
+
+        // 序列化内容
+        if (data.getContent() != null) {
+            infoBoxNbt.putString("content", Text.Serialization.toJsonString(data.getContent(), registries));
+        }
+
+        // 序列化宽度
+        infoBoxNbt.putInt("maxWidth", data.getMaxWidth());
+
+        nbt.put("info_box_data", infoBoxNbt);
+    }
+
+    /**
      * 从NBT反序列化HUD数据
      */
     public static @Nullable GoogleAbstractHUD deserializeHudData(
@@ -159,6 +192,8 @@ public class HudNetworkHandler {
         switch (type) {
             case "container":
                 return deserializeContainerData(nbt.getCompound("container_data"), registries);
+            case "info_box":
+                return deserializeInfoBoxData(nbt.getCompound("info_box_data"), registries);
             default:
                 return null;
         }
@@ -224,5 +259,57 @@ public class HudNetworkHandler {
         }
 
         return new ContainerHUDData(items, title, columns, rows);
+    }
+
+    /**
+     * 从NBT反序列化信息框数据
+     */
+    private static @Nullable InfoBoxHUDData deserializeInfoBoxData(
+            NbtCompound infoBoxNbt,
+            RegistryWrapper.WrapperLookup registries
+    ) {
+        if (infoBoxNbt.isEmpty()) {
+            return null;
+        }
+
+        // 反序列化标题
+        Text title = null;
+        if (infoBoxNbt.contains("title")) {
+            try {
+                String titleJson = infoBoxNbt.getString("title");
+                Optional<Text> result = Optional.ofNullable(Text.Serialization.fromJson(titleJson, registries));
+                if (result.isPresent()) {
+                    title = result.get();
+                }
+            } catch (Exception e) {
+                com.nekotech.NekoTechnology.LOGGER.error("解析标题失败", e);
+            }
+        }
+
+        // 反序列化内容
+        Text content = null;
+        if (infoBoxNbt.contains("content")) {
+            try {
+                String contentJson = infoBoxNbt.getString("content");
+                Optional<Text> result = Optional.ofNullable(Text.Serialization.fromJson(contentJson, registries));
+                if (result.isPresent()) {
+                    content = result.get();
+                }
+            } catch (Exception e) {
+                com.nekotech.NekoTechnology.LOGGER.error("解析内容失败", e);
+            }
+        }
+
+        // 获取宽度
+        int maxWidth = infoBoxNbt.getInt("maxWidth");
+        if (maxWidth <= 0) {
+            maxWidth = 200; // 默认值
+        }
+
+        if (title == null && content == null) {
+            return null;
+        }
+
+        return new InfoBoxHUDData(title, content, maxWidth);
     }
 }

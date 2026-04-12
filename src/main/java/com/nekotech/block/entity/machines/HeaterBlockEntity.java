@@ -5,6 +5,7 @@ import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.ContainerHUDData;
+import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
 import com.nekotech.item.block.Heater;
 import com.nekotech.modTags.ModTags;
 import net.minecraft.block.BlockState;
@@ -390,28 +391,45 @@ public class HeaterBlockEntity extends MachineBlockEntity implements SidedInvent
         markDirty();
     }
 
+//    @Override
+//    @Nullable
+//    public GoogleAbstractHUD getGoogleHUD(World world, BlockPos pos, BlockState state) {
+//
+//        List<ItemStack> items = new ArrayList<>();
+//
+//        if (this instanceof Inventory inventory) {
+//            for (int i = 0; i < inventory.size(); i++) {
+//                ItemStack stack = inventory.getStack(i);
+//                items.add(stack.copy()); // 复制一份，避免修改原物品
+//            }
+//        } else if (this instanceof ImplementedInventory implementedInventory) {
+//            for (int i = 0; i < implementedInventory.size(); i++) {
+//                ItemStack stack = implementedInventory.getStack(i);
+//                items.add(stack.copy());
+//            }
+//        }
+//
+//        int columns = 1;
+//        int rows = 1;
+//        Text title = Text.translatable("container.heater");
+//
+//        return new ContainerHUDData(items, title, columns, rows);
+//    }
+
     @Override
-    @Nullable
-    public GoogleAbstractHUD getGoogleHUD(World world, BlockPos pos, BlockState state) {
-
-        List<ItemStack> items = new ArrayList<>();
-
-        if (this instanceof Inventory inventory) {
-            for (int i = 0; i < inventory.size(); i++) {
-                ItemStack stack = inventory.getStack(i);
-                items.add(stack.copy()); // 复制一份，避免修改原物品
-            }
-        } else if (this instanceof ImplementedInventory implementedInventory) {
-            for (int i = 0; i < implementedInventory.size(); i++) {
-                ItemStack stack = implementedInventory.getStack(i);
-                items.add(stack.copy());
-            }
+    public @Nullable GoogleAbstractHUD getGoogleHUD(World world, BlockPos pos, BlockState state) {
+        // 只在服务端返回数据
+        if (world.isClient()) {
+            return null;
         }
 
-        int columns = 1;
-        int rows = 1;
-        Text title = Text.translatable("container.heater");
+        // 创建标题和内容
+        Text title = Text.translatable("block.neko-technology.info_block");
+        Text content = Text.translatable("block.neko-technology.info_block.description",
+                "这是一个信息框示例，支持多行文本自动换行。\n" +
+                        "第二行内容会自动换行显示。\n" +
+                        "可以显示很长的文本内容，HUD高度会自动调整。");
 
-        return new ContainerHUDData(items, title, columns, rows);
+        return new InfoBoxHUDData(title, content);
     }
 }

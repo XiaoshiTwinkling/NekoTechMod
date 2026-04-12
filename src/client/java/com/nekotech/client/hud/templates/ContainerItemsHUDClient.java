@@ -41,12 +41,12 @@ public class ContainerItemsHUDClient extends GoogleAbstractHUDClient {
 
         if (title != null) {
             int titleX = x + (width - MinecraftClient.getInstance().textRenderer.getWidth(title)) / 2;
-            int titleY = y + 6;
+            int titleY = y + 6 + 15;
             drawTextWithShadow(context, title, titleX, titleY, 0x404040);
         }
 
         int inventoryStartX = x + 8;
-        int inventoryStartY = y + (title != null ? 20 : 8);
+        int inventoryStartY = y + (title != null ? 20 : 8) + 15;
 
         renderInventory(context, inventoryStartX, inventoryStartY, rows, columns, items);
     }

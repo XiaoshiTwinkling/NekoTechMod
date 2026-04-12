@@ -1,8 +1,10 @@
 package com.nekotech.client.hud;
 
 import com.nekotech.client.hud.templates.ContainerItemsHUDClient;
+import com.nekotech.client.hud.templates.InfoBoxHUDClient;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.templates.ContainerHUDData;
+import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -19,6 +21,11 @@ public class HudFactory {
             case "container":
                 if (hubData instanceof ContainerHUDData containerData) {
                     return new ContainerItemsHUDClient(containerData);
+                }
+                break;
+            case "info_box": // 新增信息框类型
+                if (hubData instanceof InfoBoxHUDData infoBoxData) {
+                    return new InfoBoxHUDClient(infoBoxData);
                 }
                 break;
             // 可以添加更多HUD类型
