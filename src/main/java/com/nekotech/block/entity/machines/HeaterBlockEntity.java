@@ -1,12 +1,17 @@
 package com.nekotech.block.entity.machines;
 
+import com.nekotech.block.entity.ImplementedInventory;
 import com.nekotech.block.entity.ModBlockEntities;
+import com.nekotech.item.api.googles.GoogleAbstractHUD;
+import com.nekotech.item.api.googles.IHaveGoogleHUD;
+import com.nekotech.item.api.googles.templates.ContainerHUDData;
 import com.nekotech.item.block.Heater;
 import com.nekotech.modTags.ModTags;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -15,15 +20,18 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-public class HeaterBlockEntity extends MachineBlockEntity implements SidedInventory, TakeFreelyInventory  {
+public class HeaterBlockEntity extends MachineBlockEntity implements SidedInventory, TakeFreelyInventory, IHaveGoogleHUD {
     private static final int FUEL_SLOT = 0;
     private static final int MAX_BURN_TIME = 600;
     private static final float MAX_TEMPERATURE = 400.0f;
@@ -380,5 +388,30 @@ public class HeaterBlockEntity extends MachineBlockEntity implements SidedInvent
         temperature_rising_rate = TEMPERATURE_RISING_RATE + countBricks * BRICK_HEAT_RATE_BONUS;
 
         markDirty();
+    }
+
+    @Override
+    @Nullable
+    public GoogleAbstractHUD getGoogleHUD(World world, BlockPos pos, BlockState state) {
+
+        List<ItemStack> items = new ArrayList<>();
+
+        if (this instanceof Inventory inventory) {
+            for (int i = 0; i < inventory.size(); i++) {
+                ItemStack stack = inventory.getStack(i);
+                items.add(stack.copy()); // 复制一份，避免修改原物品
+            }
+        } else if (this instanceof ImplementedInventory implementedInventory) {
+            for (int i = 0; i < implementedInventory.size(); i++) {
+                ItemStack stack = implementedInventory.getStack(i);
+                items.add(stack.copy());
+            }
+        }
+
+        int columns = 1;
+        int rows = 1;
+        Text title = Text.translatable("container.heater");
+
+        return new ContainerHUDData(items, title, columns, rows);
     }
 }

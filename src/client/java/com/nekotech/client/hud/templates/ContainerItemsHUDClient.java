@@ -33,7 +33,7 @@ public class ContainerItemsHUDClient extends GoogleAbstractHUDClient {
     public void render(DrawContext context, float tickDelta) {
         if (hudData == null) return;
 
-        HashMap<String, Object> data = hudData.getRenderData();
+        Map<String, Object> data = hudData.getRenderData();
         List<ItemStack> items = (List<ItemStack>) data.get("items");
         int columns = (int) data.get("columns");
         int rows = (int) data.get("rows");
@@ -42,11 +42,13 @@ public class ContainerItemsHUDClient extends GoogleAbstractHUDClient {
         if (title != null) {
             int titleX = x + (width - MinecraftClient.getInstance().textRenderer.getWidth(title)) / 2;
             int titleY = y + 6;
-            // 使用原版标题颜色（白色带黑色阴影）
             drawTextWithShadow(context, title, titleX, titleY, 0x404040);
         }
 
-        renderInventory(context, x, y ,rows, columns, items);
+        int inventoryStartX = x + 8;
+        int inventoryStartY = y + (title != null ? 20 : 8);
+
+        renderInventory(context, inventoryStartX, inventoryStartY, rows, columns, items);
     }
 
 }

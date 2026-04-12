@@ -1,5 +1,6 @@
 package com.nekotech.network;
 
+import com.nekotech.NekoTechnology;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.ContainerHUDData;
@@ -12,6 +13,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
@@ -116,15 +118,30 @@ public class HudNetworkHandler {
         // 序列化物品列表
         NbtList itemsList = new NbtList();
         for (ItemStack stack : data.getItems()) {
+            NbtCompound itemNbt = new NbtCompound();
+
             if (!stack.isEmpty()) {
-                NbtCompound itemNbt = new NbtCompound();
+                // 序列化物品
                 stack.encode(registries, itemNbt);
+
+                itemNbt.putInt("Count", stack.getCount());
+
                 if (!itemNbt.contains("id")) {
-                    itemNbt.putString("id", Registries.ITEM.getId(stack.getItem()).toString());
+                    // 获取物品ID
+                    Identifier itemId = net.minecraft.registry.Registries.ITEM.getId(stack.getItem());
+                    if (itemId != null) {
+                        itemNbt.putString("id", itemId.toString());
+                    }
                 }
+
                 itemsList.add(itemNbt);
+            } else {
+                NbtCompound ItemNbt = new NbtCompound();
+                itemNbt.putBoolean("empty", true);
+                itemsList.add(ItemNbt);
             }
         }
+
         containerNbt.put("items", itemsList);
 
         nbt.put("container_data", containerNbt);
@@ -169,13 +186,40 @@ public class HudNetworkHandler {
         int columns = containerNbt.getInt("columns");
         int rows = containerNbt.getInt("rows");
 
+
         // 反序列化物品列表
         List<ItemStack> items = new ArrayList<>();
-        NbtList itemsList = containerNbt.getList("items", 10); // 10 = COMPOUND
+        NbtList itemsList = containerNbt.getList("items", 10);
+
 
         for (int i = 0; i < itemsList.size(); i++) {
             NbtCompound itemNbt = itemsList.getCompound(i);
+
+            if (itemNbt.contains("empty") && itemNbt.getBoolean("empty")) {
+                items.add(ItemStack.EMPTY);
+                continue;
+            }
+
+            if (!itemNbt.contains("id")) {
+                items.add(ItemStack.EMPTY);
+                continue;
+            }
+
             ItemStack stack = ItemStack.fromNbt(registries, itemNbt).orElse(ItemStack.EMPTY);
+
+            int savedCount = 1;
+            if (itemNbt.contains("Count", 99)) {
+                savedCount = itemNbt.getInt("Count");
+            } else if (itemNbt.contains("count", 99)) {
+                savedCount = itemNbt.getInt("count");
+            }
+
+            if (savedCount > 1 && !stack.isEmpty()) {
+                stack.setCount(savedCount);
+            }
+
+            NekoTechnology.LOGGER.info(stack.toString());
+
             items.add(stack);
         }
 

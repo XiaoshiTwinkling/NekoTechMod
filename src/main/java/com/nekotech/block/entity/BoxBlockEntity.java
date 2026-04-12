@@ -73,17 +73,9 @@ public class BoxBlockEntity extends LootableContainerBlockEntity implements IHav
             }
         }
 
-        boolean hasItems = false;
-        for (ItemStack stack : items) {
-            if (!stack.isEmpty()) {
-                hasItems = true;
-                break;
-            }
-        }
-
-        int columns = 9;  // 根据你的容器调整
-        int rows = 3;     // 根据你的容器调整
-        Text title = Text.translatable("container.your_container_name");
+        int columns = 9;
+        int rows = 3;
+        Text title = Text.translatable("container.box");
 
         return new ContainerHUDData(items, title, columns, rows);
     }

@@ -221,8 +221,6 @@ public class CatBoxItem extends Item {
         BlockPos spawnPos = calculateSpawnPosition(blockPos, face);
         Vec3d spawnVec = getExactSpawnPosition(spawnPos, face);
 
-        NekoTechnology.LOGGER.info("Spawn cat at {}", spawnPos);
-
         CatEntity cat = new CatEntity(EntityType.CAT, world);
 
         // 恢复数据

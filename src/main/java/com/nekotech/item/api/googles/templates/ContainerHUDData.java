@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,12 +40,23 @@ public class ContainerHUDData extends GoogleAbstractHUD {
     }
 
     @Override
-    public HashMap<String, Object> getRenderData() {
+    public Map<String, Object> getRenderData() {
 
-        HashMap<String, Object> data = new HashMap<>();
-        data.put("items", items);
-        data.put("columns", columns);
-        data.put("rows", rows);
+        Map<String, Object> data = new HashMap<>();
+
+        List<ItemStack> renderItems = new ArrayList<>();
+        for (ItemStack stack : this.items) {
+            if (stack == null) {
+                renderItems.add(ItemStack.EMPTY);
+            } else {
+                renderItems.add(stack.copy());  // 创建副本
+            }
+        }
+
+        data.put("items", renderItems);
+        data.put("columns", this.columns);
+        data.put("rows", this.rows);
+
         return data;
     }
 

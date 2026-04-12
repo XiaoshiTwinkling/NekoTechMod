@@ -1,23 +1,32 @@
 package com.nekotech.block.entity.machines;
 
 import com.nekotech.NekoTechnology;
+import com.nekotech.block.entity.ImplementedInventory;
 import com.nekotech.block.entity.ModBlockEntities;
+import com.nekotech.item.api.googles.GoogleAbstractHUD;
+import com.nekotech.item.api.googles.IHaveGoogleHUD;
+import com.nekotech.item.api.googles.templates.ContainerHUDData;
 import com.nekotech.item.block.ModBlocks;
 import com.nekotech.recipe.AlloyPot.AlloyPotRecipeInput;
 import com.nekotech.recipe.AlloyPot.AlloyRecipe;
 import com.nekotech.recipe.ModRecipes;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity{
+public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity implements IHaveGoogleHUD {
 
     public AlloyPotBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.alloy_pot, pos, state, 4);
@@ -282,5 +291,30 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity{
     protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         super.readNbt(nbt, registryLookup);
         alloyProgress = nbt.getInt("Progress");
+    }
+
+    @Override
+    @Nullable
+    public GoogleAbstractHUD getGoogleHUD(World world, BlockPos pos, BlockState state) {
+
+        List<ItemStack> items = new ArrayList<>();
+
+        if (this instanceof Inventory inventory) {
+            for (int i = 0; i < inventory.size(); i++) {
+                ItemStack stack = inventory.getStack(i);
+                items.add(stack.copy()); // 复制一份，避免修改原物品
+            }
+        } else if (this instanceof ImplementedInventory implementedInventory) {
+            for (int i = 0; i < implementedInventory.size(); i++) {
+                ItemStack stack = implementedInventory.getStack(i);
+                items.add(stack.copy());
+            }
+        }
+
+        int columns = 2;
+        int rows = 2;
+        Text title = Text.translatable("container.alloy_pot");
+
+        return new ContainerHUDData(items, title, columns, rows);
     }
 }
