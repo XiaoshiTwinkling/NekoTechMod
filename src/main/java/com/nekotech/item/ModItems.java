@@ -52,7 +52,7 @@ public class ModItems {
             new Item.Settings().maxDamage(ArmorItem.Type.HELMET.getMaxDamage(37)),"neko_copper_boots"));
     public static final Item neko_box = registerItems("neko_box", new CatBoxItem(new Item.Settings()));
     public static final Item thermometer = registerItems("thermometer", new Thermometer(new Item.Settings(),"thermometer"));
-
+    public static final Item ray_item = registerItems("ray_item", new RayItem(new Item.Settings().maxCount(1)));
 
 
     public static final Item NEKO_TAIL = registerItems(
