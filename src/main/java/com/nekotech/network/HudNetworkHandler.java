@@ -35,6 +35,15 @@ public class HudNetworkHandler {
                 HudNetworkPayloads.SendHudDataPayload.CODEC
         );
 
+        PayloadTypeRegistry.playS2C().register(
+                HudNetworkPayloads.SEND_RAY_POS,
+                HudNetworkPayloads.SendRayPosPayload.CODEC
+        );
+        PayloadTypeRegistry.playS2C().register(
+                HudNetworkPayloads.REMOVE_RAY_POS,
+                HudNetworkPayloads.RemoveRayPosPayload.CODEC
+        );
+
         // 注册请求处理器
         ServerPlayNetworking.registerGlobalReceiver(
                 HudNetworkPayloads.REQUEST_HUD_DATA,

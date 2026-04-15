@@ -6,9 +6,12 @@ import com.nekotech.network.ClientHudNetworkHandler;
 import com.nekotech.renderer.AlloyPotBlockEntityRenderer;
 import com.nekotech.renderer.BellowsBlockEntityRenderer;
 import com.nekotech.renderer.CatTailFeatureRenderer;
+import com.nekotech.renderer.ClientLaserTargetCache;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 
@@ -33,6 +36,12 @@ public class NekoTechnologyClient implements ClientModInitializer {
         ClientHudNetworkHandler.initialize();
         // 注册HUD渲染回调
         HudRenderCallback.EVENT.register(HUD_RENDERER);
+
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            ClientLaserTargetCache.tick();
+        });
+
+        WorldRenderEvents.AFTER_TRANSLUCENT.register(ClientLaserTargetCache::render);
 
 
         LivingEntityFeatureRendererRegistrationCallback.EVENT.register(

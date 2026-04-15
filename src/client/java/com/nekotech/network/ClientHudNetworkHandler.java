@@ -1,8 +1,12 @@
 package com.nekotech.network;
 
+import com.nekotech.renderer.ClientLaserTargetCache;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+
+import java.util.UUID;
 
 public class ClientHudNetworkHandler {
     public static void initialize() {
@@ -10,6 +14,14 @@ public class ClientHudNetworkHandler {
         ClientPlayNetworking.registerGlobalReceiver(
                 HudNetworkPayloads.SEND_HUD_DATA,
                 ClientHudNetworkHandler::handleHudData
+        );
+        ClientPlayNetworking.registerGlobalReceiver(
+                HudNetworkPayloads.SEND_RAY_POS,
+                ClientHudNetworkHandler::handleRayPos
+        );
+        ClientPlayNetworking.registerGlobalReceiver(
+                HudNetworkPayloads.REMOVE_RAY_POS,
+                ClientHudNetworkHandler::handleRemoveRayPos
         );
     }
 
@@ -32,6 +44,31 @@ public class ClientHudNetworkHandler {
                     HudDataCache.storeHudData(pos, hudData);
                 }
             }
+        });
+    }
+
+    private static void handleRayPos(
+            HudNetworkPayloads.SendRayPosPayload payload,
+            ClientPlayNetworking.Context context
+    ) {
+        UUID uuid = payload.uuid();
+        double x = payload.x();
+        double y = payload.y();
+        double z = payload.z();
+
+        context.client().execute(() -> {
+            ClientLaserTargetCache.set(uuid, new Vec3d(x, y, z));
+        });
+    }
+
+    private static void handleRemoveRayPos(
+            HudNetworkPayloads.RemoveRayPosPayload payload,
+            ClientPlayNetworking.Context context
+    ) {
+        UUID uuid = payload.uuid();
+
+        context.client().execute(() -> {
+            ClientLaserTargetCache.remove(uuid);
         });
     }
 

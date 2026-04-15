@@ -1,6 +1,8 @@
 package com.nekotech.item.custom;
 
+import com.nekotech.network.HudNetworkPayloads;
 import com.nekotech.util.LaserTargetCache;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.Item;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -42,7 +44,7 @@ public class RayItem extends Item {
 
     @Override
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
-        if (!(user instanceof PlayerEntity player)) {
+        if (!(user instanceof ServerPlayerEntity player)) {
             return;
         }
 
@@ -64,13 +66,27 @@ public class RayItem extends Item {
             Vec3d hitPos = hit.getPos();
 
             LaserTargetCache.set(player, hitPos);
+
+            for (ServerPlayerEntity target : player.getServerWorld().getPlayers()) {
+                ServerPlayNetworking.send(target,
+                        new HudNetworkPayloads.SendRayPosPayload(
+                                player.getUuid(),
+                                hitPos.x,
+                                hitPos.y,
+                                hitPos.z
+                        ));
+            }
         }
     }
 
     @Override
     public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
-        if (user instanceof PlayerEntity player) {
+        if (user instanceof ServerPlayerEntity player) {
             LaserTargetCache.remove(player);
+            for (ServerPlayerEntity target : player.getServerWorld().getPlayers()) {
+                ServerPlayNetworking.send(target,
+                        new HudNetworkPayloads.RemoveRayPosPayload(player.getUuid()));
+            }
         }
     }
 }
