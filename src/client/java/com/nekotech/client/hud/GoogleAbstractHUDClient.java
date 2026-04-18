@@ -105,4 +105,7 @@ public abstract class GoogleAbstractHUDClient {
             }
         }
     }
+    public abstract void update(com.nekotech.item.api.googles.GoogleAbstractHUD data);
+
+    public abstract boolean isSame(com.nekotech.item.api.googles.GoogleAbstractHUD data);
 }

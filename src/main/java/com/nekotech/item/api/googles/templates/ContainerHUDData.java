@@ -4,6 +4,7 @@ import com.nekotech.NekoTechnology;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -17,7 +18,8 @@ public class ContainerHUDData extends GoogleAbstractHUD {
     private final int columns;
     private final int rows;
 
-    public ContainerHUDData(List<ItemStack> items, Text title, int columns, int rows) {
+    public ContainerHUDData(BlockPos pos, List<ItemStack> items, Text title, int columns, int rows) {
+        super(pos);
         this.items = items;
         this.title = title;
         this.columns = columns;

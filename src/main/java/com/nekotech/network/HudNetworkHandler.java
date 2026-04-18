@@ -10,7 +10,6 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -194,15 +193,16 @@ public class HudNetworkHandler {
      */
     public static @Nullable GoogleAbstractHUD deserializeHudData(
             NbtCompound nbt,
-            RegistryWrapper.WrapperLookup registries
+            RegistryWrapper.WrapperLookup registries,
+            BlockPos pos
     ) {
         String type = nbt.getString("type");
 
         switch (type) {
             case "container":
-                return deserializeContainerData(nbt.getCompound("container_data"), registries);
+                return deserializeContainerData(nbt.getCompound("container_data"), registries, pos);
             case "info_box":
-                return deserializeInfoBoxData(nbt.getCompound("info_box_data"), registries);
+                return deserializeInfoBoxData(nbt.getCompound("info_box_data"), registries, pos);
             default:
                 return null;
         }
@@ -213,8 +213,8 @@ public class HudNetworkHandler {
      */
     private static @Nullable ContainerHUDData deserializeContainerData(
             NbtCompound containerNbt,
-            RegistryWrapper.WrapperLookup registries
-    ) {
+            RegistryWrapper.WrapperLookup registries,
+            BlockPos pos) {
         if (containerNbt.isEmpty()) {
             return null;
         }
@@ -267,7 +267,7 @@ public class HudNetworkHandler {
             items.add(stack);
         }
 
-        return new ContainerHUDData(items, title, columns, rows);
+        return new ContainerHUDData(pos, items, title, columns, rows);
     }
 
     /**
@@ -275,8 +275,8 @@ public class HudNetworkHandler {
      */
     private static @Nullable InfoBoxHUDData deserializeInfoBoxData(
             NbtCompound infoBoxNbt,
-            RegistryWrapper.WrapperLookup registries
-    ) {
+            RegistryWrapper.WrapperLookup registries,
+            BlockPos pos) {
         if (infoBoxNbt.isEmpty()) {
             return null;
         }
@@ -319,6 +319,6 @@ public class HudNetworkHandler {
             return null;
         }
 
-        return new InfoBoxHUDData(title, content, maxWidth);
+        return new InfoBoxHUDData(pos, title, content, maxWidth);
     }
 }

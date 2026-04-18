@@ -1,6 +1,7 @@
 package com.nekotech.item.api.googles;
 
 import net.minecraft.text.Text;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -10,6 +11,7 @@ import java.util.Map;
  * 在./template软件包中有HUD的模板可供使用
  */
 public abstract class GoogleAbstractHUD {
+    protected BlockPos pos;
     // 常量定义
     public static final int DEFAULT_WIDTH = 176;
     public static final int DEFAULT_HEIGHT = 166;
@@ -50,5 +52,13 @@ public abstract class GoogleAbstractHUD {
     public void setSize(int width, int height) {
         this.width = width;
         this.height = height;
+    }
+
+    public BlockPos getPos() {
+        return pos;
+    }
+
+    public GoogleAbstractHUD(BlockPos pos) {
+        this.pos = pos;
     }
 }

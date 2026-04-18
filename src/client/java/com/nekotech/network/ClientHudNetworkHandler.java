@@ -38,7 +38,7 @@ public class ClientHudNetworkHandler {
 
             if (client.world != null) {
                 var registries = client.world.getRegistryManager();
-                var hudData = com.nekotech.network.HudNetworkHandler.deserializeHudData(nbt, registries);
+                var hudData = com.nekotech.network.HudNetworkHandler.deserializeHudData(nbt, registries, pos);
 
                 if (hudData != null) {
                     HudDataCache.storeHudData(pos, hudData);

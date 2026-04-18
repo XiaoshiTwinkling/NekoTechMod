@@ -315,6 +315,6 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity implements
         int rows = 2;
         Text title = Text.translatable("container.alloy_pot");
 
-        return new ContainerHUDData(items, title, columns, rows);
+        return new ContainerHUDData(pos, items, title, columns, rows);
     }
 }

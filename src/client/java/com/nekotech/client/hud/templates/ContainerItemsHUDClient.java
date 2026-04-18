@@ -2,6 +2,7 @@ package com.nekotech.client.hud.templates;
 
 import com.nekotech.NekoTechnology;
 import com.nekotech.client.hud.GoogleAbstractHUDClient;
+import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.templates.ContainerHUDData;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -9,13 +10,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ContainerItemsHUDClient extends GoogleAbstractHUDClient {
-    private final ContainerHUDData hudData;
+    private ContainerHUDData hudData;
     private final Identifier backgroundTexture;
 
     public ContainerItemsHUDClient(ContainerHUDData hudData) {
@@ -49,6 +51,22 @@ public class ContainerItemsHUDClient extends GoogleAbstractHUDClient {
         int inventoryStartY = y + (title != null ? 20 : 8) + 15;
 
         renderInventory(context, inventoryStartX, inventoryStartY, rows, columns, items);
+    }
+
+    @Override
+    public void update(com.nekotech.item.api.googles.GoogleAbstractHUD data) {
+        if (data instanceof ContainerHUDData containerData) {
+            this.hudData = containerData;
+            this.width = containerData.getWidth();
+            this.height = containerData.getHeight();
+        }
+    }
+
+    @Override
+    public boolean isSame(GoogleAbstractHUD data) {
+        if (!(data instanceof ContainerHUDData other)) return false;
+
+        return this.hudData.getPos().equals(other.getPos());
     }
 
 }

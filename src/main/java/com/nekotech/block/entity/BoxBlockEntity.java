@@ -77,6 +77,6 @@ public class BoxBlockEntity extends LootableContainerBlockEntity implements IHav
         int rows = 3;
         Text title = Text.translatable("container.box");
 
-        return new ContainerHUDData(items, title, columns, rows);
+        return new ContainerHUDData(pos, items, title, columns, rows);
     }
 }

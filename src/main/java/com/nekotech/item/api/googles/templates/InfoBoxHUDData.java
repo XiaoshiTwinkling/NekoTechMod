@@ -2,6 +2,7 @@ package com.nekotech.item.api.googles.templates;
 
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -17,14 +18,16 @@ public class InfoBoxHUDData extends GoogleAbstractHUD {
     private final int maxWidth = 200; // 固定宽度
     private int calculatedHeight = 100; // 默认高度
 
-    public InfoBoxHUDData(Text title, Text content) {
+    public InfoBoxHUDData(BlockPos pos, Text title, Text content) {
+        super(pos);
         this.title = title;
         this.content = content;
         this.width = maxWidth;
         this.height = calculatedHeight;
     }
 
-    public InfoBoxHUDData(Text title, Text content, int customWidth) {
+    public InfoBoxHUDData(BlockPos pos,Text title, Text content, int customWidth) {
+        super(pos);
         this.title = title;
         this.content = content;
         this.width = customWidth;

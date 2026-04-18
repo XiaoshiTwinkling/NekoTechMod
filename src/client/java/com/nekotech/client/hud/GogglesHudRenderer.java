@@ -54,19 +54,21 @@ public class GogglesHudRenderer implements HudRenderCallback {
         }
 
         long now = System.currentTimeMillis();
-        if (now - lastRequestTime > 16) {  // 约60FPS，每帧请求一次
+        if (!pos.equals(lastRequestedPos) || now - lastRequestTime > 100) { //每秒10次
             ClientHudNetworkHandler.requestHudData(pos);
-            lastRequestTime = now;
             lastRequestedPos = pos;
+            lastRequestTime = now;
         }
 
         GoogleAbstractHUD hubData = HudDataCache.getHudData(pos);
 
         // 3. 通过工厂创建客户端HUD喵
         if (hubData != null) {
-            currentHUD = HudFactory.createHUD(hubData);
-        } else {
-            currentHUD = null;
+            if (currentHUD == null || !currentHUD.isSame(hubData)) {
+                currentHUD = HudFactory.createHUD(hubData);
+            } else {
+                currentHUD.update(hubData);
+            }
         }
 
         // 4. 设置HUD位置喵（屏幕右上角）

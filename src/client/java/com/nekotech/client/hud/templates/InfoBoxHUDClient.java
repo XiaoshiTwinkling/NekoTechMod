@@ -1,6 +1,7 @@
 package com.nekotech.client.hud.templates;
 
 import com.nekotech.client.hud.GoogleAbstractHUDClient;
+import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 public class InfoBoxHUDClient extends GoogleAbstractHUDClient {
-    private final InfoBoxHUDData hudData;
+    private InfoBoxHUDData hudData;
     private final Identifier backgroundTexture = Identifier.of("textures/gui/demo_background.png");
     private List<OrderedText> wrappedContentLines = null;
     private int contentHeight = 0;
@@ -119,6 +120,25 @@ public class InfoBoxHUDClient extends GoogleAbstractHUDClient {
                 context.drawText(textRenderer, line, contentX, contentY + i * 9, 0xFFFFFF, true);
             }
         }
+    }
+
+    @Override
+    public void update(GoogleAbstractHUD data) {
+        if (data instanceof InfoBoxHUDData newData) {
+            this.hudData = newData;
+
+            this.width = newData.getWidth();
+            this.height = newData.getHeight();
+
+            calculateTextLayout();
+        }
+    }
+
+    @Override
+    public boolean isSame(GoogleAbstractHUD data) {
+        if (!(data instanceof InfoBoxHUDData other)) return false;
+
+        return this.hudData.getPos().equals(other.getPos());
     }
 
     /**

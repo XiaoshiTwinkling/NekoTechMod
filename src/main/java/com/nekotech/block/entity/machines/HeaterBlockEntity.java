@@ -1,10 +1,8 @@
 package com.nekotech.block.entity.machines;
 
-import com.nekotech.block.entity.ImplementedInventory;
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
-import com.nekotech.item.api.googles.templates.ContainerHUDData;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
 import com.nekotech.item.block.Heater;
 import com.nekotech.modTags.ModTags;
@@ -12,7 +10,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -28,8 +25,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class HeaterBlockEntity extends MachineBlockEntity implements SidedInventory, TakeFreelyInventory, IHaveGoogleHUD {
@@ -430,6 +425,6 @@ public class HeaterBlockEntity extends MachineBlockEntity implements SidedInvent
                         "第二行内容会自动换行显示。\n" +
                         "可以显示很长的文本内容，HUD高度会自动调整。");
 
-        return new InfoBoxHUDData(title, content);
+        return new InfoBoxHUDData(pos, title, content);
     }
 }
