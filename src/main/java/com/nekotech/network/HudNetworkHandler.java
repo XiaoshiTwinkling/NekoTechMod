@@ -63,15 +63,15 @@ public class HudNetworkHandler {
             // 获取方块实体
             var blockEntity = player.getWorld().getBlockEntity(pos);
             if (blockEntity instanceof IHaveGoogleHUD hudProvider) {
-                // 获取HUD数据
-                GoogleAbstractHUD hud = hudProvider.getGoogleHUD(
+                // 获取HUDs数据
+                java.util.List<GoogleAbstractHUD> huds = hudProvider.getGoogleHUDs(
                         player.getWorld(), pos,
                         player.getWorld().getBlockState(pos)
                 );
 
-                if (hud != null) {
-                    // 序列化HUD数据
-                    NbtCompound nbt = serializeHudData(hud, player.getRegistryManager());
+                if (huds != null && !huds.isEmpty()) {
+                    // 序列化HUD列表
+                    NbtCompound nbt = serializeHudList(huds, player.getRegistryManager());
 
                     // 发送回客户端
                     ServerPlayNetworking.send(
@@ -81,6 +81,53 @@ public class HudNetworkHandler {
                 }
             }
         });
+    }
+
+    /**
+     * 序列化HUD列表为NBT喵~
+     * 这个方法会把多个HUD打包成一个NBT列表喵~
+     */
+    private static NbtCompound serializeHudList(
+            java.util.List<GoogleAbstractHUD> huds,
+            RegistryWrapper.WrapperLookup registries
+    ) {
+        NbtCompound nbt = new NbtCompound();
+        NbtList hudList = new NbtList();  // 创建一个NBT列表来存放所有HUD喵~
+
+        for (GoogleAbstractHUD hud : huds) {
+            NbtCompound hudNbt = serializeHudData(hud, registries);
+            hudList.add(hudNbt);
+        }
+
+        nbt.put("huds", hudList);
+        return nbt;
+    }
+
+    /**
+     * 从NBT反序列化HUD列表喵~
+     */
+    public static @Nullable java.util.List<GoogleAbstractHUD> deserializeHudList(
+            NbtCompound nbt,
+            RegistryWrapper.WrapperLookup registries,
+            BlockPos pos
+    ) {
+        if (!nbt.contains("huds")) {
+            return null;  // 如果没有，说明是旧格式的单HUD包，返回null喵~
+        }
+
+        NbtList hudList = nbt.getList("huds", 10);  // 10 对应 NbtElement.COMPOUND_TYPE 喵~
+        java.util.List<GoogleAbstractHUD> huds = new java.util.ArrayList<>();
+
+        // 遍历NBT列表，把每个HUD NBT都反序列化喵~
+        for (int i = 0; i < hudList.size(); i++) {
+            NbtCompound hudNbt = hudList.getCompound(i);
+            GoogleAbstractHUD hud = deserializeHudData(hudNbt, registries, pos);
+            if (hud != null) {
+                huds.add(hud);  // 把反序列化成功的HUD添加到列表里喵~
+            }
+        }
+
+        return huds;
     }
 
     /**
