@@ -71,15 +71,15 @@ public class GogglesHudRenderer implements HudRenderCallback {
             }
         }
 
-        // 4. 设置HUD位置喵（屏幕右上角）
+        // 4. 设置HUD位置喵
         if (currentHUD != null) {
             int screenWidth = client.getWindow().getScaledWidth();
-            int x = screenWidth - currentHUD.width - 10;
-            int y = 10;
-            currentHUD.setPosition(x, y);
+            int screenHeight = client.getWindow().getScaledHeight();
+            int margin = 10; // 边距
+
+            currentHUD.calculatePosition(screenWidth, screenHeight, margin);
 
             float tickDelta = renderTickCounter.getTickDelta(true);
-            // 渲染HUD
             currentHUD.render(drawContext, tickDelta);
         }
     }

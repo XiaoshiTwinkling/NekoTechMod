@@ -54,6 +54,11 @@ public class ContainerItemsHUDClient extends GoogleAbstractHUDClient {
     }
 
     @Override
+    public HudPosition getDefaultPosition() {
+        return HudPosition.TOP_RIGHT;
+    }
+
+    @Override
     public void update(com.nekotech.item.api.googles.GoogleAbstractHUD data) {
         if (data instanceof ContainerHUDData containerData) {
             this.hudData = containerData;

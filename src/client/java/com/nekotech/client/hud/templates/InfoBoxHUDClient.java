@@ -123,6 +123,11 @@ public class InfoBoxHUDClient extends GoogleAbstractHUDClient {
     }
 
     @Override
+    public HudPosition getDefaultPosition() {
+        return HudPosition.CENTER_LEFT;
+    }
+
+    @Override
     public void update(GoogleAbstractHUD data) {
         if (data instanceof InfoBoxHUDData newData) {
             this.hudData = newData;

@@ -31,6 +31,151 @@ public abstract class GoogleAbstractHUDClient {
         this.height = height;
     }
 
+    /**
+     * HUD定位喵~~~~
+     */
+    public enum HudPosition {
+        // 四个角落
+        TOP_RIGHT,      // 右上角
+        TOP_LEFT,       // 左上角
+        BOTTOM_RIGHT,   // 右下角
+        BOTTOM_LEFT,    // 左下角
+
+        // 四条边中间
+        LEFT_CENTER,    // 左中
+        RIGHT_CENTER,   // 右中
+        TOP_CENTER,     // 上中
+        BOTTOM_CENTER,  // 下中
+
+        // 中心相关
+        CENTER,         // 正中心
+        CENTER_LEFT,    // 中间稍微偏左
+        CENTER_RIGHT,   // 中间稍微偏右
+        CENTER_UP,      // 中间稍微偏上
+        CENTER_DOWN,    // 中间稍微偏下
+
+        // 特殊位置
+        SCREEN_RIGHT,   // 屏幕右侧（垂直居中）
+        SCREEN_LEFT,    // 屏幕左侧（垂直居中）
+        CUSTOM          // 自定义位置
+    }
+
+    /**
+     * 获取HUD的默认位置类型喵~~~~
+     * 每个HUD子类必须实现此方法来定义自己的默认位置喵~~~~
+     */
+    public abstract HudPosition getDefaultPosition();
+
+    /**
+     * 根据位置类型和屏幕尺寸计算实际坐标喵~~~~
+     * @param screenWidth 屏幕宽度
+     * @param screenHeight 屏幕高度
+     * @param margin 边距（像素）
+     */
+    public void calculatePosition(int screenWidth, int screenHeight, int margin) {
+        // 确保边距不小于0
+        margin = Math.max(0, margin);
+
+        switch (getDefaultPosition()) {
+            // 四个角落
+            case TOP_RIGHT:
+                this.x = screenWidth - this.width - margin;
+                this.y = margin;
+                break;
+            case TOP_LEFT:
+                this.x = margin;
+                this.y = margin;
+                break;
+            case BOTTOM_RIGHT:
+                this.x = screenWidth - this.width - margin;
+                this.y = screenHeight - this.height - margin;
+                break;
+            case BOTTOM_LEFT:
+                this.x = margin;
+                this.y = screenHeight - this.height - margin;
+                break;
+
+            // 四条边中间
+            case LEFT_CENTER:  // 左中
+                this.x = margin;
+                this.y = (screenHeight - this.height) / 2;
+                break;
+            case RIGHT_CENTER: // 右中
+                this.x = screenWidth - this.width - margin;
+                this.y = (screenHeight - this.height) / 2;
+                break;
+            case TOP_CENTER:   // 上中
+                this.x = (screenWidth - this.width) / 2;
+                this.y = margin;
+                break;
+            case BOTTOM_CENTER: // 下中
+                this.x = (screenWidth - this.width) / 2;
+                this.y = screenHeight - this.height - margin;
+                break;
+
+            // 中心相关
+            case CENTER:  // 正中心
+                this.x = (screenWidth - this.width) / 2;
+                this.y = (screenHeight - this.height) / 2;
+                break;
+            case CENTER_LEFT:  // 中间稍微偏左
+                this.x = (screenWidth - this.width) / 3 - (this.width / 4);
+                this.y = (screenHeight - this.height) / 2;
+                break;
+            case CENTER_RIGHT:  // 中间稍微偏右
+                this.x = (screenWidth - this.width) / 3 * 2 + (this.width / 4);
+                this.y = (screenHeight - this.height) / 2;
+                break;
+            case CENTER_UP:  // 中间稍微偏上
+                this.x = (screenWidth - this.width) / 2;
+                this.y = (screenHeight - this.height) / 3 - (this.height / 4);
+                break;
+            case CENTER_DOWN:  // 中间稍微偏下
+                this.x = (screenWidth - this.width) / 2;
+                this.y = (screenHeight - this.height) / 3 * 2 + (this.height / 4);
+                break;
+
+            // 特殊位置
+            case SCREEN_RIGHT:  // 屏幕右侧（垂直居中）
+                this.x = screenWidth - this.width - margin;
+                this.y = (screenHeight - this.height) / 2;
+                break;
+            case SCREEN_LEFT:  // 屏幕左侧（垂直居中）
+                this.x = margin;
+                this.y = (screenHeight - this.height) / 2;
+                break;
+            case CUSTOM:
+                calculateCustomPosition(screenWidth, screenHeight, margin);
+                break;
+        }
+        ensureWithinScreenBounds(screenWidth, screenHeight, margin);
+    }
+
+    /**
+     * 确保HUD不超出屏幕边界
+     */
+    protected void ensureWithinScreenBounds(int screenWidth, int screenHeight, int margin) {
+        this.x = Math.max(margin, Math.min(this.x, screenWidth - this.width - margin));
+
+        this.y = Math.max(margin, Math.min(this.y, screenHeight - this.height - margin));
+
+        if (this.width > screenWidth - 2 * margin) {
+            this.width = screenWidth - 2 * margin;
+        }
+        if (this.height > screenHeight - 2 * margin) {
+            this.height = screenHeight - 2 * margin;
+        }
+    }
+
+    /**
+     * 新增：自定义位置计算（可被子类重写）
+     */
+    protected void calculateCustomPosition(int screenWidth, int screenHeight, int margin) {
+        // 默认实现：使用右上角
+        this.x = screenWidth - this.width - margin;
+        this.y = margin;
+    }
+
     // 客户端工具方法
     protected void drawVanillaBackground(DrawContext context, Identifier texture) {
         int border = 4;
