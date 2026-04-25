@@ -81,10 +81,9 @@ public class CatEntityMixin {
 
         ItemStack stack = player.getStackInHand(hand);
 
-        if (stack.getItem().equals(ModItems.neko_box)) {
-            cir.setReturnValue(ActionResult.PASS);
-        } else {
-            cir.setReturnValue(ActionResult.SUCCESS);
+        if (!stack.isOf(ModItems.neko_box)) {
+            return;
         }
+        cir.setReturnValue(ActionResult.SUCCESS);
     }
 }
