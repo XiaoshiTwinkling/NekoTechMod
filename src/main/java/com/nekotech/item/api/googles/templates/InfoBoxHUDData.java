@@ -15,7 +15,7 @@ import java.util.Map;
 public class InfoBoxHUDData extends GoogleAbstractHUD {
     private final Text title;
     private final Text content;
-    private final int maxWidth = 80; // 固定宽度
+    private final int maxWidth = 100; // 固定宽度
     private int calculatedHeight = 40; // 默认高度
 
     public InfoBoxHUDData(BlockPos pos, Text title, Text content) {

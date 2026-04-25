@@ -119,20 +119,20 @@ public abstract class GoogleAbstractHUDClient {
                 this.y = (screenHeight - this.height) / 2;
                 break;
             case CENTER_LEFT:  // 中间稍微偏左
-                this.x = (screenWidth - this.width) / 3 - (this.width / 4);
+                this.x = (screenWidth - this.width) / 4 - (this.width / 4);
                 this.y = (screenHeight - this.height) / 2;
                 break;
             case CENTER_RIGHT:  // 中间稍微偏右
-                this.x = (screenWidth - this.width) / 3 * 2 + (this.width / 4);
+                this.x = (screenWidth - this.width) / 4  + (this.width / 4);
                 this.y = (screenHeight - this.height) / 2;
                 break;
             case CENTER_UP:  // 中间稍微偏上
                 this.x = (screenWidth - this.width) / 2;
-                this.y = (screenHeight - this.height) / 3 - (this.height / 4);
+                this.y = (screenHeight - this.height) / 4 - (this.height / 4);
                 break;
             case CENTER_DOWN:  // 中间稍微偏下
                 this.x = (screenWidth - this.width) / 2;
-                this.y = (screenHeight - this.height) / 3 * 2 + (this.height / 4);
+                this.y = (screenHeight - this.height) / 4  + (this.height / 4);
                 break;
 
             // 特殊位置

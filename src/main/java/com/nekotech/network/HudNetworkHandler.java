@@ -7,6 +7,9 @@ import com.nekotech.item.api.googles.templates.ContainerHUDData;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.InventoryProvider;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
@@ -15,11 +18,14 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static net.minecraft.block.entity.HopperBlockEntity.getInventoryAt;
 
 public class HudNetworkHandler {
     public static void initialize() {
@@ -59,26 +65,31 @@ public class HudNetworkHandler {
         // 在主线程处理
         context.server().execute(() -> {
             ServerPlayerEntity player = context.player();
+            World world = player.getWorld();
 
             // 获取方块实体
-            var blockEntity = player.getWorld().getBlockEntity(pos);
+            var blockEntity = world.getBlockEntity(pos);
+            List<GoogleAbstractHUD> huds = new ArrayList<>();
+
             if (blockEntity instanceof IHaveGoogleHUD hudProvider) {
-                // 获取HUDs数据
-                java.util.List<GoogleAbstractHUD> huds = hudProvider.getGoogleHUDs(
-                        player.getWorld(), pos,
-                        player.getWorld().getBlockState(pos)
-                );
-
-                if (huds != null && !huds.isEmpty()) {
-                    // 序列化HUD列表
-                    NbtCompound nbt = serializeHudList(huds, player.getRegistryManager());
-
-                    // 发送回客户端
-                    ServerPlayNetworking.send(
-                            player,
-                            new HudNetworkPayloads.SendHudDataPayload(pos, nbt)
-                    );
+                huds = hudProvider.getGoogleHUDs(world, pos, world.getBlockState(pos));
+            } else {
+                // 尝试多种方式获取原版容器
+                Inventory inventory = getInventoryAt(world, pos);
+                if (inventory != null) {
+                    huds = createContainerHUDForVanillaContainer(inventory, world, pos);
                 }
+            }
+
+            if (huds != null && !huds.isEmpty()) {
+                // 序列化HUD列表
+                NbtCompound nbt = serializeHudList(huds, player.getRegistryManager());
+
+                // 发送回客户端
+                ServerPlayNetworking.send(
+                        player,
+                        new HudNetworkPayloads.SendHudDataPayload(pos, nbt)
+                );
             }
         });
     }
@@ -367,5 +378,79 @@ public class HudNetworkHandler {
         }
 
         return new InfoBoxHUDData(pos, title, content, maxWidth);
+    }
+
+    /**
+     * 为原版容器创建容器HUD数据喵~
+     * 这个方法会读取原版容器的物品栏并创建对应的ContainerHUDData喵~
+     */
+    private static List<GoogleAbstractHUD> createContainerHUDForVanillaContainer(
+            Inventory inventory,
+            World world,
+            BlockPos pos
+    ) {
+        List<GoogleAbstractHUD> huds = new ArrayList<>();
+
+        // 获取容器中的物品
+        List<ItemStack> items = new ArrayList<>();
+        for (int i = 0; i < inventory.size(); i++) {
+            ItemStack stack = inventory.getStack(i);
+            items.add(stack.copy()); // 复制一份，避免修改原物品
+        }
+
+        // 获取容器的标题（使用方块的可翻译名称）
+        BlockState state = world.getBlockState(pos);
+        Text containerTitle = state.getBlock().getName(); // 获取方块的本地化名称
+
+        // 计算容器的行列数（根据容器类型）
+        int columns = calculateColumnsForContainer(inventory);
+        int rows = calculateRowsForContainer(inventory, columns);
+
+        // 创建ContainerHUDData
+        ContainerHUDData containerHUD = new ContainerHUDData(pos, items, containerTitle, columns, rows);
+        huds.add(containerHUD);
+
+        return huds;
+    }
+
+    /**
+     * 根据容器类型计算列数喵~
+     * 这是一个简化实现，您可以根据实际需求调整喵~
+     */
+    private static int calculateColumnsForContainer(Inventory inventory) {
+        int size = inventory.size();
+
+        // 常见原版容器的列数
+        if (size == 27) return 9; // 箱子
+        if (size == 54) return 9; // 大箱子
+        if (size == 5) return 5;  // 投掷器/发射器
+        if (size == 3) return 3;  // 炼药锅（特殊）
+
+        // 默认：如果小于9格，就按实际大小；否则用9列
+        return Math.min(size, 9);
+    }
+
+    /**
+     * 根据容器大小和列数计算行数喵~
+     */
+    private static int calculateRowsForContainer(Inventory inventory, int columns) {
+        int size = inventory.size();
+        if (columns == 0) return 0;
+        return (size + columns - 1) / columns; // 向上取整
+    }
+
+    @Nullable
+    private static Inventory getInventoryAt(World world, BlockPos pos) {
+        var blockEntity = world.getBlockEntity(pos);
+        if (blockEntity instanceof Inventory inventory) {
+            return inventory;
+        }
+
+        var block = world.getBlockState(pos).getBlock();
+        if (block instanceof InventoryProvider inventoryProvider) {
+            return inventoryProvider.getInventory(world.getBlockState(pos), world, pos);
+        }
+
+        return null;
     }
 }

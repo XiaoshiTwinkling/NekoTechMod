@@ -54,9 +54,14 @@
   "item.neko-technology.neko_copper_boots.tooltip": "猫猫紫铜全套效果: 迅捷Ⅱ",
   "item.neko-technology.ray_item": "激光笔",
 
+  "block.neko-technology.yes": "是",
+  "block.neko-technology.no": "否",
+
   "block.neko-technology.basic_storage_enclosure": "基础猫猫存储机壳",
   "block.neko-technology.heater": "加热炉",
+  "block.neko-technology.heater.description": "§2炉温：§0 %s \n§2最高炉温：§0 %s \n§2正在工作：§0 %s",
   "block.neko-technology.alloy_pot": "合金釜",
+  "block.neko-technology.alloy_pot.description": "§2炉温：§0 %s \n§2最高炉温：§0 %s \n§2正在工作：§0 %s \n§2已经成型：§0 %s",
 
   "message.nekotech.item_put": "%s 已放入喵~",
   "message.nekotech.all_items_taken": "东西全部拿出来了喵~",

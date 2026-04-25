@@ -47,11 +47,11 @@ public class GogglesHudRenderer implements HudRenderCallback {
 
         //检查方块是否支持HUD喵
         var blockEntity = client.world.getBlockEntity(pos);
-        if (!(blockEntity instanceof IHaveGoogleHUD)) {
-            currentHUD = null;
-            HudDataCache.removeHudData(pos);
-            return;
-        }
+//        if (!(blockEntity instanceof IHaveGoogleHUD)) {
+//            currentHUD = null;
+//            HudDataCache.removeHudData(pos);
+//            return;
+//        }
 
         long now = System.currentTimeMillis();
         if (!pos.equals(lastRequestedPos) || now - lastRequestTime > 100) { //每秒10次

@@ -1,8 +1,10 @@
 package com.nekotech.block.entity.machines;
 
+import com.nekotech.block.entity.ImplementedInventory;
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
+import com.nekotech.item.api.googles.templates.ContainerHUDData;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
 import com.nekotech.item.block.Heater;
 import com.nekotech.modTags.ModTags;
@@ -10,6 +12,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -19,12 +22,15 @@ import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class HeaterBlockEntity extends MachineBlockEntity implements SidedInventory, TakeFreelyInventory, IHaveGoogleHUD {
@@ -386,45 +392,38 @@ public class HeaterBlockEntity extends MachineBlockEntity implements SidedInvent
         markDirty();
     }
 
-//    @Override
-//    @Nullable
-//    public GoogleAbstractHUD getGoogleHUD(World world, BlockPos pos, BlockState state) {
-//
-//        List<ItemStack> items = new ArrayList<>();
-//
-//        if (this instanceof Inventory inventory) {
-//            for (int i = 0; i < inventory.size(); i++) {
-//                ItemStack stack = inventory.getStack(i);
-//                items.add(stack.copy()); // 复制一份，避免修改原物品
-//            }
-//        } else if (this instanceof ImplementedInventory implementedInventory) {
-//            for (int i = 0; i < implementedInventory.size(); i++) {
-//                ItemStack stack = implementedInventory.getStack(i);
-//                items.add(stack.copy());
-//            }
-//        }
-//
-//        int columns = 1;
-//        int rows = 1;
-//        Text title = Text.translatable("container.heater");
-//
-//        return new ContainerHUDData(items, title, columns, rows);
-//    }
-
     @Override
-    public @Nullable GoogleAbstractHUD getGoogleHUD(World world, BlockPos pos, BlockState state) {
+    public List<GoogleAbstractHUD> getGoogleHUDs(World world, BlockPos pos, BlockState state) {
         // 只在服务端返回数据
         if (world.isClient()) {
             return null;
         }
 
-        // 创建标题和内容
-        Text title = Text.translatable("block.neko-technology.info_block");
-        Text content = Text.translatable("block.neko-technology.info_block.description",
-                "这是一个信息框示例，支持多行文本自动换行。\n" +
-                        "第二行内容会自动换行显示。\n" +
-                        "可以显示很长的文本内容，HUD高度会自动调整。");
+        java.util.List<GoogleAbstractHUD> huds = new java.util.ArrayList<>();
 
-        return new InfoBoxHUDData(pos, title, content);
+        List<ItemStack> items = new ArrayList<>();
+        if (this instanceof Inventory inventory) {
+            for (int i = 0; i < inventory.size(); i++) {
+                ItemStack stack = inventory.getStack(i);
+                items.add(stack.copy()); // 复制一份，避免修改原物品
+            }
+        } else if (this instanceof ImplementedInventory implementedInventory) {
+            for (int i = 0; i < implementedInventory.size(); i++) {
+                ItemStack stack = implementedInventory.getStack(i);
+                items.add(stack.copy());
+            }
+        }
+        Text containerTitle = Text.translatable("block.neko-technology.heater");
+        ContainerHUDData containerHUD = new ContainerHUDData(pos, items, containerTitle, 1, 1);
+        huds.add(containerHUD);
+
+        Text title = Text.translatable("block.neko-technology.heater").formatted(Formatting.GOLD);
+        Text content = Text.translatable("block.neko-technology.heater.description",  (int) getTemperature()
+                , getMax_temperature()
+                , isHeating() ? Text.translatable("block.neko-technology.yes") : Text.translatable("block.neko-technology.no")
+                );
+        huds.add(new InfoBoxHUDData(pos, title, content));
+
+        return huds;
     }
 }

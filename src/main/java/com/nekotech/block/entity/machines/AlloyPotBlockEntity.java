@@ -19,6 +19,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -38,7 +39,7 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity implements
     //客户端渲染用
     private int bounceTick = 0;
     private boolean bouncing = false;
-
+    private boolean isCrafting = false;
 
     public static final int INPUT_SLOT_1 = 0;     // 输入槽1
     public static final int INPUT_SLOT_2 = 1;     // 输入槽2
@@ -126,24 +127,31 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity implements
         updateTemperature();
 
         if (isInputEmpty()) {
+            isCrafting = false;
             cachedRecipe = null;
             resetProgress();
             return;
         }
 
         if (cachedRecipe == null) {
+            isCrafting = false;
             cachedRecipe = getCurrentRecipe().orElse(null);
             resetProgress();
         }
 
-        if (cachedRecipe == null) return;
+        if (cachedRecipe == null){
+            isCrafting = false;
+            return;
+        }
 
         AlloyRecipe recipe = cachedRecipe.value();
 
         if (!canWork(recipe)) {
+            isCrafting = false;
             return;
         }
 
+        isCrafting = true;
 
         alloyTimeTotal = recipe.cookTime();
         alloyProgress++;
@@ -295,10 +303,9 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity implements
     }
 
     @Override
-    public java.util.List<GoogleAbstractHUD> getGoogleHUDs(World world, BlockPos pos, BlockState state) {
-        // 只在服务端返回数据喵~
+    public List<GoogleAbstractHUD> getGoogleHUDs(World world, BlockPos pos, BlockState state) {
         if (world.isClient()) {
-            return java.util.Collections.emptyList();
+            return null;
         }
 
         java.util.List<GoogleAbstractHUD> huds = new java.util.ArrayList<>();
@@ -307,7 +314,7 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity implements
         if (this instanceof Inventory inventory) {
             for (int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStack(i);
-                items.add(stack.copy()); // 复制一份，避免修改原物品
+                items.add(stack.copy());
             }
         } else if (this instanceof ImplementedInventory implementedInventory) {
             for (int i = 0; i < implementedInventory.size(); i++) {
@@ -315,14 +322,18 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity implements
                 items.add(stack.copy());
             }
         }
-        Text containerTitle = Text.translatable("container.neko-technology.alloy_pot");
+        Text containerTitle = Text.translatable("block.neko-technology.alloy_pot");
         ContainerHUDData containerHUD = new ContainerHUDData(pos, items, containerTitle, 2, 2);
         huds.add(containerHUD);
 
-        Text infoTitle = Text.translatable("hud.neko-technology.alloy_pot.status");
-        String infoContent = String.format("温度");
-        InfoBoxHUDData infoHUD = new InfoBoxHUDData(pos, infoTitle, Text.literal(infoContent));
-        huds.add(infoHUD);
+        Text title = Text.translatable("block.neko-technology.alloy_pot").formatted(Formatting.GOLD);
+        Text content = Text.translatable("block.neko-technology.alloy_pot.description"
+                ,(int) getHeaterTemperature()
+                ,getHeaterMaxTemperature()
+                ,isCrafting ? Text.translatable("block.neko-technology.yes") : Text.translatable("block.neko-technology.no")
+                ,isHeater(getWorld().getBlockState(getPos().down())) && canMachineRun() ? Text.translatable("block.neko-technology.yes") : Text.translatable("block.neko-technology.no")
+        );
+        huds.add(new InfoBoxHUDData(pos, title, content));
 
         return huds;
     }
