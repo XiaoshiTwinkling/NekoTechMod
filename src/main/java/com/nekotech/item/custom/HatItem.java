@@ -1,6 +1,7 @@
 package com.nekotech.item.custom;
 
 import com.mojang.serialization.Codec;
+import com.nekotech.item.ModItem;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Equipment;
@@ -11,10 +12,10 @@ import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
-public class HatItem extends Item implements Equipment {
+public class HatItem extends ModItem implements Equipment {
     protected final Type type;
-    public HatItem(Type type, Settings settings) {
-        super(settings);
+    public HatItem(Type type, Settings settings, String tooltipTranslationKey) {
+        super(settings, tooltipTranslationKey);
         this.type = type;
     }
 

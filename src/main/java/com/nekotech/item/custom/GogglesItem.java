@@ -5,8 +5,8 @@ import net.minecraft.item.ItemStack;
 public class GogglesItem extends HatItem{
 
 
-    public GogglesItem(Type type, Settings settings) {
-        super(type, settings);
+    public GogglesItem(Type type, Settings settings, String tooltipTranslationKey) {
+        super(type, settings, tooltipTranslationKey);
     }
 
     public static boolean isWearingGoggles(net.minecraft.entity.player.PlayerEntity player) {
