@@ -1,5 +1,6 @@
 package com.nekotech.network;
 
+import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.renderer.ClientLaserTargetCache;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.nbt.NbtCompound;
@@ -38,10 +39,10 @@ public class ClientHudNetworkHandler {
 
             if (client.world != null) {
                 var registries = client.world.getRegistryManager();
-                var hudData = com.nekotech.network.HudNetworkHandler.deserializeHudData(nbt, registries, pos);
+                java.util.List<GoogleAbstractHUD> hudList = com.nekotech.network.HudNetworkHandler.deserializeHudList(nbt, registries, pos);
 
-                if (hudData != null) {
-                    HudDataCache.storeHudData(pos, hudData);
+                if (hudList != null && !hudList.isEmpty()) {
+                    HudDataCache.storeHudDataList(pos, hudList);
                 }
             }
         });

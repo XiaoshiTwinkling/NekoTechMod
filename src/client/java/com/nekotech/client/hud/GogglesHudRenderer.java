@@ -60,27 +60,32 @@ public class GogglesHudRenderer implements HudRenderCallback {
             lastRequestTime = now;
         }
 
-        GoogleAbstractHUD hubData = HudDataCache.getHudData(pos);
+        java.util.List<GoogleAbstractHUD> hudList = HudDataCache.getHudDataList(pos);
 
-        // 3. 通过工厂创建客户端HUD喵
-        if (hubData != null) {
-            if (currentHUD == null || !currentHUD.isSame(hubData)) {
-                currentHUD = HudFactory.createHUD(hubData);
-            } else {
-                currentHUD.update(hubData);
-            }
-        }
-
-        // 4. 设置HUD位置喵
-        if (currentHUD != null) {
+        if (hudList != null && !hudList.isEmpty()) {
             int screenWidth = client.getWindow().getScaledWidth();
             int screenHeight = client.getWindow().getScaledHeight();
-            int margin = 10; // 边距
+            int margin = 10;
+            for (GoogleAbstractHUD hudData : hudList) {
+                GoogleAbstractHUDClient hudClient = null;
+                if (currentHUD != null && currentHUD.isSame(hudData)) {
+                    currentHUD.update(hudData);
+                    hudClient = currentHUD;
+                } else {
+                    hudClient = HudFactory.createHUD(hudData);
+                }
 
-            currentHUD.calculatePosition(screenWidth, screenHeight, margin);
+                if (hudClient != null) {
+                    hudClient.calculatePosition(screenWidth, screenHeight, margin);
 
-            float tickDelta = renderTickCounter.getTickDelta(true);
-            currentHUD.render(drawContext, tickDelta);
+                    float tickDelta = renderTickCounter.getTickDelta(true);
+                    hudClient.render(drawContext, tickDelta);
+
+                    currentHUD = hudClient;
+                }
+            }
+        } else {
+            currentHUD = null;
         }
     }
 }

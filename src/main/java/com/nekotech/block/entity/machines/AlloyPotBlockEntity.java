@@ -6,6 +6,7 @@ import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.ContainerHUDData;
+import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
 import com.nekotech.item.block.ModBlocks;
 import com.nekotech.recipe.AlloyPot.AlloyPotRecipeInput;
 import com.nekotech.recipe.AlloyPot.AlloyRecipe;
@@ -294,11 +295,15 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity implements
     }
 
     @Override
-    @Nullable
-    public GoogleAbstractHUD getGoogleHUD(World world, BlockPos pos, BlockState state) {
+    public java.util.List<GoogleAbstractHUD> getGoogleHUDs(World world, BlockPos pos, BlockState state) {
+        // 只在服务端返回数据喵~
+        if (world.isClient()) {
+            return java.util.Collections.emptyList();
+        }
+
+        java.util.List<GoogleAbstractHUD> huds = new java.util.ArrayList<>();
 
         List<ItemStack> items = new ArrayList<>();
-
         if (this instanceof Inventory inventory) {
             for (int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStack(i);
@@ -310,11 +315,15 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity implements
                 items.add(stack.copy());
             }
         }
+        Text containerTitle = Text.translatable("container.neko-technology.alloy_pot");
+        ContainerHUDData containerHUD = new ContainerHUDData(pos, items, containerTitle, 2, 2);
+        huds.add(containerHUD);
 
-        int columns = 2;
-        int rows = 2;
-        Text title = Text.translatable("container.alloy_pot");
+        Text infoTitle = Text.translatable("hud.neko-technology.alloy_pot.status");
+        String infoContent = String.format("温度");
+        InfoBoxHUDData infoHUD = new InfoBoxHUDData(pos, infoTitle, Text.literal(infoContent));
+        huds.add(infoHUD);
 
-        return new ContainerHUDData(pos, items, title, columns, rows);
+        return huds;
     }
 }
