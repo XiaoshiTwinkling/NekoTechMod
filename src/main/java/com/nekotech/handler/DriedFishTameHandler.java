@@ -26,25 +26,27 @@ public class DriedFishTameHandler {
             return ActionResult.PASS; // 未持有指定物品，跳过
         }
 
-        if (!player.getWorld().isClient) {
-            stack.decrement(1); // 减少物品数量
+        if (player.getWorld().isClient) {
+            return ActionResult.CONSUME;
         }
 
+        stack.decrement(1); // 减少物品数量
+
+        player.giveItemStack(new ItemStack(ModItems.tin_can));
         // 4. 执行90%概率驯服逻辑
-        if (Random.create().nextFloat() < 0.9f) { // 90% 成功
+        if (cat.getRandom().nextFloat() < 0.9f) { // 90% 成功
             // 驯服猫
             cat.setOwner(player);
-            cat.setSitting(true); // 让猫站起来
-            cat.setTamed(true, true);
+
             player.giveItemStack(new ItemStack(ModItems.tin_can));
             cat.getWorld().sendEntityStatus(cat, (byte)7);
 
 
             return ActionResult.SUCCESS; // 拦截事件，防止原版逻辑执行
         }
-
-        player.giveItemStack(new ItemStack(ModItems.tin_can));
-        cat.getWorld().sendEntityStatus(cat, (byte)6);
+        else {
+            cat.getWorld().sendEntityStatus(cat, (byte) 6);
+        }
         return ActionResult.SUCCESS; // 10% 失败，继续执行原版逻辑（可能无效果）
     }
 }
