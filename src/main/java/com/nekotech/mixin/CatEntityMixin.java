@@ -102,13 +102,16 @@ public class CatEntityMixin {
     }
 
     @Inject(method = "interactMob", at = @At("HEAD"), cancellable = true)
-    private void onInteractMob(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
+    private void onInteractMob(PlayerEntity player, Hand hand,
+                               CallbackInfoReturnable<ActionResult> cir) {
 
         ItemStack stack = player.getStackInHand(hand);
 
         if (!stack.isOf(ModItems.neko_box)) {
             return;
         }
-        cir.setReturnValue(ActionResult.SUCCESS);
+
+        cir.setReturnValue(ActionResult.PASS);
+        cir.cancel();
     }
 }
