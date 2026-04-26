@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "Neko",
+  "key": {
+    "A": {
+      "item": "minecraft:redstone"
+    },
+    "B": {
+      "item": "neko-technology:pink_len"
+    },
+    "C": {
+      "item": "neko-technology:pig_iron_plate"
+    }
+  },
+  "pattern": [
+    " B ",
+    "ACA",
+    " C "
+  ],
+  "result": {
+    "count": 1,
+    "id": "neko-technology:ray_item"
+  }
+}

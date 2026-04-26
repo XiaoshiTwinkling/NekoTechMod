@@ -1,6 +1,5 @@
 package com.nekotech.block.entity.machines;
 
-import com.nekotech.block.entity.ImplementedInventory;
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
@@ -406,11 +405,6 @@ public class HeaterBlockEntity extends MachineBlockEntity implements SidedInvent
             for (int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStack(i);
                 items.add(stack.copy()); // 复制一份，避免修改原物品
-            }
-        } else if (this instanceof ImplementedInventory implementedInventory) {
-            for (int i = 0; i < implementedInventory.size(); i++) {
-                ItemStack stack = implementedInventory.getStack(i);
-                items.add(stack.copy());
             }
         }
         Text containerTitle = Text.translatable("block.neko-technology.heater");

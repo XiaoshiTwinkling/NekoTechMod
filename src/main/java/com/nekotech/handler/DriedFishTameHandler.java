@@ -10,17 +10,14 @@ import net.minecraft.util.math.random.Random;
 
 public class DriedFishTameHandler {
     public static ActionResult handleTameAttempt(PlayerEntity player, Hand hand, Object entity) {
-        // 1. 检查目标实体是否为猫
         if (!(entity instanceof CatEntity cat)) {
             return ActionResult.PASS; // 不是猫，不处理
         }
 
-        // 2. 检查猫是否已被驯服
         if (cat.isTamed()) {
             return ActionResult.PASS; // 已驯服，跳过
         }
 
-        // 3. 检查玩家是否持有“dried_fish”
         ItemStack stack = player.getStackInHand(hand);
         if (!stack.isOf(ModItems.fish_can)) { // 替换为你的物品实例
             return ActionResult.PASS; // 未持有指定物品，跳过

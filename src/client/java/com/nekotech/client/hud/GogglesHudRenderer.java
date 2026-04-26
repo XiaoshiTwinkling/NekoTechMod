@@ -45,8 +45,7 @@ public class GogglesHudRenderer implements HudRenderCallback {
 
         var pos = blockHit.getBlockPos();
 
-        //检查方块是否支持HUD喵
-        var blockEntity = client.world.getBlockEntity(pos);
+//检查方块是否支持HUD喵
 //        if (!(blockEntity instanceof IHaveGoogleHUD)) {
 //            currentHUD = null;
 //            HudDataCache.removeHudData(pos);

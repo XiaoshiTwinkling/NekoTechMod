@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "Neko",
+  "key": {
+    "A": {
+      "item": "neko-technology:neko_silk"
+    },
+    "B": {
+      "item": "neko-technology:pink_len"
+    },
+    "C": {
+      "item": "neko-technology:neko_copper_plate"
+    },
+    "X": {
+      "item": "neko-technology:neko_ears"
+    }
+  },
+  "pattern": [
+    "AXA",
+    "BCB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neko-technology:neko_goggles"
+  }
+}

@@ -11,6 +11,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.registry.Registry;
 
+import javax.swing.text.html.parser.Entity;
+
 public class ModItemGroups {
 
     public static final RegistryKey<ItemGroup> NekoTech_INGREDIENTS = register("nekotech_ingredients");  //材料
@@ -43,7 +45,7 @@ public class ModItemGroups {
                             entries.add(ModItems.slag);
                             entries.add(ModItems.small_handful_of_slag);
                             entries.add(ModItems.neko_copper_plate);
-
+                            entries.add(ModItems.pink_len);
                         })).build());
 
         Registry.register(Registries.ITEM_GROUP, NekoTech_TOOLS,

@@ -4,7 +4,6 @@ import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.ContainerHUDData;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.InventoryProvider;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -65,11 +64,6 @@ public class BoxBlockEntity extends LootableContainerBlockEntity implements IHav
             for (int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStack(i);
                 items.add(stack.copy()); // 复制一份，避免修改原物品
-            }
-        } else if (this instanceof ImplementedInventory implementedInventory) {
-            for (int i = 0; i < implementedInventory.size(); i++) {
-                ItemStack stack = implementedInventory.getStack(i);
-                items.add(stack.copy());
             }
         }
 

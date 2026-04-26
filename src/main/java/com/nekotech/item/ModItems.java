@@ -33,6 +33,7 @@ public class ModItems {
             .build()
     ), "fish_can"));
     public static final Item neko_web= registerItems("neko_web", new Item(new Item.Settings()));
+    public static final Item pink_len= registerItems("pink_len", new Item(new Item.Settings()));
     public static final Item neko_copper_ingot= registerItems("neko_copper_ingot", new ModItem(new Item.Settings(),"neko_copper_ingot"));
     public static final Item slag= registerItems("slag", new Item(new Item.Settings()));
     public static final Item small_handful_of_slag= registerItems("small_handful_of_slag", new Item(new Item.Settings()));

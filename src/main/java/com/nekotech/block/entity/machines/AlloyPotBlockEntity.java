@@ -1,7 +1,5 @@
 package com.nekotech.block.entity.machines;
 
-import com.nekotech.NekoTechnology;
-import com.nekotech.block.entity.ImplementedInventory;
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
@@ -22,7 +20,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -314,11 +311,6 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity implements
         if (this instanceof Inventory inventory) {
             for (int i = 0; i < inventory.size(); i++) {
                 ItemStack stack = inventory.getStack(i);
-                items.add(stack.copy());
-            }
-        } else if (this instanceof ImplementedInventory implementedInventory) {
-            for (int i = 0; i < implementedInventory.size(); i++) {
-                ItemStack stack = implementedInventory.getStack(i);
                 items.add(stack.copy());
             }
         }
