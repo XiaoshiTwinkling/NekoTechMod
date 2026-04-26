@@ -63,7 +63,10 @@ public class ModItemGroups {
                             entries.add(ModItems.neko_box);
                             entries.add(ModItems.NEKO_TAIL);
                             entries.add(ModItems.thermometer);
-                            entries.add(ModItems.neko_goggles);
+                            entries.add(ModItems.pink_neko_goggles);
+                            entries.add(ModItems.blue_neko_goggles);
+                            entries.add(ModItems.yellow_neko_goggles);
+                            entries.add(ModItems.green_neko_goggles);
                             entries.add(ModItems.ray_item);
                         })).build());
 

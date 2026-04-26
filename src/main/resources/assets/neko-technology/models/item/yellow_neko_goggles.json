@@ -3,8 +3,8 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [32, 32],
 	"textures": {
-		"0": "neko-technology:item/neko_goggles",
-		"particle": "neko-technology:item/neko_goggles_model"
+		"0": "neko-technology:item/yellow_neko_goggles_model",
+		"particle": "neko-technology:item/yellow_neko_goggles_model"
 	},
 	"elements": [
 		{

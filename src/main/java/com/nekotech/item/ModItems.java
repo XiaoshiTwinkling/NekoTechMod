@@ -40,8 +40,17 @@ public class ModItems {
     public static final Item neko_copper_plate= registerItems("neko_copper_plate", new Item(new Item.Settings()));
     public static final Item neko_ears = registerItems("neko_ears", new HatItem(HatItem.Type.HAT,
             new Item.Settings().maxDamage(HatItem.Type.HAT.getMaxDamage(5)), "neko_ears"));
-    public static final Item neko_goggles = registerItems("neko_goggles", new GogglesItem(HatItem.Type.HAT,
+
+    public static final Item pink_neko_goggles = registerItems("pink_neko_goggles", new GogglesItem(HatItem.Type.HAT,
             new Item.Settings().maxDamage(HatItem.Type.HAT.getMaxDamage(5)), "neko_goggles"));
+    public static final Item blue_neko_goggles = registerItems("blue_neko_goggles", new GogglesItem(HatItem.Type.HAT,
+            new Item.Settings().maxDamage(HatItem.Type.HAT.getMaxDamage(5)), "neko_goggles"));
+    public static final Item yellow_neko_goggles = registerItems("yellow_neko_goggles", new GogglesItem(HatItem.Type.HAT,
+            new Item.Settings().maxDamage(HatItem.Type.HAT.getMaxDamage(5)), "neko_goggles"));
+    public static final Item green_neko_goggles = registerItems("green_neko_goggles", new GogglesItem(HatItem.Type.HAT,
+            new Item.Settings().maxDamage(HatItem.Type.HAT.getMaxDamage(5)), "neko_goggles"));
+
+
 
     public static final Item NEKO_COPPER_HELMET = registerItems("neko_copper_helmet", new ModArmorItem(ModArmorMaterials.NEKO_COPPER, ArmorItem.Type.HELMET,
             new Item.Settings().maxDamage(ArmorItem.Type.HELMET.getMaxDamage(37)),"neko_copper_helmet"));

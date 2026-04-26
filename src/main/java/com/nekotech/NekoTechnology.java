@@ -15,6 +15,9 @@ import org.slf4j.LoggerFactory;
 
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 
+/*
+* Welcome to Nekotech
+ */
 
 public class NekoTechnology implements ModInitializer {
 	public static final String MOD_ID = "neko-technology";
