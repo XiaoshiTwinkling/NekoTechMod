@@ -1,5 +1,6 @@
 package com.nekotech.client.hud.templates;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.nekotech.client.hud.GoogleAbstractHUDClient;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
@@ -156,6 +157,14 @@ public class InfoBoxHUDClient extends GoogleAbstractHUDClient {
         int textureWidth = 248;
         int textureHeight = 166;
 
+        context.setShaderColor(1.0f, 1.0f, 1.0f, 0.6f);
+
+        var matrices = context.getMatrices();
+        matrices.push();
+
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+
         // 绘制四个角
         context.drawTexture(DIALOG_TEXTURE, x, y, 0, 0, border, border); // 左上
         context.drawTexture(DIALOG_TEXTURE, x + width - border, y, textureWidth - border, 0, border, border); // 右上
@@ -174,5 +183,9 @@ public class InfoBoxHUDClient extends GoogleAbstractHUDClient {
         // 绘制中间区域
         context.drawTexture(DIALOG_TEXTURE, x + border, y + border, border, border,
                 width - 2 * border, height - 2 * border);
+
+        context.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+        RenderSystem.disableBlend();
+        matrices.pop();
     }
 }

@@ -1,5 +1,6 @@
 package com.nekotech.client.hud;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.nekotech.NekoTechnology;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -15,6 +16,8 @@ public abstract class GoogleAbstractHUDClient {
     protected int width = 176;
     protected int height = 166;
     protected static final int ITEM_SLOT_SIZE = 18;
+
+
 
     /**
      * 渲染HUD
@@ -208,7 +211,18 @@ public abstract class GoogleAbstractHUDClient {
 
     protected void drawItemSlot(DrawContext context, int x, int y, ItemStack stack) {
         Identifier SLOT_TEXTURE = Identifier.ofVanilla("container/slot");
+
+        context.setShaderColor(1.0f, 1.0f, 1.0f, 0.6f);
+        var matrices_bg = context.getMatrices();
+        matrices_bg.push();
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+
         context.drawGuiTexture(SLOT_TEXTURE, x, y, 18, 18);
+
+        context.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+        RenderSystem.disableBlend();
+        matrices_bg.pop();
 
         if (!stack.isEmpty()) {
             var matrices = context.getMatrices();
