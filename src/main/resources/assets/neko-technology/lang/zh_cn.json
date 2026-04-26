@@ -66,6 +66,8 @@
   "block.neko-technology.heater.description": "§2炉温：§0 %s \n§2最高炉温：§0 %s \n§2正在工作：§0 %s",
   "block.neko-technology.alloy_pot": "合金釜",
   "block.neko-technology.alloy_pot.description": "§2炉温：§0 %s \n§2最高炉温：§0 %s \n§2正在工作：§0 %s \n§2已经成型：§0 %s",
+  "block.neko-technology.cushion_block": "猫猫坐垫",
+  "block.neko-technology.cushion.description": "§2是否有猫猫：§0 %s ",
 
   "message.nekotech.item_put": "%s 已放入喵~",
   "message.nekotech.all_items_taken": "东西全部拿出来了喵~",

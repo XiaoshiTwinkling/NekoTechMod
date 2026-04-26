@@ -1,14 +1,25 @@
 package com.nekotech.block.entity;
 
 import com.nekotech.block.entity.machines.CatNeedMachineBlockEntity;
+import com.nekotech.item.api.googles.GoogleAbstractHUD;
+import com.nekotech.item.api.googles.IHaveGoogleHUD;
+import com.nekotech.item.api.googles.templates.ContainerHUDData;
+import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.passive.CatEntity;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 
-public class CushionBlockEntity extends BlockEntity {
+import java.util.ArrayList;
+import java.util.List;
+
+public class CushionBlockEntity extends BlockEntity implements IHaveGoogleHUD {
 
     private static final int MAX_MACHINES = 4;
     private static final int CHECK_INTERVAL = 10;
@@ -124,5 +135,23 @@ public class CushionBlockEntity extends BlockEntity {
             machines[i] = null;
         }
         machineCount = 0;
+    }
+
+    @Override
+    public List<GoogleAbstractHUD> getGoogleHUDs(World world, BlockPos pos, BlockState state) {
+        // 只在服务端返回数据
+        if (world.isClient()) {
+            return null;
+        }
+
+        java.util.List<GoogleAbstractHUD> huds = new java.util.ArrayList<>();
+
+        Text title = Text.translatable("block.neko-technology.cushion_block").formatted(Formatting.GOLD);
+        Text content = Text.translatable("block.neko-technology.cushion.description"
+                , hasCatCached() ? Text.translatable("block.neko-technology.yes") : Text.translatable("block.neko-technology.no")
+        );
+        huds.add(new InfoBoxHUDData(pos, title, content));
+
+        return huds;
     }
 }
