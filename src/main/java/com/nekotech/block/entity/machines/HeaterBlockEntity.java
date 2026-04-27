@@ -1,6 +1,7 @@
 package com.nekotech.block.entity.machines;
 
 import com.nekotech.block.entity.ModBlockEntities;
+import com.nekotech.block.entity.machines.api.TakeFreelyInventory;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.ContainerHUDData;
