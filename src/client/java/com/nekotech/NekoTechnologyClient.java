@@ -1,5 +1,6 @@
 package com.nekotech;
 
+import com.nekotech.Screen.NekoTagScreen;
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.client.hud.GogglesHudRenderer;
 import com.nekotech.network.ClientHudNetworkHandler;
@@ -7,11 +8,13 @@ import com.nekotech.renderer.AlloyPotBlockEntityRenderer;
 import com.nekotech.renderer.BellowsBlockEntityRenderer;
 import com.nekotech.renderer.CatTailFeatureRenderer;
 import com.nekotech.renderer.ClientLaserTargetCache;
+import com.nekotech.screen.ModScreenHandlers;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 
@@ -51,6 +54,7 @@ public class NekoTechnologyClient implements ClientModInitializer {
                     }
                 }
         );
+        HandledScreens.register(ModScreenHandlers.NEKO_TAG, NekoTagScreen::new);
 	}
 
     public static GogglesHudRenderer getHudRenderer() {

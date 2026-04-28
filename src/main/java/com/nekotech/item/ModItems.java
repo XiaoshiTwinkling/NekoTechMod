@@ -2,6 +2,7 @@ package com.nekotech.item;
 
 import com.nekotech.NekoTechnology;
 import com.nekotech.item.custom.*;
+import com.nekotech.item.custom.NekoTag.NekoTagItem;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.item.*;
@@ -64,6 +65,10 @@ public class ModItems {
     public static final Item thermometer = registerItems("thermometer", new Thermometer(new Item.Settings(),"thermometer"));
     public static final Item ray_item = registerItems("ray_item", new RayItem(new Item.Settings().maxCount(1)));
 
+    public static final Item neko_tag = registerItems(
+            "neko_tag",
+            new NekoTagItem(new Item.Settings().maxCount(1), "neko_tag")
+    );
 
     public static final Item NEKO_TAIL = registerItems(
             "neko_tail",

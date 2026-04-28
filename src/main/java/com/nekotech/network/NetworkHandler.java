@@ -1,21 +1,30 @@
 package com.nekotech.network;
 
 import com.nekotech.NekoTechnology;
+import com.nekotech.item.ModItems;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.ContainerHUDData;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
+import com.nekotech.item.custom.NekoTag.NekoTagData;
+import com.nekotech.screen.NekoTag.NekoTagScreenHandler;
+import com.nekotech.util.NekoTask;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.InventoryProvider;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.DyeColor;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -25,39 +34,90 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static net.minecraft.block.entity.HopperBlockEntity.getInventoryAt;
-
-public class HudNetworkHandler {
+public class NetworkHandler {
     public static void initialize() {
         // 注册网络包类型
         PayloadTypeRegistry.playC2S().register(
-                HudNetworkPayloads.REQUEST_HUD_DATA,
-                HudNetworkPayloads.RequestHudDataPayload.CODEC
+                NetworkPayloads.REQUEST_HUD_DATA,
+                NetworkPayloads.RequestHudDataPayload.CODEC
         );
 
         PayloadTypeRegistry.playS2C().register(
-                HudNetworkPayloads.SEND_HUD_DATA,
-                HudNetworkPayloads.SendHudDataPayload.CODEC
+                NetworkPayloads.SEND_HUD_DATA,
+                NetworkPayloads.SendHudDataPayload.CODEC
         );
 
         PayloadTypeRegistry.playS2C().register(
-                HudNetworkPayloads.SEND_RAY_POS,
-                HudNetworkPayloads.SendRayPosPayload.CODEC
+                NetworkPayloads.SEND_RAY_POS,
+                NetworkPayloads.SendRayPosPayload.CODEC
         );
         PayloadTypeRegistry.playS2C().register(
-                HudNetworkPayloads.REMOVE_RAY_POS,
-                HudNetworkPayloads.RemoveRayPosPayload.CODEC
+                NetworkPayloads.REMOVE_RAY_POS,
+                NetworkPayloads.RemoveRayPosPayload.CODEC
         );
+
+        PayloadTypeRegistry.playC2S().register(
+                NetworkPayloads.NekoTagUpdatePayload.ID,
+                NetworkPayloads.NekoTagUpdatePayload.CODEC
+        );
+
+        ServerPlayNetworking.registerGlobalReceiver(
+                NetworkPayloads.NekoTagUpdatePayload.ID,
+                (payload, context) -> {
+                    context.server().execute(() -> handleNekoTagUpdate(context.player(), payload));
+                }
+        );
+
 
         // 注册请求处理器
         ServerPlayNetworking.registerGlobalReceiver(
-                HudNetworkPayloads.REQUEST_HUD_DATA,
-                (payload, context) -> handleHudDataRequest(payload, context)
+                NetworkPayloads.REQUEST_HUD_DATA,
+                NetworkHandler::handleHudDataRequest
         );
     }
 
+    private static void handleNekoTagUpdate(ServerPlayerEntity player, NetworkPayloads.NekoTagUpdatePayload payload) {
+
+        Hand hand = Hand.valueOf(payload.hand());
+        ItemStack tagStack = player.getStackInHand(hand);
+
+        if (!tagStack.isOf(ModItems.neko_tag)) {
+            return;
+        }
+
+        DyeColor color = DyeColor.byName(payload.color(), DyeColor.WHITE);
+
+        short priority = payload.priority();
+        if (priority < 0) {
+            priority = 0;
+        }
+
+        NekoTask task = NekoTask.byId(payload.task());
+
+        ItemStack displayStack = ItemStack.EMPTY;
+        Identifier displayId = Identifier.tryParse(payload.displayItemId());
+
+        if (displayId != null) {
+            Item item = Registries.ITEM.get(displayId);
+
+            if (item != Items.AIR) {
+                displayStack = new ItemStack(item);
+            }
+        }
+
+        NekoTagData.save(
+                tagStack,
+                color,
+                priority,
+                task,
+                displayStack
+        );
+
+        player.getInventory().markDirty();
+    }
+
     private static void handleHudDataRequest(
-            HudNetworkPayloads.RequestHudDataPayload payload,
+            NetworkPayloads.RequestHudDataPayload payload,
             ServerPlayNetworking.Context context
     ) {
         BlockPos pos = payload.pos();
@@ -88,7 +148,7 @@ public class HudNetworkHandler {
                 // 发送回客户端
                 ServerPlayNetworking.send(
                         player,
-                        new HudNetworkPayloads.SendHudDataPayload(pos, nbt)
+                        new NetworkPayloads.SendHudDataPayload(pos, nbt)
                 );
             }
         });
