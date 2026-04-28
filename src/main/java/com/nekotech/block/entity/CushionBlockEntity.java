@@ -1,22 +1,18 @@
 package com.nekotech.block.entity;
 
-import com.nekotech.block.entity.machines.CatNeedMachineBlockEntity;
+import com.nekotech.block.entity.machines.api.ICatNeedMachine;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
-import com.nekotech.item.api.googles.templates.ContainerHUDData;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.passive.CatEntity;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CushionBlockEntity extends BlockEntity implements IHaveGoogleHUD {
@@ -27,7 +23,7 @@ public class CushionBlockEntity extends BlockEntity implements IHaveGoogleHUD {
     private boolean hasCat = false;
     private long lastCheckTime = 0;
 
-    private final CatNeedMachineBlockEntity[] machines = new CatNeedMachineBlockEntity[MAX_MACHINES];
+    private final ICatNeedMachine[] machines = new ICatNeedMachine[MAX_MACHINES];
     private int machineCount = 0;
 
     public CushionBlockEntity(BlockPos pos, BlockState state) {
@@ -64,13 +60,18 @@ public class CushionBlockEntity extends BlockEntity implements IHaveGoogleHUD {
         return hasCat;
     }
 
-    public boolean tryRegister(CatNeedMachineBlockEntity machine) {
-        if (machine == null) return false;
+    public boolean tryRegister(BlockEntity be) {
+        if (!(be instanceof ICatNeedMachine machine)) {
+            return false;
+        }
 
-        // 已注册
-        if (isRegistered(machine)) return true;
+        if (isRegistered(machine)) {
+            return true;
+        }
 
-        if (machineCount >= MAX_MACHINES) return false;
+        if (machineCount >= MAX_MACHINES) {
+            return false;
+        }
 
         for (int i = 0; i < MAX_MACHINES; i++) {
             if (machines[i] == null) {
@@ -79,24 +80,25 @@ public class CushionBlockEntity extends BlockEntity implements IHaveGoogleHUD {
                 return true;
             }
         }
-
         return false;
     }
 
-    public void unregisterMachine(CatNeedMachineBlockEntity machine) {
+    public void unregisterMachine(ICatNeedMachine machine) {
         if (machine == null) return;
 
         for (int i = 0; i < MAX_MACHINES; i++) {
             if (machines[i] == machine) {
                 machines[i] = null;
-                machineCount--;
+                if (machineCount > 0) {
+                    machineCount--;
+                }
                 return;
             }
         }
     }
 
-    public boolean isRegistered(CatNeedMachineBlockEntity machine) {
-        for (CatNeedMachineBlockEntity m : machines) {
+    public boolean isRegistered(ICatNeedMachine machine) {
+        for (ICatNeedMachine m : machines) {
             if (m == machine) return true;
         }
         return false;
@@ -113,12 +115,11 @@ public class CushionBlockEntity extends BlockEntity implements IHaveGoogleHUD {
 
     private void cleanupInvalidMachines() {
         for (int i = 0; i < MAX_MACHINES; i++) {
-            CatNeedMachineBlockEntity m = machines[i];
-
+            ICatNeedMachine m = machines[i];
             if (m == null) continue;
 
-            // world不同 or 已移除
-            if (m.isRemoved() || m.getWorld() != this.world) {
+            BlockEntity be = (BlockEntity) m;
+            if (be.isRemoved() || be.getWorld() != this.world) {
                 machines[i] = null;
                 if (machineCount > 0) {
                     machineCount--;

@@ -1,6 +1,8 @@
 package com.nekotech.block.entity.machines;
 
+import com.nekotech.block.entity.CushionBlockEntity;
 import com.nekotech.block.entity.ModBlockEntities;
+import com.nekotech.block.entity.machines.api.ICatNeedMachine;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.ContainerHUDData;
@@ -25,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity implements IHaveGoogleHUD {
+public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity implements IHaveGoogleHUD, ICatNeedMachine {
 
     public AlloyPotBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.alloy_pot, pos, state, 4);
@@ -49,6 +51,8 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity implements
 
     public int alloyProgress = 0;      // 当前合金进度
     private int alloyTimeTotal = 0;     // 总所需时间
+
+    private BlockPos boundCushionPos = null;
 
     public static void tick(World world, BlockPos pos, BlockState state, AlloyPotBlockEntity blockEntity) {
         if (world.isClient) {
@@ -328,5 +332,22 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity implements
         huds.add(new InfoBoxHUDData(pos, title, content));
 
         return huds;
+    }
+
+    @Override
+    public void setBoundCushion(BlockPos pos) {
+        this.boundCushionPos = pos;
+        markDirty();
+    }
+
+    @Override
+    public CushionBlockEntity getBoundCushion() {
+        if (world == null || boundCushionPos == null) return null;
+        var be = world.getBlockEntity(boundCushionPos);
+        if (be instanceof CushionBlockEntity cushion && cushion.isRegistered(this)) {
+            return cushion;
+        }
+        boundCushionPos = null; // 自动清理无效绑定
+        return null;
     }
 }

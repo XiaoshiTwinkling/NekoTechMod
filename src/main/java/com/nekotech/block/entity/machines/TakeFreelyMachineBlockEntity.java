@@ -18,7 +18,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class TakeFreelyMachineBlockEntity extends CatNeedMachineBlockEntity
+public class TakeFreelyMachineBlockEntity extends MachineBlockEntity
         implements SidedInventory, TakeFreelyInventory {
 
     protected final DefaultedList<ItemStack> inventory;

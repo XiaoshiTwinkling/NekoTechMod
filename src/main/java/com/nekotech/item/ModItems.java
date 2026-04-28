@@ -64,12 +64,10 @@ public class ModItems {
     public static final Item neko_box = registerItems("neko_box", new CatBoxItem(new Item.Settings()));
     public static final Item thermometer = registerItems("thermometer", new Thermometer(new Item.Settings(),"thermometer"));
     public static final Item ray_item = registerItems("ray_item", new RayItem(new Item.Settings().maxCount(1)));
-
     public static final Item neko_tag = registerItems(
             "neko_tag",
             new NekoTagItem(new Item.Settings().maxCount(1), "neko_tag")
     );
-
     public static final Item NEKO_TAIL = registerItems(
             "neko_tail",
             new TailItem(
@@ -78,6 +76,7 @@ public class ModItems {
                     "neko_tail"
             )
     );
+    //public static final Item brass_flux_outputer = registerItems("brass_flux_outputer", new);
 
 
     private static Item registerItems(String id, Item item){

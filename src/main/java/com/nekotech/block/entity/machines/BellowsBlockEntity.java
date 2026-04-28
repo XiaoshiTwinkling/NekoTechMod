@@ -1,6 +1,8 @@
 package com.nekotech.block.entity.machines;
 
+import com.nekotech.block.entity.CushionBlockEntity;
 import com.nekotech.block.entity.ModBlockEntities;
+import com.nekotech.block.entity.machines.api.ICatNeedMachine;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -12,7 +14,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class BellowsBlockEntity extends BlockEntity {
+public class BellowsBlockEntity extends BlockEntity implements ICatNeedMachine {
 
     // ===== 动画（客户端）=====
     public float progress = 0.0f;
@@ -21,6 +23,8 @@ public class BellowsBlockEntity extends BlockEntity {
 
     // ===== 状态（服务器同步）=====
     private boolean working = false;
+
+    private BlockPos boundCushionPos = null;
 
     public BellowsBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.bellows, pos, state);
@@ -112,5 +116,18 @@ public class BellowsBlockEntity extends BlockEntity {
     @Nullable
     public Packet<ClientPlayPacketListener> toUpdatePacket() {
         return BlockEntityUpdateS2CPacket.create(this);
+    }
+
+    @Override
+    public void setBoundCushion(BlockPos pos) {
+        this.boundCushionPos = pos;
+        markDirty();
+    }
+
+    @Override
+    public CushionBlockEntity getBoundCushion() {
+        if (world == null || boundCushionPos == null) return null;
+        var be = world.getBlockEntity(boundCushionPos);
+        return be instanceof CushionBlockEntity c ? c : null;
     }
 }
