@@ -79,5 +79,13 @@
   "advancements.neko_technology.root.title": "NekoTech",
   "advancements.neko_technology.root.description": "欢迎来到猫猫科技！",
   "advancements.neko_technology.get_neko_slik.title": "喵语织云缎",
-  "advancements.neko_technology.get_neko_slik.description": "用猫猫的毛，织出一匹猫猫丝绸喵~"
+  "advancements.neko_technology.get_neko_slik.description": "用猫猫的毛，织出一匹猫猫丝绸喵~",
+
+  "item.neko-technology.neko_tag": "猫咪标签",
+  "screen.neko-technology.neko_tag": "猫咪标签",
+
+  "screen.neko-technology.neko_tag.color": "颜色",
+  "screen.neko-technology.neko_tag.item": "物品",
+  "screen.neko-technology.neko_tag.priority": "优先级",
+  "screen.neko-technology.neko_tag.task": "任务"
 }

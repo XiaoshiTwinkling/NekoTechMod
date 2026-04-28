@@ -68,6 +68,7 @@ public class ModItemGroups {
                             entries.add(ModItems.yellow_neko_goggles);
                             entries.add(ModItems.green_neko_goggles);
                             entries.add(ModItems.ray_item);
+                            entries.add(ModItems.neko_tag);
                         })).build());
 
         Registry.register(Registries.ITEM_GROUP, NekoTech_BLOCKS,

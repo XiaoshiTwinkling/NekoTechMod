@@ -35,7 +35,6 @@ public class DriedFishTameHandler {
             // 驯服猫
             cat.setOwner(player);
 
-            player.giveItemStack(new ItemStack(ModItems.tin_can));
             cat.getWorld().sendEntityStatus(cat, (byte)7);
 
 

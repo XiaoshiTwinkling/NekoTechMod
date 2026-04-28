@@ -13,21 +13,21 @@ public class ClientHudNetworkHandler {
     public static void initialize() {
         // 注册接收HUD数据的处理器
         ClientPlayNetworking.registerGlobalReceiver(
-                HudNetworkPayloads.SEND_HUD_DATA,
+                NetworkPayloads.SEND_HUD_DATA,
                 ClientHudNetworkHandler::handleHudData
         );
         ClientPlayNetworking.registerGlobalReceiver(
-                HudNetworkPayloads.SEND_RAY_POS,
+                NetworkPayloads.SEND_RAY_POS,
                 ClientHudNetworkHandler::handleRayPos
         );
         ClientPlayNetworking.registerGlobalReceiver(
-                HudNetworkPayloads.REMOVE_RAY_POS,
+                NetworkPayloads.REMOVE_RAY_POS,
                 ClientHudNetworkHandler::handleRemoveRayPos
         );
     }
 
     private static void handleHudData(
-            HudNetworkPayloads.SendHudDataPayload payload,
+            NetworkPayloads.SendHudDataPayload payload,
             ClientPlayNetworking.Context context
     ) {
         BlockPos pos = payload.pos();
@@ -39,7 +39,7 @@ public class ClientHudNetworkHandler {
 
             if (client.world != null) {
                 var registries = client.world.getRegistryManager();
-                java.util.List<GoogleAbstractHUD> hudList = com.nekotech.network.HudNetworkHandler.deserializeHudList(nbt, registries, pos);
+                java.util.List<GoogleAbstractHUD> hudList = NetworkHandler.deserializeHudList(nbt, registries, pos);
 
                 if (hudList != null && !hudList.isEmpty()) {
                     HudDataCache.storeHudDataList(pos, hudList);
@@ -49,7 +49,7 @@ public class ClientHudNetworkHandler {
     }
 
     private static void handleRayPos(
-            HudNetworkPayloads.SendRayPosPayload payload,
+            NetworkPayloads.SendRayPosPayload payload,
             ClientPlayNetworking.Context context
     ) {
         UUID uuid = payload.uuid();
@@ -63,7 +63,7 @@ public class ClientHudNetworkHandler {
     }
 
     private static void handleRemoveRayPos(
-            HudNetworkPayloads.RemoveRayPosPayload payload,
+            NetworkPayloads.RemoveRayPosPayload payload,
             ClientPlayNetworking.Context context
     ) {
         UUID uuid = payload.uuid();
@@ -78,7 +78,7 @@ public class ClientHudNetworkHandler {
      */
     public static void requestHudData(BlockPos pos) {
         ClientPlayNetworking.send(
-                new HudNetworkPayloads.RequestHudDataPayload(pos)
+                new NetworkPayloads.RequestHudDataPayload(pos)
         );
     }
 }
