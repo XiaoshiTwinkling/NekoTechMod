@@ -1,7 +1,9 @@
 package com.nekotech.block.entity.machines.api;
 
 import com.nekotech.item.custom.component.AbstractComponentItem;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.Item;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -65,5 +67,17 @@ public interface ComponentAdaptation {
      */
     default Map<Direction, Item> getAllComponentsForDrop() {
         return Collections.unmodifiableMap(getAttachedComponents());
+    }
+
+    /**
+     * @return 方块实体位置
+     */
+    default BlockPos getPos() {
+        if (this instanceof BlockEntity be) {
+            return be.getPos();
+        }
+        throw new IllegalStateException(
+                "ComponentAdaptation must be implemented by BlockEntity"
+        );
     }
 }

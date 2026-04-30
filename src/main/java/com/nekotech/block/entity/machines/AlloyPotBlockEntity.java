@@ -2,7 +2,10 @@ package com.nekotech.block.entity.machines;
 
 import com.nekotech.block.entity.CushionBlockEntity;
 import com.nekotech.block.entity.ModBlockEntities;
+import com.nekotech.block.entity.machines.api.ComponentAdaptation;
 import com.nekotech.block.entity.machines.api.ICatNeedMachine;
+import com.nekotech.block.entity.machines.api.IElectricalMachine;
+import com.nekotech.item.ModItems;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.ContainerHUDData;
@@ -14,6 +17,7 @@ import com.nekotech.recipe.ModRecipes;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.RecipeEntry;
@@ -21,13 +25,13 @@ import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity implements IHaveGoogleHUD, ICatNeedMachine {
+public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity
+        implements IHaveGoogleHUD, ICatNeedMachine, IElectricalMachine, ComponentAdaptation {
 
     public AlloyPotBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.alloy_pot, pos, state, 4);
@@ -53,6 +57,9 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity implements
     private int alloyTimeTotal = 0;     // 总所需时间
 
     private BlockPos boundCushionPos = null;
+    private float nekoFlux = 0.0f;
+    private final EnumMap<Direction, Item> components =
+            new EnumMap<>(Direction.class);
 
     public static void tick(World world, BlockPos pos, BlockState state, AlloyPotBlockEntity blockEntity) {
         if (world.isClient) {
@@ -126,6 +133,10 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity implements
 
     private void serverTick() {
         updateTemperature();
+
+        for (Direction dir : Direction.values()) {
+            componentTick(world, dir);
+        }
 
         if (isInputEmpty()) {
             isCrafting = false;
@@ -349,5 +360,25 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity implements
         }
         boundCushionPos = null; // 自动清理无效绑定
         return null;
+    }
+
+    @Override
+    public float getNekoFlux() {
+        return nekoFlux;
+    }
+
+    @Override
+    public void setNekoFlux(float value) {
+        nekoFlux=value;
+    }
+
+    @Override
+    public Map<Direction, Item> getAttachedComponents() {
+        return components;
+    }
+
+    @Override
+    public Set<Item> getValidComponents() {
+        return Set.of(ModItems.brass_flux_outputer);
     }
 }

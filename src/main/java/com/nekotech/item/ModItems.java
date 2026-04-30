@@ -3,6 +3,7 @@ package com.nekotech.item;
 import com.nekotech.NekoTechnology;
 import com.nekotech.item.custom.*;
 import com.nekotech.item.custom.NekoTag.NekoTagItem;
+import com.nekotech.item.custom.component.BrassFluxOutputItem;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.item.*;
@@ -76,7 +77,7 @@ public class ModItems {
                     "neko_tail"
             )
     );
-    //public static final Item brass_flux_outputer = registerItems("brass_flux_outputer", new);
+    public static final Item brass_flux_outputer = registerItems("brass_flux_outputer", new BrassFluxOutputItem());
 
 
     private static Item registerItems(String id, Item item){
