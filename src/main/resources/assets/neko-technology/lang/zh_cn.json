@@ -58,7 +58,6 @@
   "item.neko-technology.neko_copper_boots.tooltip": "猫猫紫铜全套效果: 迅捷Ⅱ",
   "item.neko-technology.ray_item": "激光笔",
   "item.neko-technology.wooden_casing": "木制机壳",
-  "item.neko-technology.flux_storage": "猫猫通量储存器",
   "item.neko-technology.brass_flux_outputer": "黄铜通量输出零件",
 
   "block.neko-technology.yes": "是",
@@ -71,6 +70,8 @@
   "block.neko-technology.alloy_pot.description": "§2炉温：§0 %s \n§2最高炉温：§0 %s \n§2正在工作：§0 %s \n§2已经成型：§0 %s",
   "block.neko-technology.cushion_block": "猫猫坐垫",
   "block.neko-technology.cushion.description": "§2是否有猫猫：§0 %s ",
+  "block.neko-technology.flux_storage": "猫猫通量储存器",
+  "block.neko-technology.flux_storage.description": "§2储能：§0 %s/%s NF \n§2填充比例：§0 %s \n§2是否有猫猫：§0 %s \n安装零件: %s个",
 
   "message.nekotech.item_put": "%s 已放入喵~",
   "message.nekotech.all_items_taken": "东西全部拿出来了喵~",

@@ -23,6 +23,7 @@ import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
@@ -165,31 +166,23 @@ public class FluxStorageBlockEntity extends MachineBlockEntity
         }
 
         // 创建HUD数据
-        String title = "猫猫通量储存器";
         float currentFlux = getNekoFlux();
         float maxFlux = getMaxNekoFlux();
         float percentage = (maxFlux > 0) ? (currentFlux / maxFlux * 100) : 0;
 
-        // 构建信息内容
-        StringBuilder content = new StringBuilder();
-        content.append(String.format("当前能量: %.1f / %.1f NF\n", currentFlux, maxFlux));
-        content.append(String.format("填充比例: %.1f%%\n", percentage));
-        content.append(String.format("机器状态: %s\n", isActive ? "运行中" : "待机"));
-
-        // 检查猫垫绑定状态
-        CushionBlockEntity cushion = getBoundCushion();
-        if (cushion != null) {
-            content.append(String.format("猫垫状态: %s\n",
-                    cushion.hasCatCached() ? "有猫猫在" : "等待猫猫"));
-        } else {
-            content.append("猫垫状态: 未绑定\n");
-        }
 
         // 显示安装的零件
         int componentCount = attachedComponents.size();
-        content.append(String.format("安装零件: %d个", componentCount));
 
-        return new InfoBoxHUDData(pos, Text.literal(title), Text.literal(content.toString()));
+        Text title = Text.translatable("block.neko-technology.flux_storage").formatted(Formatting.GOLD);
+        Text content = Text.translatable("block.neko-technology.flux_storage.description"
+                ,(int) currentFlux, (int)maxFlux
+                ,(int)percentage
+                ,canMachineRun() ? Text.translatable("block.neko-technology.yes") : Text.translatable("block.neko-technology.no")
+                ,componentCount
+        );
+
+        return new InfoBoxHUDData(pos, title, content);
     }
 
     @Override

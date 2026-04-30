@@ -16,7 +16,6 @@ import java.util.Map;
 
 public class InfoBoxHUDClient extends GoogleAbstractHUDClient {
     private InfoBoxHUDData hudData;
-    private final Identifier backgroundTexture = Identifier.of("textures/gui/demo_background.png");
     private List<OrderedText> wrappedContentLines = null;
     private int contentHeight = 0;
 
@@ -187,5 +186,9 @@ public class InfoBoxHUDClient extends GoogleAbstractHUDClient {
         context.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.disableBlend();
         matrices.pop();
+    }
+
+    public int getContentHeight() {
+        return contentHeight;
     }
 }
