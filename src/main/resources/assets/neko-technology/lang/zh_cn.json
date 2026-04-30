@@ -57,6 +57,9 @@
   "item.neko-technology.neko_copper_leggings.tooltip": "猫猫紫铜全套效果: 迅捷Ⅱ",
   "item.neko-technology.neko_copper_boots.tooltip": "猫猫紫铜全套效果: 迅捷Ⅱ",
   "item.neko-technology.ray_item": "激光笔",
+  "item.neko-technology.wooden_casing": "木制机壳",
+  "item.neko-technology.flux_storage": "猫猫通量储存器",
+  "item.neko-technology.brass_flux_outputer": "黄铜通量输出零件",
 
   "block.neko-technology.yes": "是",
   "block.neko-technology.no": "否",

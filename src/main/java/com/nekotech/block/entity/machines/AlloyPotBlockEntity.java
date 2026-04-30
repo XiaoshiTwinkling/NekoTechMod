@@ -31,7 +31,7 @@ import net.minecraft.world.World;
 import java.util.*;
 
 public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity
-        implements IHaveGoogleHUD, ICatNeedMachine, IElectricalMachine, ComponentAdaptation {
+        implements IHaveGoogleHUD, ICatNeedMachine {
 
     public AlloyPotBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.alloy_pot, pos, state, 4);
@@ -57,9 +57,6 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity
     private int alloyTimeTotal = 0;     // 总所需时间
 
     private BlockPos boundCushionPos = null;
-    private float nekoFlux = 0.0f;
-    private final EnumMap<Direction, Item> components =
-            new EnumMap<>(Direction.class);
 
     public static void tick(World world, BlockPos pos, BlockState state, AlloyPotBlockEntity blockEntity) {
         if (world.isClient) {
@@ -133,10 +130,6 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity
 
     private void serverTick() {
         updateTemperature();
-
-        for (Direction dir : Direction.values()) {
-            componentTick(world, dir);
-        }
 
         if (isInputEmpty()) {
             isCrafting = false;
@@ -360,25 +353,5 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity
         }
         boundCushionPos = null; // 自动清理无效绑定
         return null;
-    }
-
-    @Override
-    public float getNekoFlux() {
-        return nekoFlux;
-    }
-
-    @Override
-    public void setNekoFlux(float value) {
-        nekoFlux=value;
-    }
-
-    @Override
-    public Map<Direction, Item> getAttachedComponents() {
-        return components;
-    }
-
-    @Override
-    public Set<Item> getValidComponents() {
-        return Set.of(ModItems.brass_flux_outputer);
     }
 }

@@ -34,6 +34,10 @@ public interface ComponentAdaptation {
     Set<Item> getValidComponents();
 
     default boolean canAttachComponent(Direction side, Item component) {
+        if (getComponent(side) != null) {
+            return false;  // 该面已有零件，不能重复安装喵
+        }
+
         return getValidComponents().contains(component);
     }
 

@@ -1,5 +1,6 @@
 package com.nekotech.item.custom.component;
 
+import com.nekotech.NekoTechnology;
 import com.nekotech.block.entity.machines.api.ComponentAdaptation;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -30,6 +31,7 @@ public abstract class AbstractComponentItem extends Item {
             return ActionResult.PASS;
         }
 
+
         if (!machine.canAttachComponent(side, this)) {
             if (!world.isClient() && player != null) {
                 player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BASS.value());
@@ -37,11 +39,13 @@ public abstract class AbstractComponentItem extends Item {
             return ActionResult.FAIL;
         }
 
+
         if (!world.isClient()) {
             machine.attachComponent(side, this);
             context.getStack().decrement(1);
             world.playSound(null, pos, SoundEvents.BLOCK_COPPER_PLACE, SoundCategory.BLOCKS, 1f, 1f);
         }
+
 
         return ActionResult.success(world.isClient());
     }

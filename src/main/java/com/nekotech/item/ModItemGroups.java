@@ -69,6 +69,8 @@ public class ModItemGroups {
                             entries.add(ModItems.green_neko_goggles);
                             entries.add(ModItems.ray_item);
                             entries.add(ModItems.neko_tag);
+                            entries.add(ModItems.brass_flux_outputer);
+
                         })).build());
 
         Registry.register(Registries.ITEM_GROUP, NekoTech_BLOCKS,
@@ -81,6 +83,7 @@ public class ModItemGroups {
                             entries.add(ModBlocks.bellows);
                             entries.add(ModBlocks.heater);
                             entries.add(ModBlocks.alloy_pot);
+                            entries.add(ModBlocks.flux_storage);
 
                         })).build());
 

@@ -18,9 +18,11 @@ public class BrassFluxOutputItem extends AbstractComponentItem{
     public void useComponent(World world, ComponentAdaptation self, Direction side) {
         BlockPos targetPos = self.getPos().offset(side);
         BlockEntity neighbor = world.getBlockEntity(targetPos);
-
-        if (neighbor instanceof IElectricalMachine receiver) {
-            receiver.receiveFlux(1); // test:每 tick 输出 1 NekoFlux
+        if (neighbor instanceof IElectricalMachine adder && self instanceof IElectricalMachine receiver) {
+            if(adder.getNekoFlux() < adder.getMaxNekoFlux() && receiver.getNekoFlux() > 0){
+                receiver.receiveFlux(1);
+                adder.addFlux(1);
+            }
         }
     }
 }

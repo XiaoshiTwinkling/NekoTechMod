@@ -2,21 +2,27 @@ package com.nekotech;
 
 import com.nekotech.Screen.NekoTagScreen;
 import com.nekotech.block.entity.ModBlockEntities;
-import com.nekotech.client.hud.GogglesHudRenderer;
+import com.nekotech.block.entity.machines.FluxStorageBlockEntity;
+import com.nekotech.renderer.GogglesHudRenderer;
 import com.nekotech.network.ClientHudNetworkHandler;
 import com.nekotech.renderer.AlloyPotBlockEntityRenderer;
 import com.nekotech.renderer.BellowsBlockEntityRenderer;
 import com.nekotech.renderer.CatTailFeatureRenderer;
 import com.nekotech.renderer.ClientLaserTargetCache;
+import com.nekotech.renderer.components.ComponentAttachmentRenderer;
 import com.nekotech.screen.ModScreenHandlers;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
+import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
+import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
+
 
 public class NekoTechnologyClient implements ClientModInitializer {
 
@@ -35,6 +41,8 @@ public class NekoTechnologyClient implements ClientModInitializer {
                 ModBlockEntities.alloy_pot,
                 AlloyPotBlockEntityRenderer::new
         );
+
+        registerComponentAttachmentRenderer();
 
         ClientHudNetworkHandler.initialize();
         // 注册HUD渲染回调
@@ -59,5 +67,14 @@ public class NekoTechnologyClient implements ClientModInitializer {
 
     public static GogglesHudRenderer getHudRenderer() {
         return HUD_RENDERER;
+    }
+
+    private void registerComponentAttachmentRenderer(){
+        BlockEntityRendererRegistry.register(ModBlockEntities.flux_storage, new BlockEntityRendererFactory<FluxStorageBlockEntity>() {
+            @Override
+            public BlockEntityRenderer<FluxStorageBlockEntity> create(Context ctx) {
+                return new ComponentAttachmentRenderer();
+            }
+        });
     }
 }
