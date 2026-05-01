@@ -1,6 +1,6 @@
 package com.nekotech.block.entity.machines;
 
-import com.nekotech.block.entity.machines.api.TakeFreelyInventory;
+import com.nekotech.block.entity.api.TakeFreelyInventory;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;

@@ -1,4 +1,4 @@
-package com.nekotech.block.entity.machines.api;
+package com.nekotech.block.entity.api;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

@@ -2,10 +2,7 @@ package com.nekotech.block.entity.machines;
 
 import com.nekotech.block.entity.CushionBlockEntity;
 import com.nekotech.block.entity.ModBlockEntities;
-import com.nekotech.block.entity.machines.api.ComponentAdaptation;
-import com.nekotech.block.entity.machines.api.ICatNeedMachine;
-import com.nekotech.block.entity.machines.api.IElectricalMachine;
-import com.nekotech.item.ModItems;
+import com.nekotech.block.entity.api.ICatNeedMachine;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.ContainerHUDData;
@@ -17,7 +14,6 @@ import com.nekotech.recipe.ModRecipes;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.RecipeEntry;
@@ -25,7 +21,6 @@ import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
 import java.util.*;

@@ -1,4 +1,4 @@
-package com.nekotech.block.entity.machines.api;
+package com.nekotech.block.entity.api;
 
 import com.nekotech.block.entity.CushionBlockEntity;
 import net.minecraft.block.entity.BlockEntity;

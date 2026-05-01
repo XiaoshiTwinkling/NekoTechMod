@@ -1,12 +1,9 @@
 package com.nekotech.item.custom.component;
 
-import com.nekotech.NekoTechnology;
-import com.nekotech.block.entity.machines.api.ComponentAdaptation;
+import com.nekotech.block.entity.api.component.ComponentAdaptation;
 import com.nekotech.item.ModItem;
-import com.nekotech.item.ModItems;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -14,9 +11,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public abstract class AbstractComponentItem extends ModItem {
 

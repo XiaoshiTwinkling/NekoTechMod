@@ -1,4 +1,4 @@
-package com.nekotech.block.entity.machines.api;
+package com.nekotech.block.entity.api.electrical;
 
 public interface IElectricalMachine {
     float getNekoFlux();

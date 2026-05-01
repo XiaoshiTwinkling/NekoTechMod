@@ -1,6 +1,6 @@
 package com.nekotech.item.custom;
 
-import com.nekotech.block.entity.machines.api.ComponentAdaptation;
+import com.nekotech.block.entity.api.component.ComponentAdaptation;
 import com.nekotech.item.AbstractDurabilityItem;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.EquipmentSlot;

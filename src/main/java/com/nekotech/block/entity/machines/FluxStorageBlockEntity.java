@@ -1,18 +1,15 @@
 package com.nekotech.block.entity.machines;
 
-import com.nekotech.NekoTechnology;
 import com.nekotech.block.entity.CushionBlockEntity;
 import com.nekotech.block.entity.ModBlockEntities;
-import com.nekotech.block.entity.machines.api.ComponentAdaptation;
-import com.nekotech.block.entity.machines.api.ICatNeedMachine;
-import com.nekotech.block.entity.machines.api.IElectricalMachine;
+import com.nekotech.block.entity.api.component.ComponentAdaptation;
+import com.nekotech.block.entity.api.ICatNeedMachine;
+import com.nekotech.block.entity.api.electrical.IElectricalMachine;
 import com.nekotech.item.ModItems;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
-import com.nekotech.item.custom.component.AbstractComponentItem;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -26,14 +23,12 @@ import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,12 +42,13 @@ public class FluxStorageBlockEntity extends MachineBlockEntity
     private BlockPos boundCushionPos = null;
 
     private final Map<Direction, Item> attachedComponents = new EnumMap<>(Direction.class);
-    private final Set<Item> validComponents = ModItems.getAllComponents();
+    private Set<Item> validComponents = ModItems.getAllComponents();
 
     private boolean isActive = false;
 
     public FluxStorageBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.flux_storage, pos, state);
+        validComponents.remove(ModItems.brass_item_inputer);
     }
 
     /**

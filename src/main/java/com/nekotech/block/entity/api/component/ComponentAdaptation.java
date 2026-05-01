@@ -1,4 +1,4 @@
-package com.nekotech.block.entity.machines.api;
+package com.nekotech.block.entity.api.component;
 
 import com.nekotech.item.custom.component.AbstractComponentItem;
 import net.minecraft.block.entity.BlockEntity;

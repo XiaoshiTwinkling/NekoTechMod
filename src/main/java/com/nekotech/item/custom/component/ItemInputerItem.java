@@ -1,6 +1,6 @@
 package com.nekotech.item.custom.component;
 
-import com.nekotech.block.entity.machines.api.ComponentAdaptation;
+import com.nekotech.block.entity.api.component.ComponentAdaptation;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;

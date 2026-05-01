@@ -2,7 +2,7 @@ package com.nekotech.block.entity.machines;
 
 import com.nekotech.block.entity.CushionBlockEntity;
 import com.nekotech.block.entity.ModBlockEntities;
-import com.nekotech.block.entity.machines.api.ICatNeedMachine;
+import com.nekotech.block.entity.api.ICatNeedMachine;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;

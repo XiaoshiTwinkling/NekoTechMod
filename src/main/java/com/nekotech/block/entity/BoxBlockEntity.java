@@ -1,7 +1,7 @@
 package com.nekotech.block.entity;
 
 import com.nekotech.block.entity.machines.FluxStorageBlockEntity;
-import com.nekotech.block.entity.machines.api.ComponentAdaptation;
+import com.nekotech.block.entity.api.component.ComponentAdaptation;
 import com.nekotech.item.ModItems;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;

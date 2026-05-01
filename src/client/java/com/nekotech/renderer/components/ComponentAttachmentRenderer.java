@@ -1,7 +1,6 @@
 package com.nekotech.renderer.components;
 
-import com.nekotech.block.entity.machines.FluxStorageBlockEntity;
-import com.nekotech.block.entity.machines.api.ComponentAdaptation;
+import com.nekotech.block.entity.api.component.ComponentAdaptation;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;

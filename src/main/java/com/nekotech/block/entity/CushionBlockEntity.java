@@ -1,6 +1,6 @@
 package com.nekotech.block.entity;
 
-import com.nekotech.block.entity.machines.api.ICatNeedMachine;
+import com.nekotech.block.entity.api.ICatNeedMachine;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;

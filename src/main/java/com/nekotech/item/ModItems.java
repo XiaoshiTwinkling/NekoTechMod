@@ -1,7 +1,7 @@
 package com.nekotech.item;
 
 import com.nekotech.NekoTechnology;
-import com.nekotech.block.entity.machines.api.ComponentAdaptation;
+import com.nekotech.block.entity.api.component.ComponentAdaptation;
 import com.nekotech.item.custom.*;
 import com.nekotech.item.custom.NekoTag.NekoTagItem;
 import com.nekotech.item.custom.component.AbstractComponentItem;
