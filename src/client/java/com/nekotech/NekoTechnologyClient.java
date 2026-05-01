@@ -76,5 +76,17 @@ public class NekoTechnologyClient implements ClientModInitializer {
                 return new ComponentAttachmentRenderer();
             }
         });
+        BlockEntityRendererRegistry.register(ModBlockEntities.basic_storage_enclosure, new BlockEntityRendererFactory<BlockEntity>() {
+            @Override
+            public BlockEntityRenderer<BlockEntity> create(Context ctx) {
+                return new ComponentAttachmentRenderer();
+            }
+        });
+        BlockEntityRendererRegistry.register(ModBlockEntities.heater, new BlockEntityRendererFactory<BlockEntity>() {
+            @Override
+            public BlockEntityRenderer<BlockEntity> create(Context ctx) {
+                return new ComponentAttachmentRenderer();
+            }
+        });
     }
 }

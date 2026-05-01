@@ -1,12 +1,15 @@
 package com.nekotech.block.entity.machines;
 
 import com.nekotech.block.entity.ModBlockEntities;
+import com.nekotech.block.entity.machines.api.ComponentAdaptation;
 import com.nekotech.block.entity.machines.api.TakeFreelyInventory;
+import com.nekotech.item.ModItems;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.ContainerHUDData;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
 import com.nekotech.item.block.Heater;
+import com.nekotech.item.custom.component.IcanItemIO;
 import com.nekotech.modTags.ModTags;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
@@ -17,23 +20,30 @@ import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
+import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class HeaterBlockEntity extends MachineBlockEntity implements SidedInventory, TakeFreelyInventory, IHaveGoogleHUD {
+public class HeaterBlockEntity extends MachineBlockEntity
+        implements SidedInventory, ComponentAdaptation , TakeFreelyInventory, IHaveGoogleHUD, IcanItemIO {
     private static final int FUEL_SLOT = 0;
     private static final int MAX_BURN_TIME = 600;
     private static final float MAX_TEMPERATURE = 400.0f;
@@ -54,6 +64,10 @@ public class HeaterBlockEntity extends MachineBlockEntity implements SidedInvent
     private int maxBurnTime = 0;
 
     private boolean isLit = false;
+
+    private final Map<Direction, Item> attachedComponents = new EnumMap<>(Direction.class);
+    private final Set<Item> validComponents = ModItems.getAllComponents();
+
 
     private static final Map<Item, Integer> FUEL_MAP =
             AbstractFurnaceBlockEntity.createFuelTimeMap();
@@ -80,6 +94,7 @@ public class HeaterBlockEntity extends MachineBlockEntity implements SidedInvent
 
     public HeaterBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.heater, pos, state);
+        validComponents.add(ModItems.brass_item_inputer);
     }
 
 
@@ -132,6 +147,11 @@ public class HeaterBlockEntity extends MachineBlockEntity implements SidedInvent
     @Override
     public int[] getAvailableSlots(Direction side) {
         return new int[]{FUEL_SLOT};
+    }
+
+    @Override
+    public boolean canInsertwithComponent(ItemStack item){
+        return isFuel(item);
     }
 
     @Override
@@ -226,6 +246,31 @@ public class HeaterBlockEntity extends MachineBlockEntity implements SidedInvent
     }
 
     @Override
+    public Map<Direction, Item> getAttachedComponents() {
+        return this.attachedComponents;
+    }
+
+    @Override
+    public Set<Item> getValidComponents() {
+        return this.validComponents;
+    }
+
+    @Override
+    public boolean attachComponent(Direction side, Item component) {
+        if (!canAttachComponent(side, component)) {
+            return false;
+        }
+        attachedComponents.put(side, component);
+
+        this.markDirty();
+
+        if (world != null && !world.isClient()) {
+            world.updateListeners(pos, getCachedState(), getCachedState(), 3);
+        }
+        return true;
+    }
+
+    @Override
     protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         super.writeNbt(nbt, registryLookup);
 
@@ -236,6 +281,22 @@ public class HeaterBlockEntity extends MachineBlockEntity implements SidedInvent
         nbt.putInt("BurnTime", burnTime);
         nbt.putInt("MaxBurnTime", maxBurnTime);
         nbt.putBoolean("IsLit", isLit);
+
+        // 保存安装的零件
+        NbtCompound componentsNbt = new NbtCompound();
+        for (Map.Entry<Direction, Item> entry : attachedComponents.entrySet()) {
+            String sideName = entry.getKey().getName();
+            String itemId = Registries.ITEM.getId(entry.getValue()).toString();
+            componentsNbt.putString(sideName, itemId);
+        }
+        nbt.put("AttachedComponents", componentsNbt);
+
+        // 保存允许的零件列表
+        NbtList validList = new NbtList();
+        for (Item item : validComponents) {
+            validList.add(NbtString.of(Registries.ITEM.getId(item).toString()));
+        }
+        nbt.put("ValidComponents", validList);
     }
 
     @Override
@@ -249,6 +310,31 @@ public class HeaterBlockEntity extends MachineBlockEntity implements SidedInvent
         burnTime = nbt.getInt("BurnTime");
         maxBurnTime = nbt.getInt("MaxBurnTime");
         isLit = nbt.getBoolean("IsLit");
+
+        // 读取安装的零件
+        attachedComponents.clear();
+        if (nbt.contains("AttachedComponents", NbtElement.COMPOUND_TYPE)) {
+            NbtCompound componentsNbt = nbt.getCompound("AttachedComponents");
+            for (String sideName : componentsNbt.getKeys()) {
+                Direction side = Direction.byName(sideName);
+                String itemId = componentsNbt.getString(sideName);
+                Item item = Registries.ITEM.get(Identifier.tryParse(itemId));
+                if (side != null) {
+                    attachedComponents.put(side, item);
+                }
+            }
+        }
+
+        // 读取允许的零件列表
+        validComponents.clear();
+        if (nbt.contains("ValidComponents", NbtElement.LIST_TYPE)) {
+            NbtList validList = nbt.getList("ValidComponents", NbtElement.STRING_TYPE);
+            for (int i = 0; i < validList.size(); i++) {
+                String itemId = validList.getString(i);
+                Item item = Registries.ITEM.get(Identifier.tryParse(itemId));
+                validComponents.add(item);
+            }
+        }
     }
 
     @Override
@@ -310,11 +396,24 @@ public class HeaterBlockEntity extends MachineBlockEntity implements SidedInvent
         }
     }
 
+    public void tickComponents() {
+        if (world == null || world.isClient()) return;
+
+        for (Direction side : Direction.values()) {
+            Item component = getComponent(side);
+            if (component != null) {
+                componentTick(world, side);
+            }
+        }
+    }
+
     //@Environment(EnvType.SERVER)
     public void serverTick(World world, BlockPos pos, BlockState state) {
         if (world.isClient) return;
 
         baseTick(world, pos, state); //启动lazytick
+
+        tickComponents();
 
         if (getStack(FUEL_SLOT).getCount() > 0) {
             if (!isHeating()) {
@@ -420,5 +519,20 @@ public class HeaterBlockEntity extends MachineBlockEntity implements SidedInvent
         huds.add(new InfoBoxHUDData(pos, title, content));
 
         return huds;
+    }
+
+    @Nullable
+    @Override
+    public Packet<ClientPlayPacketListener> toUpdatePacket() {
+        // 此方法创建用于同步方块实体数据的网络包
+        return BlockEntityUpdateS2CPacket.create(this);
+    }
+
+    @Override
+    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registries) {
+        // 这个方法返回的数据会被打包进 toUpdatePacket 发送给客户端
+        NbtCompound nbt = new NbtCompound();
+        this.writeNbt(nbt, registries); // 复用你已有的保存逻辑
+        return nbt;
     }
 }

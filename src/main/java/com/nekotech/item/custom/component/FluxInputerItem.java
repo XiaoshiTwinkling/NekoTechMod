@@ -7,6 +7,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
+/**
+ * 可以把对面能量吸过来的零件喵~
+ */
 public class FluxInputerItem extends AbstractComponentItem{
     final float inputSpeed;
 

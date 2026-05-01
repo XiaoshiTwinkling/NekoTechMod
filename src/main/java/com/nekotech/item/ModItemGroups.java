@@ -69,10 +69,13 @@ public class ModItemGroups {
                             entries.add(ModItems.green_neko_goggles);
                             entries.add(ModItems.ray_item);
                             entries.add(ModItems.neko_tag);
+                            entries.add(ModItems.component_casing);
+                            entries.add(ModItems.brass_item_inputer);
                             entries.add(ModItems.brass_flux_outputer);
                             entries.add(ModItems.brass_flux_inputer);
                             entries.add(ModItems.neko_copper_flux_outputer);
                             entries.add(ModItems.neko_copper_flux_inputer);
+
 
                         })).build());
 

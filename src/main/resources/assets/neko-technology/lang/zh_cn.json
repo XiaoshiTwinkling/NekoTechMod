@@ -58,6 +58,8 @@
   "item.neko-technology.neko_copper_boots.tooltip": "猫猫紫铜全套效果: 迅捷Ⅱ",
   "item.neko-technology.ray_item": "激光笔",
   "item.neko-technology.wooden_casing": "木制机壳",
+  "item.neko-technology.component_casing": "零件外壳",
+  "item.neko-technology.component_casing.tooltip": "木制棒棒喵",
   "item.neko-technology.brass_flux_outputer": "黄铜通量输出零件",
   "item.neko-technology.brass_flux_outputer.tooltip": "猫猫能量输出效率: 0.1 NF/tick",
   "item.neko-technology.brass_flux_inputer": "黄铜通量输入零件",
@@ -66,6 +68,9 @@
   "item.neko-technology.neko_copper_flux_outputer.tooltip": "猫猫能量输出效率: 0.4 NF/tick",
   "item.neko-technology.neko_copper_flux_inputer": "猫猫紫铜通量输入零件",
   "item.neko-technology.neko_copper_flux_inputer.tooltip": "猫猫能量输入效率: 0.4 NF/tick",
+  "item.neko-technology.brass_item_inputer": "黄铜物品输入零件",
+  "item.neko-technology.brass_item_inputer.tooltip": "物品输入效率: 0.05 个/tick",
+
 
   "block.neko-technology.yes": "是",
   "block.neko-technology.no": "否",

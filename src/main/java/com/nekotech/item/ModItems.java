@@ -1,11 +1,13 @@
 package com.nekotech.item;
 
 import com.nekotech.NekoTechnology;
+import com.nekotech.block.entity.machines.api.ComponentAdaptation;
 import com.nekotech.item.custom.*;
 import com.nekotech.item.custom.NekoTag.NekoTagItem;
 import com.nekotech.item.custom.component.AbstractComponentItem;
 import com.nekotech.item.custom.component.FluxInputerItem;
 import com.nekotech.item.custom.component.FluxOutputerItem;
+import com.nekotech.item.custom.component.ItemInputerItem;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.item.*;
@@ -13,6 +15,8 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.minecraft.component.type.FoodComponent;
+import net.minecraft.util.math.Direction;
+import net.minecraft.world.World;
 
 import java.util.*;
 
@@ -83,10 +87,15 @@ public class ModItems {
     );
 
     private static final Set<Item> allComponents = Collections.synchronizedSet(new LinkedHashSet<>());
+    public static final Item component_casing = registerComponent("component_casing", new AbstractComponentItem(new Item.Settings().maxCount(16), "component_casing") {
+        @Override public void useComponent(World world, ComponentAdaptation self, Direction side) {}
+    });
+    public static final Item brass_item_inputer = registerComponent("brass_item_inputer", new ItemInputerItem(1f, "brass_item_inputer"));
     public static final Item brass_flux_outputer = registerComponent("brass_flux_outputer", new FluxOutputerItem(0.1f, "brass_flux_outputer"));
     public static final Item brass_flux_inputer = registerComponent("brass_flux_inputer", new FluxInputerItem(0.1f, "brass_flux_inputer"));
     public static final Item neko_copper_flux_outputer = registerComponent("neko_copper_flux_outputer", new FluxOutputerItem(0.4f, "neko_copper_flux_outputer"));
     public static final Item neko_copper_flux_inputer = registerComponent("neko_copper_flux_inputer", new FluxInputerItem(0.4f, "neko_copper_flux_inputer"));
+
 
 
     private static Item registerItems(String id, Item item){
@@ -103,7 +112,7 @@ public class ModItems {
     }
 
     public static <T extends AbstractComponentItem> T registerComponent(String name, T component) {
-        Identifier id = Identifier.of("neko-technology", name);
+        Identifier id = Identifier.of(NekoTechnology.MOD_ID, name);
         allComponents.add(component);
         return Registry.register(Registries.ITEM, id, component);
     }
