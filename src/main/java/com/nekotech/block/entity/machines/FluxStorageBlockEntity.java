@@ -5,6 +5,7 @@ import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.block.entity.api.component.ComponentAdaptation;
 import com.nekotech.block.entity.api.ICatNeedMachine;
 import com.nekotech.block.entity.api.electrical.IElectricalMachine;
+import com.nekotech.block.entity.api.electrical.ITransferElectrical;
 import com.nekotech.item.ModItems;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
@@ -29,11 +30,12 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class FluxStorageBlockEntity extends MachineBlockEntity
-        implements IElectricalMachine, ICatNeedMachine, ComponentAdaptation, IHaveGoogleHUD {
+        implements IElectricalMachine, ICatNeedMachine, ComponentAdaptation, IHaveGoogleHUD, ITransferElectrical {
 
     private float nekoFlux = 500f;
     private final float maxNekoFlux = 1000f;  // 最大存储容量
@@ -42,13 +44,17 @@ public class FluxStorageBlockEntity extends MachineBlockEntity
     private BlockPos boundCushionPos = null;
 
     private final Map<Direction, Item> attachedComponents = new EnumMap<>(Direction.class);
-    private Set<Item> validComponents = ModItems.getAllComponents();
+    private final Set<Item> validComponents ;
 
     private boolean isActive = false;
 
     public FluxStorageBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.flux_storage, pos, state);
-        validComponents.remove(ModItems.brass_item_inputer);
+        validComponents= new HashSet<>();
+        validComponents.add(ModItems.brass_flux_outputer);
+        validComponents.add(ModItems.brass_flux_inputer);
+        validComponents.add(ModItems.neko_copper_flux_inputer);
+        validComponents.add(ModItems.neko_copper_flux_outputer);
     }
 
     /**

@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "neko-technology:block/wooden_casing"
+      "model": "neko-technology:block/flux_storage"
     }
   }
 }

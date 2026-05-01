@@ -66,7 +66,7 @@ public class HeaterBlockEntity extends MachineBlockEntity
     private boolean isLit = false;
 
     private final Map<Direction, Item> attachedComponents = new EnumMap<>(Direction.class);
-    private final Set<Item> validComponents = ModItems.getAllComponents();
+    private final Set<Item> validComponents ;
 
 
     private static final Map<Item, Integer> FUEL_MAP =
@@ -94,6 +94,7 @@ public class HeaterBlockEntity extends MachineBlockEntity
 
     public HeaterBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.heater, pos, state);
+        validComponents= new HashSet<>();
         validComponents.add(ModItems.brass_item_inputer);
     }
 
@@ -498,7 +499,7 @@ public class HeaterBlockEntity extends MachineBlockEntity
             return null;
         }
 
-        java.util.List<GoogleAbstractHUD> huds = new java.util.ArrayList<>();
+        List<GoogleAbstractHUD> huds = new ArrayList<>();
 
         List<ItemStack> items = new ArrayList<>();
         if (this instanceof Inventory inventory) {

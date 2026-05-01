@@ -23,7 +23,6 @@ public class ModBlocks {
             FabricBlockSettings.create()
                     .strength(0.3f)  // 软垫子
                     .sounds(BlockSoundGroup.WOOL)
-                    .nonOpaque()
     ));
 
     public static final Block heater= register("heater", new Heater(AbstractBlock.Settings.create()
@@ -39,8 +38,6 @@ public class ModBlocks {
             new AlloyPot(
                     Block.Settings.create()
                             .strength(3.5f)
-                            .requiresTool()
-                            .nonOpaque()
             )
     );
 
@@ -48,8 +45,13 @@ public class ModBlocks {
             new FluxStorage(
                     Block.Settings.create()
                             .strength(3.5f)
-                            .requiresTool()
-                            .nonOpaque()
+            )
+    );
+
+    public static final Block wooden_casing = register("wooden_casing",
+            new WoodenCasing(
+                    Block.Settings.create()
+                            .strength(3.5f)
             )
     );
 

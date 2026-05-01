@@ -1,6 +1,7 @@
 package com.nekotech;
 
 import com.nekotech.block.entity.ModBlockEntities;
+import com.nekotech.block.entity.api.electrical.ConductorManager;
 import com.nekotech.events.ServerTick;
 import com.nekotech.handler.DriedFishTameHandler;
 import com.nekotech.item.ModItemGroups;
@@ -10,6 +11,8 @@ import com.nekotech.network.NetworkHandler;
 import com.nekotech.recipe.ModRecipes;
 import com.nekotech.screen.ModScreenHandlers;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.minecraft.server.world.ServerWorld;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,8 +36,6 @@ public class NekoTechnology implements ModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution
 
-
-
 		ModItems.registerModItems();
 		ModItemGroups.registerModItemGroups();
 		ModBlocks.registerModBlocks();
@@ -47,6 +48,13 @@ public class NekoTechnology implements ModInitializer {
 		UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
 			// 调用自定义处理逻辑
 			return DriedFishTameHandler.handleTameAttempt(player, hand, entity);
+		});
+
+		ServerTickEvents.END_SERVER_TICK.register(server -> {
+			for (ServerWorld world : server.getWorlds()) {
+				ConductorManager manager = ConductorManager.get(world);
+				manager.tick(world);
+			}
 		});
 
 		LOGGER.info("Hello Fabric world!");

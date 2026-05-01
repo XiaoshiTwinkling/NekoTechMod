@@ -30,4 +30,8 @@ public class FluxOutputerItem extends AbstractComponentItem{
             }
         }
     }
+
+    public float getOutputSpeed(){
+        return outputSpeed;
+    }
 }

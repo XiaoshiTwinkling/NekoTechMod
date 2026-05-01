@@ -29,4 +29,8 @@ public class FluxInputerItem extends AbstractComponentItem{
             }
         }
     }
+
+    public float getInputSpeed(){
+        return inputSpeed;
+    }
 }
