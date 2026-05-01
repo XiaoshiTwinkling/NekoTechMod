@@ -3,7 +3,9 @@ package com.nekotech.item;
 import com.nekotech.NekoTechnology;
 import com.nekotech.item.custom.*;
 import com.nekotech.item.custom.NekoTag.NekoTagItem;
-import com.nekotech.item.custom.component.BrassFluxOutputItem;
+import com.nekotech.item.custom.component.AbstractComponentItem;
+import com.nekotech.item.custom.component.FluxInputerItem;
+import com.nekotech.item.custom.component.FluxOutputerItem;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.item.*;
@@ -11,6 +13,8 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.minecraft.component.type.FoodComponent;
+
+import java.util.*;
 
 
 public class ModItems {
@@ -77,7 +81,12 @@ public class ModItems {
                     "neko_tail"
             )
     );
-    public static final Item brass_flux_outputer = registerItems("brass_flux_outputer", new BrassFluxOutputItem());
+
+    private static final Set<Item> allComponents = Collections.synchronizedSet(new LinkedHashSet<>());
+    public static final Item brass_flux_outputer = registerComponent("brass_flux_outputer", new FluxOutputerItem(0.1f, "brass_flux_outputer"));
+    public static final Item brass_flux_inputer = registerComponent("brass_flux_inputer", new FluxInputerItem(0.1f, "brass_flux_inputer"));
+    public static final Item neko_copper_flux_outputer = registerComponent("neko_copper_flux_outputer", new FluxOutputerItem(0.4f, "neko_copper_flux_outputer"));
+    public static final Item neko_copper_flux_inputer = registerComponent("neko_copper_flux_inputer", new FluxInputerItem(0.4f, "neko_copper_flux_inputer"));
 
 
     private static Item registerItems(String id, Item item){
@@ -93,5 +102,14 @@ public class ModItems {
         NekoTechnology.LOGGER.info("Registering Mod Items");
     }
 
+    public static <T extends AbstractComponentItem> T registerComponent(String name, T component) {
+        Identifier id = Identifier.of("neko-technology", name);
+        allComponents.add(component);
+        return Registry.register(Registries.ITEM, id, component);
+    }
+
+    public static Set<Item> getAllComponents() {
+        return allComponents;
+    }
 
 }

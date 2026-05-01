@@ -15,11 +15,8 @@ public class ModItem extends Item {
     private final String tooltipTranslationKey;
 
     public ModItem(Settings settings, String tooltipTranslationKey) {
-
         super(settings);
-
         this.tooltipTranslationKey = "item.neko-technology." + tooltipTranslationKey + ".tooltip";
-
     }
 
 

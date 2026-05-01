@@ -19,7 +19,6 @@ import java.util.Set;
  * 这些零件附着在六面时候 不会影响相邻方块的放置
  */
 public interface ComponentAdaptation {
-    /* ================= 数据 ================= */
 
     /**
      * 六个面安装的零件

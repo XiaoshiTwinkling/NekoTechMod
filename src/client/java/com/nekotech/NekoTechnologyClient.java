@@ -2,7 +2,6 @@ package com.nekotech;
 
 import com.nekotech.Screen.NekoTagScreen;
 import com.nekotech.block.entity.ModBlockEntities;
-import com.nekotech.block.entity.machines.FluxStorageBlockEntity;
 import com.nekotech.renderer.GogglesHudRenderer;
 import com.nekotech.network.ClientHudNetworkHandler;
 import com.nekotech.renderer.AlloyPotBlockEntityRenderer;
@@ -17,6 +16,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
@@ -70,9 +70,9 @@ public class NekoTechnologyClient implements ClientModInitializer {
     }
 
     private void registerComponentAttachmentRenderer(){
-        BlockEntityRendererRegistry.register(ModBlockEntities.flux_storage, new BlockEntityRendererFactory<FluxStorageBlockEntity>() {
+        BlockEntityRendererRegistry.register(ModBlockEntities.flux_storage, new BlockEntityRendererFactory<BlockEntity>() {
             @Override
-            public BlockEntityRenderer<FluxStorageBlockEntity> create(Context ctx) {
+            public BlockEntityRenderer<BlockEntity> create(Context ctx) {
                 return new ComponentAttachmentRenderer();
             }
         });

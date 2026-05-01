@@ -10,6 +10,7 @@ import com.nekotech.item.ModItems;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
+import com.nekotech.item.custom.component.AbstractComponentItem;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.Item;
@@ -46,13 +47,12 @@ public class FluxStorageBlockEntity extends MachineBlockEntity
     private BlockPos boundCushionPos = null;
 
     private final Map<Direction, Item> attachedComponents = new EnumMap<>(Direction.class);
-    private final Set<Item> validComponents = new HashSet<>();
+    private final Set<Item> validComponents = ModItems.getAllComponents();
 
     private boolean isActive = false;
 
     public FluxStorageBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.flux_storage, pos, state);
-        validComponents.add(ModItems.brass_flux_outputer);
     }
 
     /**

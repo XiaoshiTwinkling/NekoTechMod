@@ -1,6 +1,8 @@
 package com.nekotech.renderer.components;
 
 import com.nekotech.block.entity.machines.FluxStorageBlockEntity;
+import com.nekotech.block.entity.machines.api.ComponentAdaptation;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
@@ -10,17 +12,24 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.RotationAxis;
 
-public class ComponentAttachmentRenderer implements BlockEntityRenderer<FluxStorageBlockEntity> {
+public class ComponentAttachmentRenderer implements BlockEntityRenderer<BlockEntity> {
 
     @Override
-    public void render(FluxStorageBlockEntity blockEntity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        if (blockEntity.getAttachedComponents().isEmpty()) {
-            return;
+    public void render(BlockEntity blockEntity, float tickDelta, MatrixStack matrices,
+                       VertexConsumerProvider vertexConsumers, int light, int overlay) {
+
+        // 检查方块实体是否实现了ComponentAdaptation接口
+        if (!(blockEntity instanceof ComponentAdaptation componentAdaptation)) {
+            return;  // 不是零件宿主，跳过渲染
+        }
+
+        if (componentAdaptation.getAttachedComponents().isEmpty()) {
+            return;  // 没有安装零件，跳过渲染
         }
 
         // 遍历六个面
         for (Direction side : Direction.values()) {
-            var componentItem = blockEntity.getComponent(side);
+            var componentItem = componentAdaptation.getComponent(side);
             if (componentItem != null) {
                 renderComponent(matrices, vertexConsumers, componentItem, side, light, overlay);
             }
@@ -46,7 +55,7 @@ public class ComponentAttachmentRenderer implements BlockEntityRenderer<FluxStor
         }
 
         // 从方块表面向外偏移
-        matrices.translate(0, 0, 0.3f);
+        matrices.translate(0, 0, 0.1f);
 
         matrices.scale(1f, 1f, 1f);
 

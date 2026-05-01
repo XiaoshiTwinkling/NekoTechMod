@@ -70,6 +70,9 @@ public class ModItemGroups {
                             entries.add(ModItems.ray_item);
                             entries.add(ModItems.neko_tag);
                             entries.add(ModItems.brass_flux_outputer);
+                            entries.add(ModItems.brass_flux_inputer);
+                            entries.add(ModItems.neko_copper_flux_outputer);
+                            entries.add(ModItems.neko_copper_flux_inputer);
 
                         })).build());
 
