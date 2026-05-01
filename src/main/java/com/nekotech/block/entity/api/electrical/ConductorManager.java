@@ -38,7 +38,11 @@ public class ConductorManager {
      * 当某个位置的导体状态发生变化时调用（如方块放置、破坏、零件变更）。
      * 这将触发以该位置为中心的网络重建。
      */
+    /**
+     * 当某个位置的导体状态发生变化时调用
+     */
     public void invalidateAt(BlockPos pos) {
+        NekoTechnology.LOGGER.info("[导体管理器] 方块 {} 状态变化，触发网络重建", pos);
 
         // 查找并移除所有包含此方块的旧网络
         Set<Conductor> affectedNetworks = new HashSet<>();
@@ -47,7 +51,7 @@ public class ConductorManager {
             affectedNetworks.add(existingNet);
         }
 
-        // 也需要检查相邻方块，因为变化可能影响邻居所属的网络
+        // 也需要检查相邻方块
         for (Direction dir : Direction.values()) {
             BlockPos neighbor = pos.offset(dir);
             Conductor neighborNet = blockToNetwork.get(neighbor);
@@ -61,12 +65,9 @@ public class ConductorManager {
             removeNetwork(net);
         }
 
-        // 如果该位置当前仍是导体，以其为起点重建网络
-        // 调用此方法时，方块实体可能还未更新，因此重建逻辑应由外部在合适时机调用 `scheduleRebuildAt`
-        // 这里我们只做标记，实际重建在 `tick` 中进行
+        // 将位置加入待重建队列
         pendingRebuildPositions.add(pos);
         for (Conductor net : affectedNetworks) {
-            // 将旧网络的所有方块都加入待重建队列，以确保碎片能重新合并
             pendingRebuildPositions.addAll(net.getBlocks());
         }
     }

@@ -12,7 +12,9 @@ import com.nekotech.recipe.ModRecipes;
 import com.nekotech.screen.ModScreenHandlers;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.ActionResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +57,15 @@ public class NekoTechnology implements ModInitializer {
 				ConductorManager manager = ConductorManager.get(world);
 				manager.tick(world);
 			}
+		});
+		UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
+			if (!world.isClient() && hitResult != null) {
+				ConductorManager manager = ConductorManager.get(world);
+				if (manager != null) {
+					manager.invalidateAt(hitResult.getBlockPos());
+				}
+			}
+			return ActionResult.PASS;
 		});
 
 		LOGGER.info("Hello Fabric world!");

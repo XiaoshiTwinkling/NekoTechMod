@@ -20,14 +20,14 @@ public class FluxInputerItem extends AbstractComponentItem{
 
     @Override
     public void useComponent(World world, ComponentAdaptation self, Direction side) {
-        BlockPos targetPos = self.getPos().offset(side);
-        BlockEntity neighbor = world.getBlockEntity(targetPos);
-        if (self instanceof IElectricalMachine adder && neighbor instanceof IElectricalMachine receiver) {
-            if(adder.getNekoFlux() < adder.getMaxNekoFlux() && receiver.getNekoFlux() > 0){
-                receiver.receiveFlux(inputSpeed);
-                adder.addFlux(inputSpeed);
-            }
-        }
+//        BlockPos targetPos = self.getPos().offset(side);
+//        BlockEntity neighbor = world.getBlockEntity(targetPos);
+//        if (self instanceof IElectricalMachine adder && neighbor instanceof IElectricalMachine receiver) {
+//            if(adder.getNekoFlux() < adder.getMaxNekoFlux() && receiver.getNekoFlux() > 0){
+//                receiver.receiveFlux(inputSpeed);
+//                adder.addFlux(inputSpeed);
+//            }
+//        }
     }
 
     public float getInputSpeed(){

@@ -42,23 +42,26 @@ public class Conductor {
      * 导体端口
      */
     public static class Port {
-        public final BlockPos pos;          // 端口所在方块位置
-        public final PortType type;         // 端口类型
-        public final Direction side;        // 端口方向 (零件安装面或能量来源方向)
-        public final float efficiency;      // 连接到此端口的零件效率
-        public final String sourceItemId;   // 来源物品ID，用于调试
+        public final BlockPos hostPos;     // 端口所在的宿主方块
+        public final BlockPos targetPos;   // 能量交互的目标方块 (能量来源或去向，为null表示自身)
+        public final PortType type;        // 端口类型
+        public final float efficiency;     // 连接到此端口的零件效率
+        public final String sourceItemId;  // 来源物品ID，用于调试
+        public final boolean isSelf;       // 是否是自身安装的零件
 
-        public Port(BlockPos pos, PortType type, Direction side, float efficiency, String sourceItemId) {
-            this.pos = pos;
+        public Port(BlockPos hostPos, PortType type, BlockPos targetPos, float efficiency, String sourceItemId, boolean isSelf) {
+            this.hostPos = hostPos;
+            this.targetPos = targetPos;
             this.type = type;
-            this.side = side;
             this.efficiency = efficiency;
             this.sourceItemId = sourceItemId;
+            this.isSelf = isSelf;
         }
 
         @Override
         public String toString() {
-            return String.format("Port[%s@%s side=%s eff=%.1f]", type, pos, side, efficiency);
+            return String.format("Port[%s host=%s target=%s eff=%.1f self=%s]",
+                    type, hostPos, targetPos, efficiency, isSelf);
         }
     }
 
@@ -169,28 +172,34 @@ public class Conductor {
 
             if (item instanceof FluxInputerItem inputer) {
                 // 此方块安装了 flux_input 零件
+                BlockPos targetPos = isSelf ? null : pos.offset(side);
                 Port port = new Port(pos,
                         isSelf ? PortType.INPUT : PortType.OUTPUT, // 自身输入零件是输入口，邻居的输入零件对准我，则我是输出口
-                        side,
+                        targetPos,
                         inputer.getInputSpeed(),
-                        "flux_inputer");
+                        "flux_inputer",
+                        isSelf);
                 if (isSelf) {
                     inputPorts.add(port);
                 } else {
                     outputPorts.add(port);
                 }
+                NekoTechnology.LOGGER.debug("[导体网络#{}] 识别到{}端口 (自身安装): {}", id, isSelf ? "输入" : "输出", port);
             } else if (item instanceof FluxOutputerItem outputer) {
                 // 此方块安装了 flux_output 零件
+                BlockPos targetPos = isSelf ? null : pos.offset(side);
                 Port port = new Port(pos,
                         isSelf ? PortType.OUTPUT : PortType.INPUT, // 自身输出零件是输出口，邻居的输出零件对准我，则我是输入口
-                        side,
+                        targetPos,
                         outputer.getOutputSpeed(),
-                        "flux_outputer");
+                        "flux_outputer",
+                        isSelf);
                 if (isSelf) {
                     outputPorts.add(port);
                 } else {
                     inputPorts.add(port);
                 }
+                NekoTechnology.LOGGER.debug("[导体网络#{}] 识别到{}端口 (自身安装): {}", id, isSelf ? "输出" : "输入", port);
             }
         }
     }
@@ -235,86 +244,86 @@ public class Conductor {
             return;
         }
 
-        // 从所有输入端口收集能量
-        float totalInputThisTick = collectInputFromPorts(world);
-        if (totalInputThisTick <= 0.0f) {
-            return; // 本 tick 无能量输入
-        }
+        NekoTechnology.LOGGER.debug("[导体网络#{}] 开始tick，输入口={}，输出口={}",
+                id, inputPorts.size(), outputPorts.size());
 
-        // 计算所有输出端口的需求
+        // 【修复】先计算输出需求，再决定是否收集输入
         OutputDemandResult demandResult = calculateOutputDemands(world);
         float totalDemand = demandResult.totalDemand;
         List<PortAllocation> allocations = demandResult.allocations;
 
+        NekoTechnology.LOGGER.debug("[导体网络#{}] 计算出总需求: {:.2f} NF, 输出口数: {}",
+                id, totalDemand, allocations.size());
+
         if (totalDemand <= 0.0f || allocations.isEmpty()) {
-            return; // 无输出需求
+            return; // 无输出需求，不进行任何能量传输
         }
 
-        // 分配能量
+        // 步骤1: 从所有输入端口收集能量（现在只在有输出需求时执行）
+        float totalInputThisTick = collectInputFromPorts(world, totalDemand);
+        NekoTechnology.LOGGER.debug("[导体网络#{}] 收集到总输入: {:.2f} NF", id, totalInputThisTick);
+
+        if (totalInputThisTick <= 0.0f) {
+            return; // 本 tick 无能量输入
+        }
+
+        // 步骤2: 分配能量
         float energyToDistribute = Math.min(totalInputThisTick, totalDemand);
+        NekoTechnology.LOGGER.debug("[导体网络#{}] 准备分配: {:.2f} NF", id, energyToDistribute);
+
         distributeEnergyToOutputs(world, energyToDistribute, allocations);
+
+        // 调试：每5秒记录一次传输摘要
+        if (world.getTime() % 100 == 0 && energyToDistribute > 0) {
+            NekoTechnology.LOGGER.info("[导体网络#{}] 传输摘要: 输入={:.2f} NF, 需求={:.2f} NF, 分配={:.2f} NF",
+                    id, totalInputThisTick, totalDemand, energyToDistribute);
+        }
     }
 
     /**
      * 从所有输入端口收集能量
-     * @return 本tick可从所有输入端口获取的总能量
      */
-    private float collectInputFromPorts(World world) {
+    private float collectInputFromPorts(World world, float maxNeeded) {
         float total = 0.0f;
+        float remainingNeeded = maxNeeded;
+
         for (Port inputPort : inputPorts) {
-            float extracted = extractEnergyFromSource(world, inputPort);
+            if (remainingNeeded <= 0) break;
+
+            float extracted = extractEnergyFromSource(world, inputPort, remainingNeeded);
             total += extracted;
+            remainingNeeded -= extracted;
         }
         return total;
     }
 
     /**
-     * 从一个具体地输入端口提取能量
+     * 从一个具体的输入端口提取能量
      */
-    private float extractEnergyFromSource(World world, Port inputPort) {
-        // 根据端口类型，确定能量来源
-        BlockEntity sourceEntity = getEnergySourceEntity(world, inputPort);
+    private float extractEnergyFromSource(World world, Port inputPort, float maxNeeded) {
+        if (maxNeeded <= 0) return 0;
+
+        // 确定能量来源位置
+        BlockPos sourcePos = (inputPort.targetPos != null) ? inputPort.targetPos : inputPort.hostPos;
+        BlockEntity sourceEntity = world.getBlockEntity(sourcePos);
+
         if (!(sourceEntity instanceof IElectricalMachine sourceMachine)) {
-            return 0.0f; // 来源不是电力机器
+            NekoTechnology.LOGGER.debug("[导体网络#{}] 输入端口 {} 的源不是电力机器", id, inputPort);
+            return 0.0f;
         }
 
         // 计算基于零件效率的本tick可提取量
         float availableFromSource = sourceMachine.getNekoFlux();
-        float maxExtractable = inputPort.efficiency;
+        float maxExtractable = Math.min(inputPort.efficiency, maxNeeded);
         float toExtract = Math.min(availableFromSource, maxExtractable);
 
         if (toExtract > 0) {
-            sourceMachine.receiveFlux(toExtract); // 从源机器扣除
+            sourceMachine.receiveFlux(toExtract); // 从源机器扣除能量
             sourceEntity.markDirty();
+            NekoTechnology.LOGGER.debug("[导体网络#{}] 从 {} 提取 {:.2f} NF",
+                    id, sourcePos, toExtract);
         }
         return toExtract;
-    }
-
-    /**
-     * 根据端口信息，找到提供能量的方块实体
-     */
-    private BlockEntity getEnergySourceEntity(World world, Port port) {
-        // 端口类型决定了能量流动方向
-        if (port.type == PortType.INPUT) {
-            // 输入口：能量流入此端口所在的方块。
-            // 如果此端口是由自身安装的 flux_input 零件产生，则源是此方块自身。
-            // 如果此端口是由邻居的 flux_output 零件对准产生，则源是邻居方块。
-            // 我们需要通过端口的方向 (port.side) 来判断。
-            // 简化处理：假设端口数据中的 side 总是指向能量来源的方向。
-            // 对于“被邻居对准”形成的输入口，side 应指向邻居。来源是 world.getBlockEntity(pos.offset(side))
-            // 对于“自身安装零件”形成的输入口，side 是零件安装面，但能量来源于自身。我们约定此时传入 side=null 或自身？
-            // 这里需与端口识别逻辑保持一致。为简化，我们假设：
-            //   - 如果 side == null，能量来源于自身方块 (pos)
-            //   - 否则，能量来源于相邻方块 (pos.offset(side))
-            if (port.side == null) {
-                return world.getBlockEntity(port.pos);
-            } else {
-                return world.getBlockEntity(port.pos.offset(port.side));
-            }
-        } else {
-            // 对于输出口，在收集输入时不应被调用。这里返回null。
-            return null;
-        }
     }
 
     /**
@@ -366,9 +375,12 @@ public class Conductor {
      * 计算单个输出端口的需求量
      */
     private float calculateSingleOutputDemand(World world, Port outputPort) {
-        // 找到接收能量的目标机器
-        BlockEntity targetEntity = getEnergyTargetEntity(world, outputPort);
+        // 确定能量目标位置
+        BlockPos targetPos = (outputPort.targetPos != null) ? outputPort.targetPos : outputPort.hostPos;
+        BlockEntity targetEntity = world.getBlockEntity(targetPos);
+
         if (!(targetEntity instanceof IElectricalMachine targetMachine)) {
+            NekoTechnology.LOGGER.debug("[导体网络#{}] 输出端口 {} 的目标不是电力机器", id, outputPort);
             return 0.0f;
         }
 
@@ -379,24 +391,8 @@ public class Conductor {
         }
 
         // 本tick最多能传入多少（受零件效率限制）
-        float maxThroughput = outputPort.efficiency; // 效率值作为能量/tick速率
+        float maxThroughput = outputPort.efficiency;
         return Math.min(spaceAvailable, maxThroughput);
-    }
-
-    /**
-     * 根据端口信息，找到接收能量的方块实体
-     */
-    private BlockEntity getEnergyTargetEntity(World world, Port port) {
-        // 逻辑与 getEnergySourceEntity 对称但相反
-        if (port.type == PortType.OUTPUT) {
-            if (port.side == null) {
-                return world.getBlockEntity(port.pos); // 能量输出到自身方块
-            } else {
-                return world.getBlockEntity(port.pos.offset(port.side)); // 能量输出到相邻方块
-            }
-        } else {
-            return null;
-        }
     }
 
     /**
@@ -407,10 +403,15 @@ public class Conductor {
             return;
         }
 
+        // 计算总需求用于比例分配
+        double sumDemand = allocations.stream().mapToDouble(a -> a.demand).sum();
+        if (sumDemand <= 0) {
+            return;
+        }
+
         // 按需求比例分配
-        float remainingEnergy = totalEnergy;
         for (PortAllocation alloc : allocations) {
-            float share = (float) ((alloc.demand / allocations.stream().mapToDouble(a -> a.demand).sum()) * totalEnergy);
+            float share = (float) ((alloc.demand / sumDemand) * totalEnergy);
             alloc.allocated = share;
         }
 
@@ -418,11 +419,20 @@ public class Conductor {
         for (PortAllocation alloc : allocations) {
             if (alloc.allocated <= 0) continue;
 
-            BlockEntity targetEntity = getEnergyTargetEntity(world, alloc.port);
+            // 确定能量目标位置
+            BlockPos targetPos = (alloc.port.targetPos != null) ? alloc.port.targetPos : alloc.port.hostPos;
+            BlockEntity targetEntity = world.getBlockEntity(targetPos);
+
             if (targetEntity instanceof IElectricalMachine targetMachine) {
+                float before = targetMachine.getNekoFlux();
                 targetMachine.addFlux(alloc.allocated);
+                float after = targetMachine.getNekoFlux();
                 targetEntity.markDirty();
+
+                NekoTechnology.LOGGER.debug("[导体网络#{}] 向 {} 输出 {:.2f} NF ({} -> {})",
+                        id, targetPos, alloc.allocated, before, after);
             }
         }
     }
+
 }
