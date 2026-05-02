@@ -2,12 +2,14 @@ package com.nekotech.item.block;
 
 import com.mojang.serialization.MapCodec;
 import com.nekotech.block.entity.ModBlockEntities;
-import com.nekotech.block.entity.api.electrical.ConductorManager;
+import com.nekotech.block.entity.api.electrical.conductor.ConductorManager;
+import com.nekotech.block.entity.api.electrical.conductor.ConductorSystem;
 import com.nekotech.block.entity.machines.FluxStorageBlockEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -48,16 +50,8 @@ public class FluxStorage extends BlockWithEntity implements BlockEntityProvider 
 
     @Override
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        if (!state.isOf(newState.getBlock())) {
-            // 只在服务端处理
-            if (!world.isClient()) {
-                // 获取导体管理器并通知此位置需要更新
-                ConductorManager manager = ConductorManager.get(world);
-                if (manager != null) {
-                    // 通知管理器此位置的方块发生了变化
-                    manager.invalidateAt(pos);
-                }
-            }
+        if (!state.isOf(newState.getBlock()) && !world.isClient()) {
+            ConductorSystem.onBlockBroken((ServerWorld) world, pos);
         }
 
         if (!state.isOf(newState.getBlock())) {
@@ -79,5 +73,13 @@ public class FluxStorage extends BlockWithEntity implements BlockEntityProvider 
 
         // 调用父类方法
         super.onStateReplaced(state, world, pos, newState, moved);
+    }
+
+    @Override
+    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
+        super.onBlockAdded(state, world, pos, oldState, notify);
+        if (!world.isClient()) {
+            ConductorSystem.onBlockPlaced((ServerWorld) world, pos);
+        }
     }
 }

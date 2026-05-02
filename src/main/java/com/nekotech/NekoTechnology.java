@@ -1,7 +1,8 @@
 package com.nekotech;
 
 import com.nekotech.block.entity.ModBlockEntities;
-import com.nekotech.block.entity.api.electrical.ConductorManager;
+import com.nekotech.block.entity.api.electrical.conductor.ConductorManager;
+import com.nekotech.block.entity.api.electrical.conductor.ConductorSystem;
 import com.nekotech.events.ServerTick;
 import com.nekotech.handler.DriedFishTameHandler;
 import com.nekotech.item.ModItemGroups;
@@ -46,6 +47,7 @@ public class NekoTechnology implements ModInitializer {
         ModRecipes.init();
 		NetworkHandler.initialize();
         ServerTick.init();
+		new ConductorSystem().onInitialize();
 
 		UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
 			// 调用自定义处理逻辑
@@ -57,15 +59,6 @@ public class NekoTechnology implements ModInitializer {
 				ConductorManager manager = ConductorManager.get(world);
 				manager.tick(world);
 			}
-		});
-		UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-			if (!world.isClient() && hitResult != null) {
-				ConductorManager manager = ConductorManager.get(world);
-				if (manager != null) {
-					manager.invalidateAt(hitResult.getBlockPos());
-				}
-			}
-			return ActionResult.PASS;
 		});
 
 		LOGGER.info("Hello Fabric world!");

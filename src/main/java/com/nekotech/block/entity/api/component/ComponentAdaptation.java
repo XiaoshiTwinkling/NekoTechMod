@@ -1,8 +1,10 @@
 package com.nekotech.block.entity.api.component;
 
+import com.nekotech.block.entity.api.electrical.conductor.ConductorSystem;
 import com.nekotech.item.custom.component.AbstractComponentItem;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.Item;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -41,15 +43,28 @@ public interface ComponentAdaptation {
     }
 
     default boolean attachComponent(Direction side, Item component) {
+        Item old = getComponent(side);
         if (!canAttachComponent(side, component)) return false;
+
         getAttachedComponents().put(side, component);
+
+        // 通知导体系统
+        if (this instanceof BlockEntity be && be.getWorld() != null && !be.getWorld().isClient()) {
+            ConductorSystem.onComponentChanged((ServerWorld) be.getWorld(), be.getPos(), side);
+        }
+
         return true;
     }
 
     default void removeComponent(Direction side) {
+        Item old = getComponent(side);
         getAttachedComponents().remove(side);
-    }
 
+        // 通知导体系统
+        if (this instanceof BlockEntity be && be.getWorld() != null && !be.getWorld().isClient()) {
+            ConductorSystem.onComponentChanged((ServerWorld) be.getWorld(), be.getPos(), side);
+        }
+    }
     @Nullable
     default Item getComponent(Direction side) {
         return getAttachedComponents().get(side);
