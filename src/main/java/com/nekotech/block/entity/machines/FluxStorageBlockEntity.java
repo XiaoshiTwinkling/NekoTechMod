@@ -10,7 +10,9 @@ import com.nekotech.item.ModItems;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
+import com.nekotech.item.custom.component.AbstractComponentItem;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -62,6 +64,13 @@ public class FluxStorageBlockEntity extends MachineBlockEntity
      * 在方块实体类型注册时需要注册tick方法喵~
      */
     public static void tick(World world, BlockPos pos, BlockState state, FluxStorageBlockEntity blockEntity) {
+        if (world.isClient()) {
+            // 客户端逻辑
+            blockEntity.clientTick(world, pos, state, blockEntity);
+        }
+    }
+
+    private void clientTick(World world, BlockPos pos, BlockState state, FluxStorageBlockEntity blockEntity){
         if (world.isClient()) return;
 
         // 检查机器是否可以运行（需要猫）
@@ -138,10 +147,6 @@ public class FluxStorageBlockEntity extends MachineBlockEntity
             return cushion;
         }
         return null;
-    }
-
-    public boolean canRunWithCat() {
-        return canMachineRun();
     }
 
     @Override

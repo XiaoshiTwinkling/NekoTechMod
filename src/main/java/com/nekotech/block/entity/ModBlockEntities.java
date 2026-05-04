@@ -41,7 +41,7 @@ public class ModBlockEntities {
             create("flux_storage", BlockEntityType.Builder.create(FluxStorageBlockEntity::new, ModBlocks.flux_storage));
 
     public static BlockEntityType<MachineCasingBlockEntity> wooden_casing =
-            create("flux_storage", BlockEntityType.Builder.create(MachineCasingBlockEntity::new, ModBlocks.wooden_casing));
+            create("wooden_casing", BlockEntityType.Builder.create(MachineCasingBlockEntity::new, ModBlocks.wooden_casing));
 
 
 

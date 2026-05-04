@@ -33,7 +33,7 @@ public abstract class MachineBlockEntity extends BlockEntity {
     };
 
     //lazytick的计时器函数
-    protected void baseTick(World world, BlockPos pos, BlockState state) {
+    public void baseTick(World world, BlockPos pos, BlockState state) {
         if (world.isClient) {
             return;
         }
