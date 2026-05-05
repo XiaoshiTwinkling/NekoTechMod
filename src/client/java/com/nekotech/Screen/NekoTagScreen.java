@@ -4,7 +4,7 @@ import com.nekotech.item.ModItems;
 import com.nekotech.item.custom.NekoTag.NekoTagData;
 import com.nekotech.network.NetworkPayloads;
 import com.nekotech.screen.NekoTag.NekoTagScreenHandler;
-import com.nekotech.util.NekoTask;
+import com.nekotech.item.custom.NekoTag.NekoTask;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -36,7 +36,7 @@ public class NekoTagScreen extends HandledScreen<NekoTagScreenHandler> {
     private DyeColor selectedColor = DyeColor.WHITE;
     private ItemStack displayStack = ItemStack.EMPTY;
     private short priority = 0;
-    private NekoTask selectedTask = NekoTask.IDLE;
+    private NekoTask selectedTask = NekoTask.INPUT;
 
     private TextFieldWidget priorityBox;
 

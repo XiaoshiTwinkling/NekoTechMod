@@ -1,9 +1,11 @@
-package com.nekotech.util;
+package com.nekotech.item.custom.NekoTag;
 
 import net.minecraft.util.Identifier;
 
 public enum NekoTask {
-    IDLE("idle", "gui/task/idle.png");
+    INPUT("input", "gui/task/input.png"),
+    OUTPUT("output", "gui/task/output.png");
+
     public static final String MOD_ID = "neko-technology";
 
     private final String id;
@@ -29,7 +31,7 @@ public enum NekoTask {
             }
         }
 
-        return IDLE;
+        return INPUT;
     }
 
     public String translationKey() {

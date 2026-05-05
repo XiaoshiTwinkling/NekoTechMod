@@ -104,5 +104,7 @@
   "screen.neko-technology.neko_tag.color": "颜色",
   "screen.neko-technology.neko_tag.item": "物品",
   "screen.neko-technology.neko_tag.priority": "优先级",
-  "screen.neko-technology.neko_tag.task": "任务"
+  "screen.neko-technology.neko_tag.task": "任务",
+  "message.neko-technology.neko_tag.added": "任务标签已放置喵",
+  "message.neko-technology.neko_tag.removed": "任务标签已移除喵"
 }

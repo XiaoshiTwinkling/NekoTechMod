@@ -1,6 +1,5 @@
 package com.nekotech.item.custom.NekoTag;
 
-import com.nekotech.util.NekoTask;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.Item;
