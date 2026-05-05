@@ -2,6 +2,8 @@ package com.nekotech;
 
 import com.nekotech.Screen.NekoTagScreen;
 import com.nekotech.block.entity.ModBlockEntities;
+import com.nekotech.item.ModItems;
+import com.nekotech.item.custom.NekoTag.NekoTagData;
 import com.nekotech.renderer.GogglesHudRenderer;
 import com.nekotech.network.ClientHudNetworkHandler;
 import com.nekotech.renderer.AlloyPotBlockEntityRenderer;
@@ -18,10 +20,12 @@ import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRe
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
+import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
+import net.minecraft.util.Identifier;
 
 
 public class NekoTechnologyClient implements ClientModInitializer {
@@ -63,6 +67,13 @@ public class NekoTechnologyClient implements ClientModInitializer {
                 }
         );
         HandledScreens.register(ModScreenHandlers.NEKO_TAG, NekoTagScreen::new);
+
+        ModelPredicateProviderRegistry.register(
+                ModItems.neko_tag,
+                Identifier.of("neko-technology", "color"),
+                (stack, world, entity, seed) -> NekoTagData.readColor(stack).getId()/15.0F
+
+        );
 	}
 
     public static GogglesHudRenderer getHudRenderer() {

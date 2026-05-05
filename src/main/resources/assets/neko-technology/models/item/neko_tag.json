@@ -1,24 +1,24 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "nekotechnology:item/neko_tag"
+    "layer0": "neko-technology:item/neko_tag"
   },
   "overrides": [
-    {"predicate": {"color": 0}, "model": "neko_technology:item/neko_tag/neko_tag_white"},
-    {"predicate": {"color": 1}, "model": "neko_technology:item/neko_tag/neko_tag_orange"},
-    {"predicate": {"color": 2}, "model": "neko_technology:item/neko_tag/neko_tag_magenta"},
-    {"predicate": {"color": 3}, "model": "neko_technology:item/neko_tag/neko_tag_light_blue"},
-    {"predicate": {"color": 4}, "model": "neko_technology:item/neko_tag/neko_tag_yellow"},
-    {"predicate": {"color": 5}, "model": "neko_technology:item/neko_tag/neko_tag_lime"},
-    {"predicate": {"color": 6}, "model": "neko_technology:item/neko_tag/neko_tag_pink"},
-    {"predicate": {"color": 7}, "model": "neko_technology:item/neko_tag/neko_tag_gray"},
-    {"predicate": {"color": 8}, "model": "neko_technology:item/neko_tag/neko_tag_light_gray"},
-    {"predicate": {"color": 9}, "model": "neko_technology:item/neko_tag/neko_tag_cyan"},
-    {"predicate": {"color": 10}, "model": "neko_technology:item/neko_tag/neko_tag_purple"},
-    {"predicate": {"color": 11}, "model": "neko_technology:item/neko_tag/neko_tag_blue"},
-    {"predicate": {"color": 12}, "model": "neko_technology:item/neko_tag/neko_tag_brown"},
-    {"predicate": {"color": 13}, "model": "neko_technology:item/neko_tag/neko_tag_green"},
-    {"predicate": {"color": 14}, "model": "neko_technology:item/neko_tag/neko_tag_red"},
-    {"predicate": {"color": 15}, "model": "neko_technology:item/neko_tag/neko_tag_black"}
+    {"predicate": {"neko-technology:color": 0.000000}, "model": "neko-technology:item/neko_tag/neko_tag_white"},
+    {"predicate": {"neko-technology:color": 0.033333}, "model": "neko-technology:item/neko_tag/neko_tag_orange"},
+    {"predicate": {"neko-technology:color": 0.100000}, "model": "neko-technology:item/neko_tag/neko_tag_magenta"},
+    {"predicate": {"neko-technology:color": 0.166667}, "model": "neko-technology:item/neko_tag/neko_tag_light_blue"},
+    {"predicate": {"neko-technology:color": 0.233333}, "model": "neko-technology:item/neko_tag/neko_tag_yellow"},
+    {"predicate": {"neko-technology:color": 0.300000}, "model": "neko-technology:item/neko_tag/neko_tag_lime"},
+    {"predicate": {"neko-technology:color": 0.366667}, "model": "neko-technology:item/neko_tag/neko_tag_pink"},
+    {"predicate": {"neko-technology:color": 0.433333}, "model": "neko-technology:item/neko_tag/neko_tag_gray"},
+    {"predicate": {"neko-technology:color": 0.500000}, "model": "neko-technology:item/neko_tag/neko_tag_light_gray"},
+    {"predicate": {"neko-technology:color": 0.566667}, "model": "neko-technology:item/neko_tag/neko_tag_cyan"},
+    {"predicate": {"neko-technology:color": 0.633333}, "model": "neko-technology:item/neko_tag/neko_tag_purple"},
+    {"predicate": {"neko-technology:color": 0.700000}, "model": "neko-technology:item/neko_tag/neko_tag_blue"},
+    {"predicate": {"neko-technology:color": 0.766667}, "model": "neko-technology:item/neko_tag/neko_tag_brown"},
+    {"predicate": {"neko-technology:color": 0.833333}, "model": "neko-technology:item/neko_tag/neko_tag_green"},
+    {"predicate": {"neko-technology:color": 0.900000}, "model": "neko-technology:item/neko_tag/neko_tag_red"},
+    {"predicate": {"neko-technology:color": 0.966667}, "model": "neko-technology:item/neko_tag/neko_tag_black"}
   ]
 }
