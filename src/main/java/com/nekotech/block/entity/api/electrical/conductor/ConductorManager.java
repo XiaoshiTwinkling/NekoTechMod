@@ -6,6 +6,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
@@ -36,6 +37,33 @@ public class ConductorManager extends PersistentState {
     // 保存方块位置到导体组ID的映射
     private final Map<BlockPos, Integer> posToGroupId = new HashMap<>();
 
+    //操作类型枚举
+    private enum OperationType {
+        PLACE, BREAK, COMPONENT_CHANGE
+    }
+
+    private static class PendingOperation {
+        final BlockPos pos;
+        final OperationType type;
+        final Direction side; // 对于零件变更有用
+
+        PendingOperation(BlockPos pos, OperationType type, Direction side) {
+            this.pos = pos;
+            this.type = type;
+            this.side = side;
+        }
+    }
+
+    private static int NEXT_ID = 0;
+    public int id;
+
+
+
+    // 操作缓存队列
+    private final Queue<PendingOperation> operationQueue = new LinkedList<>();
+    // 已处理的位置（用于去重）
+    private final Set<BlockPos> processedPositions = new HashSet<>();
+
     public static ConductorManager get(World world) {
         if (world.isClient) {
             return null;
@@ -48,11 +76,61 @@ public class ConductorManager extends PersistentState {
         return INSTANCES.computeIfAbsent(world, w -> new ConductorManager());
     }
 
+    public static void setNextId(int nextId) {
+        NEXT_ID = nextId;
+        NekoTechnology.LOGGER.info("[导体组] 设置下一个ID为: {}", nextId);
+    }
+
+    public static int getNextId() {
+        return NEXT_ID;
+    }
+
+    public void ConductorGroup() {
+        this.id = NEXT_ID++;
+        NekoTechnology.LOGGER.info("[导体组] 创建新导体组 #{}, 下一个ID: {}", id, NEXT_ID);
+    }
+
     /**
      * 当导体方块被放置时调用
      */
     public void onBlockPlaced(World world, BlockPos pos) {
-        NekoTechnology.LOGGER.info("[导体管理器] 方块放置: {}", pos);
+        operationQueue.add(new PendingOperation(pos, OperationType.PLACE, null));
+        NekoTechnology.LOGGER.debug("[导体管理器] 缓存方块放置操作: {}", pos);
+    }
+
+    /**
+     * 当导体方块被破坏时调用
+     */
+    public void onBlockBroken(World world, BlockPos pos) {
+        operationQueue.add(new PendingOperation(pos, OperationType.BREAK, null));
+        NekoTechnology.LOGGER.debug("[导体管理器] 缓存方块破坏操作: {}", pos);
+    }
+
+    /**
+     * 当零件变更时调用
+     */
+    public void onComponentChanged(World world, BlockPos pos, Direction side) {
+        operationQueue.add(new PendingOperation(pos, OperationType.COMPONENT_CHANGE, side));
+        NekoTechnology.LOGGER.debug("[导体管理器] 缓存零件变更操作: {} {}", pos, side);
+    }
+
+    private void processOperation(World world, PendingOperation operation) {
+        if (processedPositions.contains(operation.pos)) {
+            NekoTechnology.LOGGER.debug("[导体管理器] 跳过已处理的位置: {}", operation.pos);
+            return;
+        }
+
+        switch (operation.type) {
+            case PLACE -> handleBlockPlace(world, operation.pos);
+            case BREAK -> handleBlockBreak(world, operation.pos);
+            case COMPONENT_CHANGE -> handleComponentChange(world, operation.pos, operation.side);
+        }
+
+        processedPositions.add(operation.pos);
+    }
+
+    private void handleBlockPlace(World world, BlockPos pos) {
+        NekoTechnology.LOGGER.info("[导体管理器] 处理方块放置: {}", pos);
 
         if (!isConductor(world, pos)) {
             return;
@@ -74,42 +152,46 @@ public class ConductorManager extends PersistentState {
         }
     }
 
-    /**
-     * 当导体方块被破坏时调用
-     */
-    public void onBlockBroken(World world, BlockPos pos) {
-        NekoTechnology.LOGGER.info("[导体管理器] 方块破坏: {}", pos);
+    private void handleBlockBreak(World world, BlockPos pos) {
+        NekoTechnology.LOGGER.info("[导体管理器] 处理方块破坏: {}", pos);
 
         ConductorGroup group = blockToGroup.get(pos);
         if (group == null) {
+            NekoTechnology.LOGGER.debug("[导体管理器] 位置 {} 没有对应的导体组", pos);
             return;
         }
+        int originalGroupId = group.id;
+        int originalNodeCount = group.nodes.size();
 
-        // 检查是否需要分割导体组
+        // 调用新的分割逻辑
         List<ConductorGroup> splitGroups = group.splitAt(world, pos);
+
+        // 从映射中移除被破坏的方块
         blockToGroup.remove(pos);
 
+        NekoTechnology.LOGGER.info("[导体管理器] 导体组#{} (原{}节点) 分割成 {} 个新组",
+                originalGroupId, originalNodeCount, splitGroups.size());
+
         if (splitGroups.isEmpty()) {
-            // 导体组被完全移除
+            // 如果没有产生新组，说明原组已空
             removeGroup(group);
-        } else if (splitGroups.size() == 1) {
-            // 导体组没有分割，只是移除了一个节点
-            ConductorGroup remaining = splitGroups.get(0);
-            updateGroupMapping(remaining);
+            NekoTechnology.LOGGER.info("[导体管理器] 导体组#{} 变为空，已移除", originalGroupId);
         } else {
-            // 导体组被分割成多个
             removeGroup(group);
+
             for (ConductorGroup newGroup : splitGroups) {
-                registerGroup(newGroup);
+                if (!newGroup.nodes.isEmpty()) {
+                    registerGroup(newGroup);
+                    NekoTechnology.LOGGER.info("[导体管理器] 注册新导体组#{}，节点: {}，输入口: {}，输出口: {}",
+                            newGroup.id, newGroup.nodes.size(),
+                            newGroup.inputPorts.size(), newGroup.outputPorts.size());
+                }
             }
         }
     }
 
-    /**
-     * 当零件变更时调用
-     */
-    public void onComponentChanged(World world, BlockPos pos, Direction side) {
-        NekoTechnology.LOGGER.info("[导体管理器] 零件变更: {} {}", pos, side);
+    private void handleComponentChange(World world, BlockPos pos, Direction side) {
+        NekoTechnology.LOGGER.info("[导体管理器] 处理零件变更: {} {}", pos, side);
 
         ConductorGroup group = blockToGroup.get(pos);
         if (group == null) {
@@ -214,7 +296,42 @@ public class ConductorManager extends PersistentState {
         return conductorGroups.values();
     }
 
+    private boolean needsRescan = false;
+    private int worldLoadTicks = 0;
+
     public void tick(World world) {
+        // 世界加载后的处理
+        if (worldLoadTicks < 20) {  // 等待20个tick，确保世界完全加载
+            worldLoadTicks++;
+            if (worldLoadTicks == 5) {  // 第5个tick时触发重新扫描
+                needsRescan = true;
+            }
+        }
+
+        // 重新扫描端口
+        if (needsRescan) {
+            rescanAllPorts(world);
+            needsRescan = false;
+            NekoTechnology.LOGGER.info("[导体管理器] 世界加载后端口重新扫描完成");
+        }
+
+        // 处理操作队列
+        int processedCount = 0;
+        int maxOperationsPerTick = 5;
+
+        while (!operationQueue.isEmpty() && processedCount < maxOperationsPerTick) {
+            PendingOperation operation = operationQueue.poll();
+            if (operation != null) {
+                processOperation(world, operation);
+                processedCount++;
+            }
+        }
+
+        if (world.getTime() % 20 == 0) {
+            processedPositions.clear();
+        }
+
+        // 处理导体组tick
         for (ConductorGroup group : conductorGroups.values()) {
             if (!group.nodes.isEmpty()) {
                 group.tick(world);
@@ -234,13 +351,55 @@ public class ConductorManager extends PersistentState {
         return manager;
     }
 
+    /**
+     * 重新扫描所有导体组的端口
+     * 用于在世界加载后刷新端口信息
+     */
+    private void rescanAllPorts(World world) {
+        NekoTechnology.LOGGER.info("[导体管理器] 重新扫描所有端口...");
+
+        int totalGroups = conductorGroups.size();
+        int processedGroups = 0;
+
+        for (ConductorGroup group : conductorGroups.values()) {
+            // 遍历组中所有节点
+            for (ConductorNode node : new HashSet<>(group.nodes)) {
+                // 清除旧端口
+                group.removePortsFromNode(node);
+                node.inputPort = null;
+                node.outputPort = null;
+
+                // 重新扫描端口
+                portScanner.scanPorts(world, node);
+
+                // 更新端口映射
+                group.updatePortsFromNode(node);
+            }
+
+            processedGroups++;
+            if (world.getTime() % 20 == 0 && processedGroups > 0) {
+                NekoTechnology.LOGGER.debug("[导体管理器] 端口重新扫描进度: {}/{}", processedGroups, totalGroups);
+            }
+        }
+
+        NekoTechnology.LOGGER.info("[导体管理器] 端口重新扫描完成: 处理了 {} 个导体组", totalGroups);
+    }
+
     @Override
     public NbtCompound writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        // 保存当前的最大ID
+        nbt.putInt("NextGroupId", getNextId());
+
         // 保存方块位置到导体组ID的映射
-        NbtCompound posMapping = new NbtCompound();
+        NbtList posMapping = new NbtList();
         for (Map.Entry<BlockPos, Integer> entry : posToGroupId.entrySet()) {
-            String posKey = entry.getKey().getX() + "," + entry.getKey().getY() + "," + entry.getKey().getZ();
-            posMapping.putInt(posKey, entry.getValue());
+            BlockPos pos = entry.getKey();
+            NbtCompound entryNbt = new NbtCompound();
+            entryNbt.putInt("X", pos.getX());
+            entryNbt.putInt("Y", pos.getY());
+            entryNbt.putInt("Z", pos.getZ());
+            entryNbt.putInt("GroupId", entry.getValue());
+            posMapping.add(entryNbt);
         }
         nbt.put("PosToGroupId", posMapping);
 
@@ -253,9 +412,6 @@ public class ConductorManager extends PersistentState {
         }
         nbt.put("ConductorGroups", groupsList);
 
-        NekoTechnology.LOGGER.info("[导体管理器] 保存了 {} 个导体组，{} 个方块映射",
-                conductorGroups.size(), posToGroupId.size());
-
         return nbt;
     }
 
@@ -265,24 +421,25 @@ public class ConductorManager extends PersistentState {
         conductorGroups.clear();
         posToGroupId.clear();
 
-        // 加载方块位置到导体组ID的映射
-        if (nbt.contains("PosToGroupId", NbtElement.COMPOUND_TYPE)) {
-            NbtCompound posMapping = nbt.getCompound("PosToGroupId");
-            for (String posKey : posMapping.getKeys()) {
-                String[] parts = posKey.split(",");
-                if (parts.length == 3) {
-                    try {
-                        int x = Integer.parseInt(parts[0]);
-                        int y = Integer.parseInt(parts[1]);
-                        int z = Integer.parseInt(parts[2]);
-                        int groupId = posMapping.getInt(posKey);
+        // 加载下一个ID
+        if (nbt.contains("NextGroupId", NbtElement.INT_TYPE)) {
+            int nextId = nbt.getInt("NextGroupId");
+            setNextId(nextId);
+            NekoTechnology.LOGGER.info("[导体管理器] 加载NextGroupId: {}", nextId);
+        }
 
-                        BlockPos pos = new BlockPos(x, y, z);
-                        posToGroupId.put(pos, groupId);
-                    } catch (NumberFormatException e) {
-                        NekoTechnology.LOGGER.warn("无法解析位置键: {}", posKey);
-                    }
-                }
+        // 加载方块位置到导体组ID的映射
+        if (nbt.contains("PosToGroupId", NbtElement.LIST_TYPE)) {
+            NbtList posMapping = nbt.getList("PosToGroupId", NbtElement.COMPOUND_TYPE);
+            for (int i = 0; i < posMapping.size(); i++) {
+                NbtCompound entryNbt = posMapping.getCompound(i);
+                int x = entryNbt.getInt("X");
+                int y = entryNbt.getInt("Y");
+                int z = entryNbt.getInt("Z");
+                int groupId = entryNbt.getInt("GroupId");
+
+                BlockPos pos = new BlockPos(x, y, z);
+                posToGroupId.put(pos, groupId);
             }
         }
 
@@ -292,17 +449,17 @@ public class ConductorManager extends PersistentState {
             for (int i = 0; i < groupsList.size(); i++) {
                 NbtCompound groupNbt = groupsList.getCompound(i);
                 ConductorGroup group = readGroupFromNbt(groupNbt, registryLookup);
-                if (group != null) {
-                    conductorGroups.put(group.id, group);
-                }
+                conductorGroups.put(group.id, group);
             }
         }
 
         // 重建方块位置到导体组的映射
         rebuildBlockToGroupMapping();
 
-        NekoTechnology.LOGGER.info("[导体管理器] 加载了 {} 个导体组，{} 个方块映射",
-                conductorGroups.size(), posToGroupId.size());
+        // 设置需要重新扫描端口的标志
+        this.needsRescan = true;
+        NekoTechnology.LOGGER.info("[导体管理器] 加载完成: {} 个导体组, {} 个方块映射, 需要重新扫描: {}",
+                conductorGroups.size(), blockToGroup.size(), needsRescan);
     }
 
     /**
@@ -311,31 +468,61 @@ public class ConductorManager extends PersistentState {
     private void writeGroupToNbt(ConductorGroup group, NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         nbt.putInt("Id", group.id);
 
-        // 保存节点位置
+        // 保存节点
         NbtList nodesList = new NbtList();
         for (ConductorNode node : group.nodes) {
             NbtCompound nodeNbt = new NbtCompound();
+
+            // 保存位置
             nodeNbt.putInt("X", node.pos.getX());
             nodeNbt.putInt("Y", node.pos.getY());
             nodeNbt.putInt("Z", node.pos.getZ());
+
+            // 保存连接
+            NbtList connections = new NbtList();
+            for (Direction dir : node.connections) {
+                connections.add(NbtString.of(dir.getName()));
+            }
+            nodeNbt.put("Connections", connections);
+
+            // 保存端口信息
+            if (node.inputPort != null) {
+                NbtCompound portNbt = new NbtCompound();
+                portNbt.putString("Type", node.inputPort.type.name());
+                portNbt.putFloat("MaxRate", node.inputPort.maxRate);
+                portNbt.putFloat("Efficiency", node.inputPort.efficiency);
+                portNbt.putInt("MachineX", node.inputPort.machinePos.getX());
+                portNbt.putInt("MachineY", node.inputPort.machinePos.getY());
+                portNbt.putInt("MachineZ", node.inputPort.machinePos.getZ());
+                portNbt.putInt("PortX", node.inputPort.portPos.getX());
+                portNbt.putInt("PortY", node.inputPort.portPos.getY());
+                portNbt.putInt("PortZ", node.inputPort.portPos.getZ());
+                portNbt.putBoolean("IsSelf", node.inputPort.isSelf);
+                portNbt.putString("SourceItemId", node.inputPort.sourceItemId);
+                nodeNbt.put("InputPort", portNbt);
+            }
+
+            if (node.outputPort != null) {
+                NbtCompound portNbt = new NbtCompound();
+                portNbt.putString("Type", node.outputPort.type.name());
+                portNbt.putFloat("MaxRate", node.outputPort.maxRate);
+                portNbt.putFloat("Efficiency", node.outputPort.efficiency);
+                portNbt.putInt("MachineX", node.outputPort.machinePos.getX());
+                portNbt.putInt("MachineY", node.outputPort.machinePos.getY());
+                portNbt.putInt("MachineZ", node.outputPort.machinePos.getZ());
+                portNbt.putInt("PortX", node.outputPort.portPos.getX());
+                portNbt.putInt("PortY", node.outputPort.portPos.getY());
+                portNbt.putInt("PortZ", node.outputPort.portPos.getZ());
+                portNbt.putBoolean("IsSelf", node.outputPort.isSelf);
+                portNbt.putString("SourceItemId", node.outputPort.sourceItemId);
+                nodeNbt.put("OutputPort", portNbt);
+            }
+
             nodesList.add(nodeNbt);
         }
         nbt.put("Nodes", nodesList);
 
-        // 保存端口信息
-        NbtList inputPortsList = new NbtList();
-        for (Port port : group.inputPorts) {
-            NbtCompound portNbt = writePortToNbt(port);
-            inputPortsList.add(portNbt);
-        }
-        nbt.put("InputPorts", inputPortsList);
-
-        NbtList outputPortsList = new NbtList();
-        for (Port port : group.outputPorts) {
-            NbtCompound portNbt = writePortToNbt(port);
-            outputPortsList.add(portNbt);
-        }
-        nbt.put("OutputPorts", outputPortsList);
+        NekoTechnology.LOGGER.debug("[导体管理器] 保存导体组#{}, 节点数: {}", group.id, group.nodes.size());
     }
 
     /**
@@ -344,48 +531,112 @@ public class ConductorManager extends PersistentState {
     private ConductorGroup readGroupFromNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         int id = nbt.getInt("Id");
 
-        // 由于ConductorGroup的id是自动生成的，我们需要创建一个占位符
-        // 在实际实现中，可能需要修改ConductorGroup的构造函数以支持指定ID
+        // 创建导体组
         ConductorGroup group = new ConductorGroup();
 
-        // 使用反射或其他方法设置ID（这里简化处理）
-        // 注意：实际实现中需要更优雅的方式处理ID
+        // 通过反射设置ID
+        try {
+            java.lang.reflect.Field idField = ConductorGroup.class.getDeclaredField("id");
+            idField.setAccessible(true);
+            idField.set(group, id);
+        } catch (Exception e) {
+            NekoTechnology.LOGGER.error("无法设置导体组ID: {}", e.getMessage());
+        }
 
         // 加载节点
         if (nbt.contains("Nodes", NbtElement.LIST_TYPE)) {
             NbtList nodesList = nbt.getList("Nodes", NbtElement.COMPOUND_TYPE);
             for (int i = 0; i < nodesList.size(); i++) {
                 NbtCompound nodeNbt = nodesList.getCompound(i);
+
+                // 读取位置
                 int x = nodeNbt.getInt("X");
                 int y = nodeNbt.getInt("Y");
                 int z = nodeNbt.getInt("Z");
                 BlockPos pos = new BlockPos(x, y, z);
 
                 ConductorNode node = new ConductorNode(pos);
-                group.addNode(node);
+
+                // 读取连接
+                if (nodeNbt.contains("Connections", NbtElement.LIST_TYPE)) {
+                    NbtList connections = nodeNbt.getList("Connections", NbtElement.STRING_TYPE);
+                    for (int j = 0; j < connections.size(); j++) {
+                        String dirName = connections.getString(j);
+                        try {
+                            Direction dir = Direction.byName(dirName);
+                            if (dir != null) {
+                                node.connections.add(dir);
+                            }
+                        } catch (IllegalArgumentException e) {
+                            NekoTechnology.LOGGER.warn("无法解析方向: {}", dirName);
+                        }
+                    }
+                }
+
+                // 读取输入端口
+                if (nodeNbt.contains("InputPort", NbtElement.COMPOUND_TYPE)) {
+                    NbtCompound portNbt = nodeNbt.getCompound("InputPort");
+                    Port port = new Port(
+                            Port.Type.valueOf(portNbt.getString("Type")),
+                            portNbt.getFloat("MaxRate"),
+                            portNbt.getFloat("Efficiency"),
+                            new BlockPos(
+                                    portNbt.getInt("MachineX"),
+                                    portNbt.getInt("MachineY"),
+                                    portNbt.getInt("MachineZ")
+                            ),
+                            portNbt.getBoolean("IsSelf"),
+                            new BlockPos(
+                                    portNbt.getInt("PortX"),
+                                    portNbt.getInt("PortY"),
+                                    portNbt.getInt("PortZ")
+                            ),
+                            portNbt.getString("SourceItemId")
+                    );
+                    node.inputPort = port;
+                }
+
+                // 读取输出端口
+                if (nodeNbt.contains("OutputPort", NbtElement.COMPOUND_TYPE)) {
+                    NbtCompound portNbt = nodeNbt.getCompound("OutputPort");
+                    Port port = new Port(
+                            Port.Type.valueOf(portNbt.getString("Type")),
+                            portNbt.getFloat("MaxRate"),
+                            portNbt.getFloat("Efficiency"),
+                            new BlockPos(
+                                    portNbt.getInt("MachineX"),
+                                    portNbt.getInt("MachineY"),
+                                    portNbt.getInt("MachineZ")
+                            ),
+                            portNbt.getBoolean("IsSelf"),
+                            new BlockPos(
+                                    portNbt.getInt("PortX"),
+                                    portNbt.getInt("PortY"),
+                                    portNbt.getInt("PortZ")
+                            ),
+                            portNbt.getString("SourceItemId")
+                    );
+                    node.outputPort = port;
+                }
+
+                group.nodes.add(node);
             }
         }
 
-        return group;
-    }
+        // 重新计算端口列表
+        for (ConductorNode node : group.nodes) {
+            if (node.inputPort != null) {
+                group.inputPorts.add(node.inputPort);
+            }
+            if (node.outputPort != null) {
+                group.outputPorts.add(node.outputPort);
+            }
+        }
 
-    /**
-     * 将端口保存到NBT
-     */
-    private NbtCompound writePortToNbt(Port port) {
-        NbtCompound nbt = new NbtCompound();
-        nbt.putString("Type", port.type.name());
-        nbt.putFloat("MaxRate", port.maxRate);
-        nbt.putFloat("Efficiency", port.efficiency);
-        nbt.putInt("MachineX", port.machinePos.getX());
-        nbt.putInt("MachineY", port.machinePos.getY());
-        nbt.putInt("MachineZ", port.machinePos.getZ());
-        nbt.putInt("PortX", port.portPos.getX());
-        nbt.putInt("PortY", port.portPos.getY());
-        nbt.putInt("PortZ", port.portPos.getZ());
-        nbt.putBoolean("IsSelf", port.isSelf);
-        nbt.putString("SourceItemId", port.sourceItemId);
-        return nbt;
+        NekoTechnology.LOGGER.info("[导体管理器] 加载导体组#{}, 节点: {}, 输入: {}, 输出: {}",
+                group.id, group.nodes.size(), group.inputPorts.size(), group.outputPorts.size());
+
+        return group;
     }
 
     /**

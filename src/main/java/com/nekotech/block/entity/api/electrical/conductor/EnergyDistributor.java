@@ -47,20 +47,35 @@ public class EnergyDistributor {
             return new AllocationResult(Collections.emptyList(), 0);
         }
 
-        // 2. 计算总容量和需求
+        // 2. 计算总容量
         float totalInputCapacity = calculateTotalInputCapacity(inputPorts);
-        float totalOutputDemand = calculateTotalOutputDemand(outputPorts);
+        float totalOutputCapacity = calculateTotalOutputDemand(outputPorts);
 
-        // 3. 可用能量是输入容量和输出需求的最小值
-        float availableEnergy = Math.min(totalInputCapacity, totalOutputDemand);
+        // 3. 可用能量是输入容量和输出容量的最小值
+        float availableEnergy = Math.min(totalInputCapacity, totalOutputCapacity);
 
-        // 4. 智能分配（低速输入端口优先）
-        List<Allocation> allocations = smartAllocate(inputPorts, outputPorts, availableEnergy);
+        if (availableEnergy <= 0) {
+            return new AllocationResult(Collections.emptyList(), 0);
+        }
+
+        // 4. 智能分配
+        List<Allocation> allocations = smartAllocate(inputPorts, outputPorts,
+                availableEnergy, totalInputCapacity, totalOutputCapacity);
 
         // 5. 执行传输
-        executeAllocations(world, allocations);
+        if (!allocations.isEmpty()) {
+            executeAllocations(world, allocations);
+        }
 
-        return new AllocationResult(allocations, availableEnergy);
+        float totalTransferred = allocations.stream().map(a -> a.amount).reduce(0f, Float::sum);
+
+        // 调试日志
+        if (totalTransferred > 0 && world.getTime() % 20 == 0) {
+            NekoTechnology.LOGGER.debug("[能量分配器] 传输: {:.2f} NF, 输入口: {}, 输出口: {}",
+                    totalTransferred, inputPorts.size(), outputPorts.size());
+        }
+
+        return new AllocationResult(allocations, totalTransferred);
     }
 
     private List<InputPortInfo> collectInputPorts(World world, ConductorGroup group) {
@@ -69,17 +84,14 @@ public class EnergyDistributor {
         for (Port port : group.inputPorts) {
             BlockEntity be = world.getBlockEntity(port.machinePos);
             if (be instanceof IElectricalMachine machine) {
-                float availableEnergy = machine.getNekoFlux();
-                float maxExtractable = Math.min(availableEnergy, port.getEffectiveRate());
+                float available = machine.getNekoFlux();
+                float maxExtractable = Math.min(available, port.getEffectiveRate());
 
-                if (maxExtractable > 0) {
+                if (maxExtractable > 0.001f) {
                     inputs.add(new InputPortInfo(port, machine, maxExtractable));
                 }
             }
         }
-
-        // 按最大可提取量升序排序（低速优先）
-        inputs.sort(Comparator.comparingDouble(a -> a.maxExtractable));
 
         return inputs;
     }
@@ -118,47 +130,37 @@ public class EnergyDistributor {
         return total;
     }
 
-    private List<Allocation> smartAllocate(List<InputPortInfo> inputs, List<OutputPortInfo> outputs, float totalAvailable) {
+    private List<Allocation> smartAllocate(List<InputPortInfo> inputs, List<OutputPortInfo> outputs,
+                                           float totalAllocated, float totalInputCapacity, float totalOutputCapacity) {
         List<Allocation> allocations = new ArrayList<>();
-
-        if (outputs.isEmpty()) {
+        if (outputs.isEmpty() || inputs.isEmpty() || totalAllocated <= 0) {
             return allocations;
         }
 
-        // 计算总输出容量
-        float totalOutputCapacity = 0;
-        for (OutputPortInfo output : outputs) {
-            totalOutputCapacity += output.maxAcceptable;
+        float[] inputAllocations = calculateInputAllocations(inputs, totalAllocated, totalInputCapacity, totalOutputCapacity);
+
+        float[] outputRatios = new float[outputs.size()];
+
+        if (totalOutputCapacity > 0) {
+            for (int j = 0; j < outputs.size(); j++) {
+                outputRatios[j] = outputs.get(j).maxAcceptable / totalOutputCapacity;
+            }
+        } else {
+            return allocations;
         }
+        for (int i = 0; i < inputs.size(); i++) {
+            InputPortInfo inputInfo = inputs.get(i);
+            float inputAlloc = inputAllocations[i];
 
-        // 总输入不能超过总输出
-        float effectiveAvailable = Math.min(totalAvailable, totalOutputCapacity);
+            if (inputAlloc <= 0) continue;
 
-        // 优先满足低速输入端口
-        float remaining = effectiveAvailable;
+            for (int j = 0; j < outputs.size(); j++) {
+                OutputPortInfo outputInfo = outputs.get(j);
+                float allocationAmount = inputAlloc * outputRatios[j];
 
-        for (InputPortInfo input : inputs) {
-            if (remaining <= 0) break;
-
-            // 为此输入端口分配能量（不能超过其最大速率）
-            // 每个input端口的实际抽取速率 ≤ 该端口的最大速率
-            float maxForThisInput = input.maxExtractable;
-            float toAllocate = Math.min(maxForThisInput, remaining);
-
-            if (toAllocate <= 0) continue;
-
-            List<Allocation> inputAllocations = allocateForInput(input, outputs, toAllocate);
-
-            allocations.addAll(inputAllocations);
-            remaining -= toAllocate;
-
-            // 更新输出端口剩余容量
-            for (Allocation alloc : inputAllocations) {
-                for (OutputPortInfo output : outputs) {
-                    if (output.port == alloc.outputPort) {
-                        output.maxAcceptable -= alloc.amount;
-                        break;
-                    }
+                // 避免极小的分配量
+                if (allocationAmount > 0.001f) {
+                    allocations.add(new Allocation(inputInfo.port, outputInfo.port, allocationAmount));
                 }
             }
         }
@@ -166,37 +168,43 @@ public class EnergyDistributor {
         return allocations;
     }
 
-    private List<Allocation> allocateForInput(InputPortInfo input, List<OutputPortInfo> outputs, float available) {
-        List<Allocation> allocations = new ArrayList<>();
 
-        // 计算输出端口总剩余需求
-        float totalRemainingDemand = 0;
-        for (OutputPortInfo output : outputs) {
-            if (output.maxAcceptable > 0) {
-                totalRemainingDemand += output.maxAcceptable;
+    /**
+     * 计算每个输入端口的分配量
+     */
+    private float[] calculateInputAllocations(List<InputPortInfo> inputs, float totalAllocated,
+                                              float totalInputCapacity, float totalOutputCapacity) {
+        float[] allocations = new float[inputs.size()];
+
+        // 按最大速度升序排序（低速优先）
+        List<InputPortInfo> sortedInputs = new ArrayList<>(inputs);
+        sortedInputs.sort(Comparator.comparingDouble(a -> a.maxExtractable));
+
+        if (totalOutputCapacity >= totalInputCapacity) {
+            // 情况1：输出容量充足，所有输入端口可达到最大速度
+            for (int i = 0; i < sortedInputs.size(); i++) {
+                InputPortInfo input = sortedInputs.get(i);
+                allocations[i] = input.maxExtractable;
             }
-        }
+        } else {
+            // 情况2：输出容量不足，需要公平分配
+            float remainingCapacity = totalAllocated; // 剩余可分配容量
+            int remainingInputs = sortedInputs.size();
 
-        if (totalRemainingDemand <= 0) {
-            return allocations;
-        }
+            for (int i = 0; i < sortedInputs.size(); i++) {
+                InputPortInfo input = sortedInputs.get(i);
+                float average = remainingCapacity / remainingInputs;
 
-        // 按需求比例分配
-        for (OutputPortInfo output : outputs) {
-            if (output.maxAcceptable <= 0) continue;
-
-            float allocationRatio = output.maxAcceptable / totalRemainingDemand;
-            float allocated = available * allocationRatio;
-
-            // 确保不超过输出端口的最大接受量
-            allocated = Math.min(allocated, output.maxAcceptable);
-
-            if (allocated > 0) {
-                allocations.add(new Allocation(input.port, output.port, allocated));
-                available -= allocated;
-                output.maxAcceptable -= allocated;
-
-                if (available <= 0) break;
+                if (input.maxExtractable <= average) {
+                    // 条件3：低速端口可满速运行
+                    allocations[i] = input.maxExtractable;
+                    remainingCapacity -= input.maxExtractable;
+                } else {
+                    // 按平均值分配
+                    allocations[i] = average;
+                    remainingCapacity -= average;
+                }
+                remainingInputs--;
             }
         }
 
