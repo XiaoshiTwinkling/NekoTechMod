@@ -11,7 +11,7 @@ import java.util.*;
  * 表示一个导体组（由多个导体方块连接而成的整体）
  */
 public class ConductorGroup {
-    private static int NEXT_ID = 0;
+    static int NEXT_ID = 0;
 
     public final int id;
     public final Set<ConductorNode> nodes = new HashSet<>();
@@ -21,8 +21,6 @@ public class ConductorGroup {
     // 导体组属性
     public float totalInputCapacity = 0;
     public float totalOutputCapacity = 0;
-    public float currentLoad = 0;
-    public float energyBuffer = 0; // 导体组内部缓冲区
 
     public ConductorGroup() {
         this.id = NEXT_ID++;
@@ -41,12 +39,16 @@ public class ConductorGroup {
 
     public void updatePortsFromNode(ConductorNode node) {
         if (node.inputPort != null) {
-            inputPorts.add(node.inputPort);
-            totalInputCapacity += node.inputPort.getEffectiveRate();
+            if (!inputPorts.contains(node.inputPort)) {
+                inputPorts.add(node.inputPort);
+                totalInputCapacity += node.inputPort.getEffectiveRate();
+            }
         }
         if (node.outputPort != null) {
-            outputPorts.add(node.outputPort);
-            totalOutputCapacity += node.outputPort.getEffectiveRate();
+            if (!outputPorts.contains(node.outputPort)) {
+                outputPorts.add(node.outputPort);
+                totalOutputCapacity += node.outputPort.getEffectiveRate();
+            }
         }
     }
 
@@ -77,18 +79,6 @@ public class ConductorGroup {
             }
         }
         return null;
-    }
-
-    public Set<ConductorNode> getNeighborNodes(ConductorNode node) {
-        Set<ConductorNode> neighbors = new HashSet<>();
-        for (Direction dir : node.connections) {
-            BlockPos neighborPos = node.pos.offset(dir);
-            ConductorNode neighbor = getNode(neighborPos);
-            if (neighbor != null) {
-                neighbors.add(neighbor);
-            }
-        }
-        return neighbors;
     }
 
     /**
@@ -133,12 +123,24 @@ public class ConductorGroup {
      * 合并另一个导体组
      */
     public void merge(ConductorGroup other) {
+        float otherInputCapacity = other.totalInputCapacity;
+        float otherOutputCapacity = other.totalOutputCapacity;
+
         for (ConductorNode node : other.nodes) {
             this.nodes.add(node);
             updatePortsFromNode(node);
         }
+
+        this.inputPorts.addAll(other.inputPorts);
+        this.outputPorts.addAll(other.outputPorts);
+        this.totalInputCapacity += otherInputCapacity;
+        this.totalOutputCapacity += otherOutputCapacity;
+
+        other.inputPorts.clear();
+        other.outputPorts.clear();
+        other.totalInputCapacity = 0;
+        other.totalOutputCapacity = 0;
         other.nodes.clear();
-        NekoTechnology.LOGGER.info("[导体组#{}] 合并了导体组#{}", id, other.id);
     }
 
     /**
@@ -146,77 +148,113 @@ public class ConductorGroup {
      * 返回分割后的新导体组列表
      */
     public List<ConductorGroup> splitAt(World world, BlockPos removedPos) {
-        // 移除节点
         ConductorNode removedNode = getNode(removedPos);
         if (removedNode != null) {
             removeNode(removedNode);
         }
 
-        // 构建图
-        Map<BlockPos, List<BlockPos>> graph = new HashMap<>();
-        for (ConductorNode node : nodes) {
-            List<BlockPos> neighbors = new ArrayList<>();
-            for (Direction dir : node.connections) {
-                BlockPos neighborPos = node.pos.offset(dir);
-                if (getNode(neighborPos) != null && !neighborPos.equals(removedPos)) {
-                    neighbors.add(neighborPos);
-                }
-            }
-            graph.put(node.pos, neighbors);
+        if (nodes.isEmpty()) {
+            NekoTechnology.LOGGER.info("[导体组#{}] 分割后无节点，直接移除", id);
+            return Collections.emptyList();
         }
 
-        // 查找连通分量
-        List<Set<BlockPos>> components = findConnectedComponents(graph);
+        List<Set<BlockPos>> connectedComponents = findConnectedComponentsAfterRemoval(world, removedPos);
 
-        // 创建新导体组
         List<ConductorGroup> newGroups = new ArrayList<>();
-        for (Set<BlockPos> component : components) {
-            if (!component.isEmpty()) {
-                ConductorGroup newGroup = new ConductorGroup();
-                for (BlockPos pos : component) {
-                    ConductorNode node = getNode(pos);
-                    if (node != null) {
-                        newGroup.addNode(node);
+
+        for (Set<BlockPos> component : connectedComponents) {
+            if (component.isEmpty()) {
+                continue;
+            }
+
+            ConductorGroup newGroup = new ConductorGroup();
+            PortScanner scanner = new PortScanner();
+
+            // 为这个连通分量中的所有节点创建新组
+            for (BlockPos pos : component) {
+                ConductorNode originalNode = getNode(pos);
+                if (originalNode != null) {
+                    // 创建节点副本，避免修改原节点
+                    ConductorNode newNode = new ConductorNode(pos);
+
+                    // 复制连接信息
+                    for (Direction dir : originalNode.connections) {
+                        if (component.contains(pos.offset(dir))) {
+                            newNode.addConnection(dir);
+                        }
                     }
+
+                    // 复制端口信息
+                    newNode.inputPort = originalNode.inputPort;
+                    newNode.outputPort = originalNode.outputPort;
+
+                    newGroup.addNode(newNode);
                 }
+            }
+
+            if (!newGroup.nodes.isEmpty()) {
                 newGroups.add(newGroup);
+                NekoTechnology.LOGGER.debug("[导体组#{}] 创建新导体组#{}，包含 {} 个节点",
+                        id, newGroup.id, newGroup.nodes.size());
             }
         }
 
-        NekoTechnology.LOGGER.info("[导体组#{}] 分割成 {} 个导体组", id, newGroups.size());
+        NekoTechnology.LOGGER.info("[导体组#{}] 分割成 {} 个新导体组", id, newGroups.size());
         return newGroups;
     }
 
-    private List<Set<BlockPos>> findConnectedComponents(Map<BlockPos, List<BlockPos>> graph) {
+    /**
+     * 查找移除指定位置后的所有连通分量
+     */
+    private List<Set<BlockPos>> findConnectedComponentsAfterRemoval(World world, BlockPos removedPos) {
+        // 使用BFS查找所有连通分量
         List<Set<BlockPos>> components = new ArrayList<>();
         Set<BlockPos> visited = new HashSet<>();
 
-        for (BlockPos pos : graph.keySet()) {
-            if (!visited.contains(pos)) {
-                Set<BlockPos> component = new HashSet<>();
-                Queue<BlockPos> queue = new LinkedList<>();
-                queue.add(pos);
-                visited.add(pos);
+        for (ConductorNode node : nodes) {
+            if (visited.contains(node.pos)) {
+                continue;
+            }
 
-                while (!queue.isEmpty()) {
-                    BlockPos current = queue.poll();
-                    component.add(current);
+            // 对每个未访问的节点进行BFS
+            Set<BlockPos> component = new HashSet<>();
+            Queue<BlockPos> queue = new LinkedList<>();
+            queue.add(node.pos);
+            visited.add(node.pos);
 
-                    for (BlockPos neighbor : graph.get(current)) {
-                        if (!visited.contains(neighbor)) {
-                            visited.add(neighbor);
-                            queue.add(neighbor);
-                        }
+            while (!queue.isEmpty()) {
+                BlockPos current = queue.poll();
+                component.add(current);
+
+                ConductorNode currentNode = getNode(current);
+                if (currentNode == null) {
+                    continue;
+                }
+
+                for (Direction dir : currentNode.connections) {
+                    BlockPos neighborPos = current.offset(dir);
+
+                    if (neighborPos.equals(removedPos)) {
+                        continue;
+                    }
+
+                    if (!visited.contains(neighborPos) && getNode(neighborPos) != null) {
+                        visited.add(neighborPos);
+                        queue.add(neighborPos);
                     }
                 }
+            }
 
-                if (!component.isEmpty()) {
-                    components.add(component);
-                }
+            if (!component.isEmpty()) {
+                components.add(component);
             }
         }
-
         return components;
+    }
+
+    // 重置ID
+    public static void resetNextId(int nextId) {
+        NEXT_ID = nextId;
     }
 
     public void tick(World world) {

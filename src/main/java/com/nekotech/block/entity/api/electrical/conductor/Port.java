@@ -2,6 +2,8 @@ package com.nekotech.block.entity.api.electrical.conductor;
 
 import net.minecraft.util.math.BlockPos;
 
+import java.util.Objects;
+
 /**
  * 能量端口，表示能量流入或流出的点
  */
@@ -46,5 +48,21 @@ public class Port {
     public String toString() {
         return String.format("Port[%s@%s->%s rate=%.1f]",
                 type, portPos, machinePos, maxRate);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Port port = (Port) o;
+        return type == port.type &&
+                machinePos.equals(port.machinePos) &&
+                portPos.equals(port.portPos) &&
+                isSelf == port.isSelf;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, machinePos, portPos, isSelf);
     }
 }
