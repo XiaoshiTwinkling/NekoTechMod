@@ -1,6 +1,24 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "item/generated",
   "textures": {
-    "layer0": "neko-technology:item/neko_tag"
-  }
+    "layer0": "nekotechnology:item/neko_tag"
+  },
+  "overrides": [
+    {"predicate": {"color": 0}, "model": "neko_technology:item/neko_tag/neko_tag_white"},
+    {"predicate": {"color": 1}, "model": "neko_technology:item/neko_tag/neko_tag_orange"},
+    {"predicate": {"color": 2}, "model": "neko_technology:item/neko_tag/neko_tag_magenta"},
+    {"predicate": {"color": 3}, "model": "neko_technology:item/neko_tag/neko_tag_light_blue"},
+    {"predicate": {"color": 4}, "model": "neko_technology:item/neko_tag/neko_tag_yellow"},
+    {"predicate": {"color": 5}, "model": "neko_technology:item/neko_tag/neko_tag_lime"},
+    {"predicate": {"color": 6}, "model": "neko_technology:item/neko_tag/neko_tag_pink"},
+    {"predicate": {"color": 7}, "model": "neko_technology:item/neko_tag/neko_tag_gray"},
+    {"predicate": {"color": 8}, "model": "neko_technology:item/neko_tag/neko_tag_light_gray"},
+    {"predicate": {"color": 9}, "model": "neko_technology:item/neko_tag/neko_tag_cyan"},
+    {"predicate": {"color": 10}, "model": "neko_technology:item/neko_tag/neko_tag_purple"},
+    {"predicate": {"color": 11}, "model": "neko_technology:item/neko_tag/neko_tag_blue"},
+    {"predicate": {"color": 12}, "model": "neko_technology:item/neko_tag/neko_tag_brown"},
+    {"predicate": {"color": 13}, "model": "neko_technology:item/neko_tag/neko_tag_green"},
+    {"predicate": {"color": 14}, "model": "neko_technology:item/neko_tag/neko_tag_red"},
+    {"predicate": {"color": 15}, "model": "neko_technology:item/neko_tag/neko_tag_black"}
+  ]
 }
