@@ -85,6 +85,7 @@
   "block.neko-technology.wooden_casing": "含导体木制机壳",
   "block.neko-technology.flux_storage": "猫猫通量储存器",
   "block.neko-technology.flux_storage.description": "§2储能：§0 %s/%s NF \n§2填充比例：§0 %s \n§2是否有猫猫：§0 %s \n安装零件: %s个",
+  "block.neko-technology.bellows": "猫风箱",
 
   "message.nekotech.item_put": "%s 已放入喵~",
   "message.nekotech.all_items_taken": "东西全部拿出来了喵~",
@@ -100,6 +101,9 @@
 
   "item.neko-technology.neko_tag": "猫咪标签",
   "screen.neko-technology.neko_tag": "猫咪标签",
+  "task.neko-technology.input": "猫输入",
+  "task.neko-technology.output": "猫输出",
+
 
   "screen.neko-technology.neko_tag.color": "颜色",
   "screen.neko-technology.neko_tag.item": "物品",

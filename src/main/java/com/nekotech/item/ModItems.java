@@ -29,7 +29,6 @@ public class ModItems {
     public static final Item enhanced_neko_hair= registerItems("enhanced_neko_hair", new ModItem(new Item.Settings(),"enhanced_neko_hair"));
     public static final Item stone_powder= registerItems("stone_powder", new Item(new Item.Settings()));
     public static final Item neko_feather= registerItems("neko_feather", new ModItem(new Item.Settings(),"neko_feather"));
-//    public static final Item neko_arrow= registerItems("neko_arrow", new Item(new Item.Settings()));
     public static final Item dried_fish= registerItems("dried_fish", new ModItem(new Item.Settings().food(ModFoodComponents.DRIED_FISH),"dried_fish"));
     public static final Item burnt_fish= registerItems("burnt_fish", new ModItem(new Item.Settings().food(ModFoodComponents.BURNT_FISH),"burnt_fish"));
     public static final Item tin_can= registerItems("tin_can", new Item(new Item.Settings()));
