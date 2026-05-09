@@ -1,5 +1,6 @@
 package com.nekotech.renderer;
 
+import com.nekotech.NekoTechnology;
 import com.nekotech.block.entity.machines.WorkBenchBlockEntity;
 import com.nekotech.item.block.WorkBench;
 import net.minecraft.block.entity.VaultBlockEntity;
@@ -11,6 +12,7 @@ import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.RotationAxis;
 
@@ -22,27 +24,26 @@ public class WorkBenchBlockEntityRenderer implements BlockEntityRenderer<WorkBen
     public void render(WorkBenchBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
 
         Direction facing = entity.getCachedState().get(WorkBench.FACING);
-        float rotationAngle = -facing.asRotation(); // 转换为渲染旋转角度
+        float rotationAngle = -facing.asRotation();
 
         ItemStack inputStack = entity.getStack(WorkBenchBlockEntity.INPUT_SLOT);
-        if (!inputStack.isEmpty()) {
             renderItemOnBench(entity, inputStack, rotationAngle, matrices, vertexConsumers, light,
-                    -0.25f, 0.0f, -0.05f);
-        }
+                    -0.25f, 0.0f, 0.15f);
 
         ItemStack outputStack = entity.getStack(WorkBenchBlockEntity.OUTPUT_SLOT);
-        if (!outputStack.isEmpty()) {
             renderItemOnBench(entity, outputStack, rotationAngle, matrices, vertexConsumers, light,
-                    0.25f, 0.0f, 0.05f);
-        }
+                    0.25f, 0.0f, -0.15f);
     }
 
     private void renderItemOnBench(WorkBenchBlockEntity entity,ItemStack stack, float yaw, MatrixStack matrices,
                                    VertexConsumerProvider vertexConsumers, int light,
                                    float xOffset, float yOffset, float zOffset) {
 
-        matrices.push();
+        if(stack.isEmpty()){
+            return;
+        }
 
+        matrices.push();
         matrices.translate(0.5, 0.8, 0.5);
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(yaw));
         matrices.translate(xOffset, yOffset, zOffset);

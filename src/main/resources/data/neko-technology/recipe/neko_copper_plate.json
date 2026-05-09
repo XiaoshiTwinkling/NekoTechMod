@@ -1,21 +1,11 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
-  "group": "Neko",
-  "key": {
-    "A": {
-      "item": "neko-technology:hammer"
-    },
-    "B": {
-      "item": "neko-technology:neko_copper_ingot"
-    }
+  "type": "neko-technology:forging",
+  "input": {
+    "item": "neko-technology:neko_copper_ingot"
   },
-  "pattern": [
-    "A",
-    "B"
-  ],
-  "result": {
-    "count": 1,
-    "id": "neko-technology:neko_copper_plate"
-  }
+  "output": {
+    "id": "neko-technology:neko_copper_plate",
+    "count": 2
+  },
+  "success_chance": 0.7
 }

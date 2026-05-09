@@ -3,9 +3,13 @@ package com.nekotech.item.block;
 import com.mojang.serialization.MapCodec;
 import com.nekotech.block.entity.machines.AlloyPotBlockEntity;
 import com.nekotech.block.entity.machines.WorkBenchBlockEntity;
+import com.nekotech.item.custom.Hammer;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
@@ -39,16 +43,32 @@ public class WorkBench extends DirectionalMachineBlock {
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos,
                               PlayerEntity player, BlockHitResult hit) {
-        if (!world.isClient) {
-            BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof WorkBenchBlockEntity be) {
-                Hand hand = player.getActiveHand();
-                if (be.handleRightClick(player, player.getStackInHand(hand))) {
+        if (world.isClient) {
+            return ActionResult.SUCCESS;
+        }
+
+        ItemStack handStack = player.getStackInHand(player.getActiveHand());
+
+        if (handStack.getItem() instanceof Hammer) {
+            if (world.getBlockEntity(pos) instanceof WorkBenchBlockEntity workBench) {
+                if (workBench.tryForging(player, handStack)) {
+                    // 成功：播放音效
+                    world.playSound(null, pos, SoundEvents.BLOCK_ANVIL_USE, SoundCategory.BLOCKS, 0.8f, 0.8f + world.random.nextFloat() * 0.4f);
                     return ActionResult.SUCCESS;
+                } else {
+                    // 失败：播放不同的音效
+                    world.playSound(null, pos, SoundEvents.BLOCK_ANVIL_LAND, SoundCategory.BLOCKS, 0.5f, 0.5f);
+                    return ActionResult.FAIL;
                 }
             }
         }
-        return ActionResult.SUCCESS;
+
+        // 2. 否则，执行原有的 TakeFreelyInventory 交互
+        if (world.getBlockEntity(pos) instanceof WorkBenchBlockEntity workBench) {
+            return workBench.handleRightClick(player, handStack) ? ActionResult.SUCCESS : ActionResult.PASS;
+        }
+
+        return ActionResult.PASS;
     }
 
     @Override

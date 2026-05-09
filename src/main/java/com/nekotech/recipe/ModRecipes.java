@@ -3,6 +3,8 @@ package com.nekotech.recipe;
 import com.nekotech.NekoTechnology;
 import com.nekotech.recipe.AlloyPot.AlloyRecipe;
 import com.nekotech.recipe.AlloyPot.AlloyRecipeSerializer;
+import com.nekotech.recipe.WorkBench.forging.ForgingRecipe;
+import com.nekotech.recipe.WorkBench.forging.ForgingRecipeSerializer;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.Registries;
@@ -13,6 +15,9 @@ public class ModRecipes {
 
     public static RecipeType<AlloyRecipe> ALLOY_TYPE;
     public static RecipeSerializer<AlloyRecipe> ALLOY_SERIALIZER;
+
+    public static RecipeType<ForgingRecipe> FORGING_RECIPE_TYPE;
+    public static RecipeSerializer<ForgingRecipe> FORGING_RECIPE_SERIALIZER;
 
     public static void init() {
         ALLOY_TYPE = Registry.register(
@@ -29,6 +34,22 @@ public class ModRecipes {
                 Registries.RECIPE_SERIALIZER,
                 Identifier.of(NekoTechnology.MOD_ID, "alloy"),
                 new AlloyRecipeSerializer()
+        );
+
+        FORGING_RECIPE_TYPE = Registry.register(
+                Registries.RECIPE_TYPE,
+                Identifier.of(NekoTechnology.MOD_ID, "forging"),
+                new RecipeType<ForgingRecipe>() {
+                    @Override
+                    public String toString() {
+                        return "neko-technology:forging";
+                    }
+                });
+
+        FORGING_RECIPE_SERIALIZER = Registry.register(
+                Registries.RECIPE_SERIALIZER,
+                Identifier.of(NekoTechnology.MOD_ID, "forging"),
+                new ForgingRecipeSerializer()
         );
     }
 }
