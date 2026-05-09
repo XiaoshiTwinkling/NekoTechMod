@@ -11,6 +11,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,7 +31,7 @@ public abstract class AbstractElectricalAppliance extends MachineBlockEntity
 
     public AbstractElectricalAppliance(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-        this.validComponents = null;
+        this.validComponents = new HashSet<>();
     }
 
     @Override

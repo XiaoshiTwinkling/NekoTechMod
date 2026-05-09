@@ -43,6 +43,9 @@ public class ModBlockEntities {
     public static BlockEntityType<MachineCasingBlockEntity> wooden_casing =
             create("wooden_casing", BlockEntityType.Builder.create(MachineCasingBlockEntity::new, ModBlocks.wooden_casing));
 
+    public static BlockEntityType<WorkBenchBlockEntity> work_bench =
+            create("work_bench", BlockEntityType.Builder.create(WorkBenchBlockEntity::new, ModBlocks.work_bench));
+
 
 
     private static <T extends BlockEntity> BlockEntityType<T> create(String id, BlockEntityType.Builder<T> builder){

@@ -4,12 +4,8 @@ import com.nekotech.Screen.NekoTagScreen;
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.item.ModItems;
 import com.nekotech.item.custom.NekoTag.NekoTagData;
-import com.nekotech.renderer.GogglesHudRenderer;
+import com.nekotech.renderer.*;
 import com.nekotech.network.ClientHudNetworkHandler;
-import com.nekotech.renderer.AlloyPotBlockEntityRenderer;
-import com.nekotech.renderer.BellowsBlockEntityRenderer;
-import com.nekotech.renderer.CatTailFeatureRenderer;
-import com.nekotech.renderer.ClientLaserTargetCache;
 import com.nekotech.renderer.components.ComponentAttachmentRenderer;
 import com.nekotech.screen.ModScreenHandlers;
 import net.fabricmc.api.ClientModInitializer;
@@ -67,6 +63,7 @@ public class NekoTechnologyClient implements ClientModInitializer {
                 }
         );
         HandledScreens.register(ModScreenHandlers.NEKO_TAG, NekoTagScreen::new);
+        BlockEntityRendererRegistry.register(ModBlockEntities.work_bench, WorkBenchBlockEntityRenderer::new);
 
         ModelPredicateProviderRegistry.register(
                 ModItems.neko_tag,

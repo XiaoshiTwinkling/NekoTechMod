@@ -64,15 +64,13 @@ public class FluxStorageBlockEntity extends MachineBlockEntity
      * 在方块实体类型注册时需要注册tick方法喵~
      */
     public static void tick(World world, BlockPos pos, BlockState state, FluxStorageBlockEntity blockEntity) {
-        if (world.isClient()) {
-            // 客户端逻辑
-            blockEntity.clientTick(world, pos, state, blockEntity);
+        if (!world.isClient()) {
+            // 服务端逻辑
+            blockEntity.serverTick(world, pos, state, blockEntity);
         }
     }
 
-    private void clientTick(World world, BlockPos pos, BlockState state, FluxStorageBlockEntity blockEntity){
-        if (world.isClient()) return;
-
+    private void serverTick(World world, BlockPos pos, BlockState state, FluxStorageBlockEntity blockEntity){
         // 检查机器是否可以运行（需要猫）
         blockEntity.isActive = blockEntity.canMachineRun();
 

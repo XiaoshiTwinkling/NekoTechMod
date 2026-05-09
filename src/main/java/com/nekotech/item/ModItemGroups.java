@@ -91,6 +91,7 @@ public class ModItemGroups {
                             entries.add(ModBlocks.alloy_pot);
                             entries.add(ModBlocks.wooden_casing);
                             entries.add(ModBlocks.flux_storage);
+                            entries.add(ModBlocks.work_bench);
 
                         })).build());
 

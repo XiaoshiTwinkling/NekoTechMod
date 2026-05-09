@@ -86,6 +86,7 @@
   "block.neko-technology.flux_storage": "猫猫通量储存器",
   "block.neko-technology.flux_storage.description": "§2储能：§0 %s/%s NF \n§2填充比例：§0 %s \n§2是否有猫猫：§0 %s \n安装零件: %s个",
   "block.neko-technology.bellows": "猫风箱",
+  "block.neko-technology.work_bench": "加工台",
 
   "message.nekotech.item_put": "%s 已放入喵~",
   "message.nekotech.all_items_taken": "东西全部拿出来了喵~",

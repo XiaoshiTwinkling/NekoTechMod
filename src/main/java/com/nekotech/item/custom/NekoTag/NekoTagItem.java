@@ -4,6 +4,7 @@ import com.nekotech.screen.NekoTag.NekoTagScreenHandler;
 import com.nekotech.item.ModItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
 import net.minecraft.text.Text;
@@ -26,6 +27,7 @@ public class NekoTagItem extends ModItem {
 
     public NekoTagItem(Settings settings, String id) {
         super(settings, id);
+
     }
 
     @Override
@@ -120,4 +122,6 @@ public class NekoTagItem extends ModItem {
 
         return storage != null;
     }
+
+
 }
