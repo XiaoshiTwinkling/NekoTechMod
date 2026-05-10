@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "neko-technology:block/work_bench"
+      "model": "neko-technology:block/work_bench/work_bench"
     }
   }
 }

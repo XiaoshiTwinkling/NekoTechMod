@@ -1,14 +1,16 @@
 package com.nekotech;
 
-import com.nekotech.Screen.NekoTagScreen;
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.item.ModItems;
+import com.nekotech.item.block.ModBlocks;
 import com.nekotech.item.custom.NekoTag.NekoTagData;
 import com.nekotech.renderer.*;
 import com.nekotech.network.ClientHudNetworkHandler;
 import com.nekotech.renderer.components.ComponentAttachmentRenderer;
 import com.nekotech.screen.ModScreenHandlers;
+import com.nekotech.screens.NekoTagScreen;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
@@ -17,6 +19,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
@@ -54,6 +57,7 @@ public class NekoTechnologyClient implements ClientModInitializer {
 
         WorldRenderEvents.AFTER_TRANSLUCENT.register(ClientLaserTargetCache::render);
 
+        registerRenderLayerMap();
 
         LivingEntityFeatureRendererRegistrationCallback.EVENT.register(
                 (entityType, renderer, helper, context) -> {
@@ -96,5 +100,9 @@ public class NekoTechnologyClient implements ClientModInitializer {
                 return new ComponentAttachmentRenderer();
             }
         });
+    }
+
+    private void registerRenderLayerMap(){
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.glass_cover, RenderLayer.getCutout());
     }
 }

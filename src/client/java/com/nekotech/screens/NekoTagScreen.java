@@ -1,4 +1,4 @@
-package com.nekotech.Screen;
+package com.nekotech.screens;
 
 import com.nekotech.item.ModItems;
 import com.nekotech.item.custom.NekoTag.NekoTagData;

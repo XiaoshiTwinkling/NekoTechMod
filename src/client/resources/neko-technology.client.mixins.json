@@ -3,7 +3,7 @@
 	"package": "com.nekotech.mixin.client",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
-		"ExampleClientMixin"
+		"RenderLayerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
