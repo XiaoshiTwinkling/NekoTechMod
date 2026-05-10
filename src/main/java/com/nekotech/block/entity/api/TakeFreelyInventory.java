@@ -93,24 +93,29 @@ public interface TakeFreelyInventory {
         boolean tookSomething = false;
 
         for (int i = 0; i < getInventorySize(); i++) {
+            ItemStack slotStack = getStack(i);
 
-            ItemStack extracted = getStack(i);
+            if (!slotStack.isEmpty() && canExtract(slotStack, i)) {
 
-            if (!extracted.isEmpty() && canExtract(extracted, i)) {
+                ItemStack extracted = removeStack(i);
+
+                if (extracted.isEmpty()) {
+                    continue;
+                }
+
+                ItemStack callbackStack = extracted.copy();
 
                 if (!player.getInventory().insertStack(extracted)) {
                     player.dropItem(extracted, false);
                 }
 
-                removeStack(i);
-
                 tookSomething = true;
-
-                onItemTaken(player, extracted, i);
+                onItemTaken(player, callbackStack, i);
             }
         }
 
         if (tookSomething) {
+            markDirty();
             onAllItemsTaken(player);
         }
 

@@ -23,7 +23,7 @@ public class AlloyPot extends BlockWithEntity {
     public static final MapCodec<AlloyPot> CODEC = createCodec(AlloyPot::new);
 
     public AlloyPot(Settings settings) {
-        super(settings);
+        super(settings.nonOpaque());
     }
 
     @Override

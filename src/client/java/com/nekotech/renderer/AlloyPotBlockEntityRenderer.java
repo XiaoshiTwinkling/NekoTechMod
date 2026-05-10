@@ -30,6 +30,7 @@ public class AlloyPotBlockEntityRenderer implements BlockEntityRenderer<AlloyPot
     private static final float BASE_RADIUS = 0.08f;
     private static final float RADIUS_VARIATION = 0.04f;
     private static final float BASE_HEIGHT = 0.32f;
+    private static final int FULL_BRIGHT = 0x00F000F0;
 
     public AlloyPotBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
         this.itemRenderer = MinecraftClient.getInstance().getItemRenderer();
@@ -126,7 +127,7 @@ public class AlloyPotBlockEntityRenderer implements BlockEntityRenderer<AlloyPot
         itemRenderer.renderItem(
                 stack,
                 ModelTransformationMode.FIXED,
-                light,
+                FULL_BRIGHT,
                 OverlayTexture.DEFAULT_UV,
                 matrices,
                 vcp,
