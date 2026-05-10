@@ -3,13 +3,18 @@ package com.nekotech.item.block;
 import com.mojang.serialization.MapCodec;
 import com.nekotech.block.entity.machines.AlloyPotBlockEntity;
 import com.nekotech.block.entity.machines.WorkBenchBlockEntity;
+import com.nekotech.item.ModItems;
 import com.nekotech.item.custom.Hammer;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
@@ -26,8 +31,17 @@ public class WorkBench extends DirectionalMachineBlock {
 
     public static final MapCodec<WorkBench> CODEC = createCodec(WorkBench::new);
 
+    public static final BooleanProperty HAS_GLASS_COVER = BooleanProperty.of("has_glass_cover");
+
     protected WorkBench(Settings settings) {
         super(settings);
+        this.setDefaultState(this.getStateManager().getDefaultState()
+                .with(HAS_GLASS_COVER, false));
+    }
+
+    @Override
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        builder.add(FACING, HAS_GLASS_COVER);
     }
 
     @Override
@@ -48,22 +62,63 @@ public class WorkBench extends DirectionalMachineBlock {
         }
 
         ItemStack handStack = player.getStackInHand(player.getActiveHand());
+        boolean isSneaking = player.isSneaking();
+
+        if (isSneaking) {
+            boolean hasCover = state.get(HAS_GLASS_COVER);
+
+            if (!hasCover && handStack.getItem() == ModItems.glass_cover ) {
+
+                world.setBlockState(pos, state.with(HAS_GLASS_COVER, true), Block.NOTIFY_ALL);
+
+                if (!player.getAbilities().creativeMode) {
+                    handStack.decrement(1);
+                }
+
+                world.playSound(null, pos, SoundEvents.BLOCK_GLASS_PLACE,
+                        SoundCategory.BLOCKS, 0.8f, 1.0f);
+
+                return ActionResult.SUCCESS;
+            }
+            if (hasCover && (handStack.isEmpty() || player.getAbilities().creativeMode)) {
+                world.setBlockState(pos, state.with(HAS_GLASS_COVER, false), Block.NOTIFY_ALL);
+
+                if (!player.getAbilities().creativeMode) {
+                    ItemStack coverStack = new ItemStack(ModItems.glass_cover);
+                    if (!player.getInventory().insertStack(coverStack)) {
+                        // 背包满则掉落
+                        player.dropItem(coverStack, false);
+                    }
+                }
+
+                world.playSound(null, pos, SoundEvents.BLOCK_GLASS_BREAK,
+                        SoundCategory.BLOCKS, 0.8f, 1.0f);
+
+                return ActionResult.SUCCESS;
+            }
+        }
 
         if (handStack.getItem() instanceof Hammer) {
             if (world.getBlockEntity(pos) instanceof WorkBenchBlockEntity workBench) {
                 if (workBench.tryForging(player, handStack)) {
-                    // 成功：播放音效
-                    world.playSound(null, pos, SoundEvents.BLOCK_ANVIL_USE, SoundCategory.BLOCKS, 0.8f, 0.8f + world.random.nextFloat() * 0.4f);
+                    world.playSound(null, pos, SoundEvents.BLOCK_ANVIL_USE,
+                            SoundCategory.BLOCKS, 0.8f, 0.8f + world.random.nextFloat() * 0.4f);
                     return ActionResult.SUCCESS;
                 } else {
-                    // 失败：播放不同的音效
-                    world.playSound(null, pos, SoundEvents.BLOCK_ANVIL_LAND, SoundCategory.BLOCKS, 0.5f, 0.5f);
+                    world.playSound(null, pos, SoundEvents.BLOCK_ANVIL_LAND,
+                            SoundCategory.BLOCKS, 0.5f, 0.5f);
                     return ActionResult.FAIL;
                 }
             }
         }
 
-        // 2. 否则，执行原有的 TakeFreelyInventory 交互
+        boolean hasCover = state.get(HAS_GLASS_COVER);
+        if (hasCover) {
+            if (player instanceof ServerPlayerEntity) {
+                player.sendMessage(Text.translatable("message.neko-technology.workbench.covered"), true);
+            }
+            return ActionResult.FAIL;
+        }
         if (world.getBlockEntity(pos) instanceof WorkBenchBlockEntity workBench) {
             return workBench.handleRightClick(player, handStack) ? ActionResult.SUCCESS : ActionResult.PASS;
         }

@@ -69,7 +69,7 @@
   "item.neko-technology.neko_copper_flux_inputer.tooltip": "猫猫能量输入效率: 0.4 NF/tick",
   "item.neko-technology.brass_item_inputer": "黄铜物品输入零件",
   "item.neko-technology.brass_item_inputer.tooltip": "物品输入效率: 0.05 个/tick",
-
+  "item.neko-technology.glass_cover": "玻璃罩",
 
 
   "block.neko-technology.yes": "是",
@@ -87,12 +87,14 @@
   "block.neko-technology.flux_storage.description": "§2储能：§0 %s/%s NF \n§2填充比例：§0 %s \n§2是否有猫猫：§0 %s \n安装零件: %s个",
   "block.neko-technology.bellows": "猫风箱",
   "block.neko-technology.work_bench": "加工台",
+  "message.neko-technology.workbench.covered": "§7玻璃罩已盖上，无法直接存取物品！",
   "message.neko-technology.forging.no_input": "§7加工台输入槽是空的！",
   "message.neko-technology.forging.no_recipe": "§7没有可用的锻造配方！",
   "message.neko-technology.forging.output_full": "§7输出槽已满！",
   "message.neko-technology.forging.hammer_broken": "§c锤子快要坏了！",
   "message.neko-technology.forging.success": "§a锻造成功！获得了：",
   "message.neko-technology.forging.failed": "§7锻造失败了，材料被消耗了...",
+
 
   "message.nekotech.item_put": "%s 已放入喵~",
   "message.nekotech.all_items_taken": "东西全部拿出来了喵~",

@@ -1,3 +1,6 @@
 {
-	"parent":"neko-technology:block/glass_cover"
+	"parent": "minecraft:item/generated",
+	"textures": {
+		"layer0": "neko-technology:item/glass_cover"
+	}
 }

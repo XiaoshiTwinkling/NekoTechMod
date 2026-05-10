@@ -62,9 +62,6 @@ public class ModBlocks {
             )
     );
 
-    public static final Block glass_cover = register("glass_cover",
-            new GlassCover(AbstractBlock.Settings.copy(Blocks.GLASS).nonOpaque())
-    );
 
     public static void registerBlockItems(String id, Block block){
         Item item = Registry.register(Registries.ITEM, Identifier.of(NekoTechnology.MOD_ID, id), new BlockItem(block, new Item.Settings()));

@@ -75,7 +75,7 @@ public class ModItemGroups {
                             entries.add(ModItems.brass_flux_inputer);
                             entries.add(ModItems.neko_copper_flux_outputer);
                             entries.add(ModItems.neko_copper_flux_inputer);
-
+                            entries.add(ModItems.glass_cover);
 
                         })).build());
 
@@ -92,7 +92,6 @@ public class ModItemGroups {
                             entries.add(ModBlocks.wooden_casing);
                             entries.add(ModBlocks.flux_storage);
                             entries.add(ModBlocks.work_bench);
-                            entries.add(ModBlocks.glass_cover);
 
                         })).build());
 

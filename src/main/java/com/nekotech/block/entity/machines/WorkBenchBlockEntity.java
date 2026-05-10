@@ -2,6 +2,7 @@ package com.nekotech.block.entity.machines;
 
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.block.entity.api.TakeFreelyInventory;
+import com.nekotech.item.block.WorkBench;
 import com.nekotech.recipe.ModRecipes;
 import com.nekotech.recipe.WorkBench.forging.ForgingRecipe;
 import net.minecraft.block.BlockState;
@@ -207,5 +208,28 @@ public class WorkBenchBlockEntity extends TakeFreelyMachineBlockEntity implement
         markDirty();
 
         return success;
+    }
+
+    /**
+     * 检查是否有玻璃罩
+     */
+    public boolean hasGlassCover() {
+        if (world == null || pos == null) return false;
+        BlockState state = world.getBlockState(pos);
+        if (state.getBlock() instanceof WorkBench) {
+            return state.get(WorkBench.HAS_GLASS_COVER);
+        }
+        return false;
+    }
+
+    /**
+     * 在有玻璃罩时禁用交互
+     */
+    @Override
+    public boolean handleRightClick(PlayerEntity player, ItemStack stack) {
+        if (hasGlassCover()) {
+            return false; // 有玻璃罩时禁止交互
+        }
+        return super.handleRightClick(player, stack);
     }
 }

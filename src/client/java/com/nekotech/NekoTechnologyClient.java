@@ -103,6 +103,5 @@ public class NekoTechnologyClient implements ClientModInitializer {
     }
 
     private void registerRenderLayerMap(){
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.glass_cover, RenderLayer.getCutout());
     }
 }
