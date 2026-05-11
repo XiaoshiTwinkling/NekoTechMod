@@ -77,7 +77,7 @@ public class ModItems {
             new NekoTagItem(new Item.Settings().maxCount(1), "neko_tag")
     );
 
-    public static final Item glass_cover = registerItems("glass_cover", new ModItem(new Item.Settings(),"thermometer"));
+    public static final Item glass_cover = registerItems("glass_cover", new GlassCover(new Item.Settings(),"glass_cover"));
 
     public static final Item NEKO_TAIL = registerItems(
             "neko_tail",

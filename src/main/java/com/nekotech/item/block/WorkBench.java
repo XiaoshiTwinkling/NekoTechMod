@@ -57,46 +57,9 @@ public class WorkBench extends DirectionalMachineBlock {
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos,
                               PlayerEntity player, BlockHitResult hit) {
-        if (world.isClient) {
-            return ActionResult.SUCCESS;
-        }
+        if (world.isClient) return ActionResult.SUCCESS;
 
         ItemStack handStack = player.getStackInHand(player.getActiveHand());
-        boolean isSneaking = player.isSneaking();
-
-        if (isSneaking) {
-            boolean hasCover = state.get(HAS_GLASS_COVER);
-
-            if (!hasCover && handStack.getItem() == ModItems.glass_cover ) {
-
-                world.setBlockState(pos, state.with(HAS_GLASS_COVER, true), Block.NOTIFY_ALL);
-
-                if (!player.getAbilities().creativeMode) {
-                    handStack.decrement(1);
-                }
-
-                world.playSound(null, pos, SoundEvents.BLOCK_GLASS_PLACE,
-                        SoundCategory.BLOCKS, 0.8f, 1.0f);
-
-                return ActionResult.SUCCESS;
-            }
-            if (hasCover && (handStack.isEmpty() || player.getAbilities().creativeMode)) {
-                world.setBlockState(pos, state.with(HAS_GLASS_COVER, false), Block.NOTIFY_ALL);
-
-                if (!player.getAbilities().creativeMode) {
-                    ItemStack coverStack = new ItemStack(ModItems.glass_cover);
-                    if (!player.getInventory().insertStack(coverStack)) {
-                        // 背包满则掉落
-                        player.dropItem(coverStack, false);
-                    }
-                }
-
-                world.playSound(null, pos, SoundEvents.BLOCK_GLASS_BREAK,
-                        SoundCategory.BLOCKS, 0.8f, 1.0f);
-
-                return ActionResult.SUCCESS;
-            }
-        }
 
         if (handStack.getItem() instanceof Hammer) {
             if (world.getBlockEntity(pos) instanceof WorkBenchBlockEntity workBench) {
@@ -112,15 +75,40 @@ public class WorkBench extends DirectionalMachineBlock {
             }
         }
 
-        boolean hasCover = state.get(HAS_GLASS_COVER);
-        if (hasCover) {
-            if (player instanceof ServerPlayerEntity) {
-                player.sendMessage(Text.translatable("message.neko-technology.workbench.covered"), true);
+        if (state.get(HAS_GLASS_COVER) && player.isSneaking() &&
+                (handStack.isEmpty() || player.getAbilities().creativeMode)) {
+
+            if (world.isClient) return ActionResult.SUCCESS;
+
+            world.setBlockState(pos,
+                    state.with(WorkBench.HAS_GLASS_COVER, false),
+                    Block.NOTIFY_ALL);
+
+            if (!player.getAbilities().creativeMode) {
+                var coverStack = new ItemStack(ModItems.glass_cover);
+                if (!player.getInventory().insertStack(coverStack)) {
+                    player.dropItem(coverStack, false);
+                }
             }
+
+            world.playSound(null, pos, SoundEvents.BLOCK_GLASS_BREAK,
+                    SoundCategory.BLOCKS, 0.8f, 1.0f);
+
+            return ActionResult.SUCCESS;
+        }
+
+        if (state.get(HAS_GLASS_COVER) && !handStack.isEmpty()) {
+            player.sendMessage(
+                    Text.translatable("message.neko-technology.workbench.covered"),
+                    true
+            );
             return ActionResult.FAIL;
         }
+
         if (world.getBlockEntity(pos) instanceof WorkBenchBlockEntity workBench) {
-            return workBench.handleRightClick(player, handStack) ? ActionResult.SUCCESS : ActionResult.PASS;
+            return workBench.handleRightClick(player, handStack)
+                    ? ActionResult.SUCCESS
+                    : ActionResult.PASS;
         }
 
         return ActionResult.PASS;
