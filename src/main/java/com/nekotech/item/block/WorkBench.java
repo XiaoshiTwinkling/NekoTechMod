@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class WorkBench extends DirectionalMachineBlock {
 
-    private static final VoxelShape SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 12.0, 16.0);
+    private static VoxelShape SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 12.0, 16.0);
 
     public static final MapCodec<WorkBench> CODEC = createCodec(WorkBench::new);
 
@@ -52,6 +52,10 @@ public class WorkBench extends DirectionalMachineBlock {
     @Override
     public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return new WorkBenchBlockEntity(pos, state);
+    }
+
+    public void setSHAPE(VoxelShape shape){
+        SHAPE=shape;
     }
 
     @Override
@@ -83,6 +87,9 @@ public class WorkBench extends DirectionalMachineBlock {
             world.setBlockState(pos,
                     state.with(WorkBench.HAS_GLASS_COVER, false),
                     Block.NOTIFY_ALL);
+
+            SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 12.0, 16.0);
+            world.updateNeighbors(pos, this);
 
             if (!player.getAbilities().creativeMode) {
                 var coverStack = new ItemStack(ModItems.glass_cover);
@@ -133,8 +140,17 @@ public class WorkBench extends DirectionalMachineBlock {
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world,
-                                      BlockPos pos, ShapeContext context) {
+    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+        return SHAPE;
+    }
+
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+        return SHAPE;
+    }
+
+    @Override
+    public VoxelShape getRaycastShape(BlockState state, BlockView world, BlockPos pos) {
         return SHAPE;
     }
 }

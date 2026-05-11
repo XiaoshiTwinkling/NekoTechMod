@@ -103,5 +103,6 @@ public class NekoTechnologyClient implements ClientModInitializer {
     }
 
     private void registerRenderLayerMap(){
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.work_bench, RenderLayer.getTranslucent());
     }
 }

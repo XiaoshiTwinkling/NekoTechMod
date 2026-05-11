@@ -42,6 +42,11 @@ public class GlassCover extends ModItem {
                     state.with(WorkBench.HAS_GLASS_COVER, true),
                     Block.NOTIFY_ALL);
 
+            if (state.getBlock() instanceof WorkBench bl) {
+                bl.setSHAPE(Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 16.0, 16.0));
+                world.updateNeighbors(pos, bl);
+            }
+
             if (!player.getAbilities().creativeMode) {
                 handStack.decrement(1);
             }
