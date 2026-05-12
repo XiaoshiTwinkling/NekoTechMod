@@ -141,7 +141,7 @@ public class BoxBlockEntity extends LootableContainerBlockEntity implements IHav
      * 服务器端tick方法喵~
      * 在方块实体类型注册时需要注册tick方法喵~
      */
-    public static void tick(World world, BlockPos pos, BlockState state, FluxStorageBlockEntity blockEntity) {
+    public static void tick(World world, BlockPos pos, BlockState state, BoxBlockEntity blockEntity) {
         if (world.isClient()) return;
         blockEntity.tickComponents();
     }

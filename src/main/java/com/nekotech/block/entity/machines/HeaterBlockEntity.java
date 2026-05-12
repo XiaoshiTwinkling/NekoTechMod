@@ -13,6 +13,7 @@ import com.nekotech.item.custom.component.IcanItemIO;
 import com.nekotech.modTags.ModTags;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.Inventory;
@@ -50,6 +51,7 @@ public class HeaterBlockEntity extends MachineBlockEntity
     private static final float TEMPERATURE_RISING_RATE = 0.14f;
     private static final float BRICK_TEMPERATURE_BONUS = 50.0f;  // 每个砖块增加的温度
     private static final int BRICK_CHECK_RANGE = 1;  // 检查砖块范围
+    private static final int COIL_CHECK_RANGE = 2;
 
     private final DefaultedList<ItemStack> fuelSlots = DefaultedList.ofSize(1, ItemStack.EMPTY);
     private float temperature = 0.0f;
@@ -67,6 +69,7 @@ public class HeaterBlockEntity extends MachineBlockEntity
 
     private final Map<Direction, Item> attachedComponents = new EnumMap<>(Direction.class);
     private final Set<Item> validComponents ;
+
 
 
     private static final Map<Item, Integer> FUEL_MAP =
@@ -367,12 +370,15 @@ public class HeaterBlockEntity extends MachineBlockEntity
     @Override
     public void lazytick(World world, BlockPos pos, BlockState state) {
         final int countBricks = countBricksInRange(world, pos);
+        float[] coilBonus = getCoilBonus();
 
-        // 温度上限
-        max_temperature = MAX_TEMPERATURE + countBricks * BRICK_TEMPERATURE_BONUS;
+        max_temperature = MAX_TEMPERATURE +
+                countBricks * BRICK_TEMPERATURE_BONUS +
+                coilBonus[0];
 
-        // 升温速度
-        temperature_rising_rate = TEMPERATURE_RISING_RATE + countBricks * BRICK_HEAT_RATE_BONUS;
+        temperature_rising_rate = TEMPERATURE_RISING_RATE +
+                countBricks * BRICK_HEAT_RATE_BONUS +
+                coilBonus[1];
     }
 
     public DefaultedList<ItemStack> getItems() {
@@ -470,6 +476,35 @@ public class HeaterBlockEntity extends MachineBlockEntity
                 }
             }
         }
+    }
+
+
+    /**
+     * 计算线圈加成
+     */
+    public float[] getCoilBonus() {
+        if (world == null) return new float[]{0, 0};
+
+        float tempBonus = 0;
+        float rateBonus = 0;
+
+        for (int x = -COIL_CHECK_RANGE; x <= COIL_CHECK_RANGE; x++) {
+            for (int y = -COIL_CHECK_RANGE; y <= COIL_CHECK_RANGE; y++) {
+                for (int z = -COIL_CHECK_RANGE; z <= COIL_CHECK_RANGE; z++) {
+                    if (x == 0 && y == 0 && z == 0) continue;
+
+                    BlockPos checkPos = pos.add(x, y, z);
+                    BlockEntity be = world.getBlockEntity(checkPos);
+                    if (be instanceof CoilBlockEntity coil) {
+                        float[] bonus = coil.getHeatBonus();
+                        tempBonus += bonus[0];
+                        rateBonus += bonus[1];
+                    }
+                }
+            }
+        }
+
+        return new float[]{tempBonus, rateBonus};
     }
 
     public boolean isHeating() {

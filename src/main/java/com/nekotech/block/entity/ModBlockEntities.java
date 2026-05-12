@@ -46,6 +46,9 @@ public class ModBlockEntities {
     public static BlockEntityType<WorkBenchBlockEntity> work_bench =
             create("work_bench", BlockEntityType.Builder.create(WorkBenchBlockEntity::new, ModBlocks.work_bench));
 
+    public static BlockEntityType<CoilBlockEntity> coil_block =
+            create("coil_block", BlockEntityType.Builder.create(CoilBlockEntity::new, ModBlocks.coil_block));
+
 
 
     private static <T extends BlockEntity> BlockEntityType<T> create(String id, BlockEntityType.Builder<T> builder){
