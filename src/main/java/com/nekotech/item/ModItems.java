@@ -77,7 +77,7 @@ public class ModItems {
             new NekoTagItem(new Item.Settings().maxCount(1), "neko_tag")
     );
 
-    public static final Item glass_cover = registerItems("glass_cover", new ModItem(new Item.Settings(),"thermometer"));
+    public static final Item glass_cover = registerItems("glass_cover", new GlassCover(new Item.Settings(),"glass_cover"));
 
     public static final Item NEKO_TAIL = registerItems(
             "neko_tail",
@@ -98,6 +98,10 @@ public class ModItems {
     public static final Item neko_copper_flux_outputer = registerComponent("neko_copper_flux_outputer", new FluxOutputerItem(0.4f, "neko_copper_flux_outputer"));
     public static final Item neko_copper_flux_inputer = registerComponent("neko_copper_flux_inputer", new FluxInputerItem(0.4f, "neko_copper_flux_inputer"));
 
+    public static final Item copper_coil = registerItems("copper_coil", new ModItem(new Item.Settings(), "copper_coil"));
+    public static final Item pig_iron_coil = registerItems("pig_iron_coil", new ModItem(new Item.Settings(), "pig_iron_coil"));
+    public static final Item neko_copper_coil = registerItems("neko_copper_coil", new ModItem(new Item.Settings(), "neko_copper_coil"));
+    public static final Item pig_iron_framework = registerItems("pig_iron_framework", new ModItem(new Item.Settings(), "pig_iron_framework"));
 
 
     private static Item registerItems(String id, Item item){

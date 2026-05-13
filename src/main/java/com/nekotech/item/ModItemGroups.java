@@ -51,10 +51,9 @@ public class ModItemGroups {
         Registry.register(Registries.ITEM_GROUP, NekoTech_TOOLS,
                 ItemGroup.create(ItemGroup.Row.TOP, 7)
                         .displayName(Text.translatable("itemGroup.nekotech_tools"))
-                        .icon(() -> new ItemStack(ModItems.NEKO_COPPER_CHESTPLATE))
+                        .icon(() -> new ItemStack(ModItems.pink_neko_goggles))
                         .entries(((displayContext, entries) -> {
                             entries.add(ModItems.hammer);
-                            //entries.add(ModItems.neko_arrow);
                             entries.add(ModItems.neko_ears);
                             entries.add(ModItems.NEKO_COPPER_HELMET);
                             entries.add(ModItems.NEKO_COPPER_CHESTPLATE);
@@ -76,6 +75,11 @@ public class ModItemGroups {
                             entries.add(ModItems.neko_copper_flux_outputer);
                             entries.add(ModItems.neko_copper_flux_inputer);
                             entries.add(ModItems.glass_cover);
+                            entries.add(ModItems.copper_coil);
+                            entries.add(ModItems.pig_iron_coil);
+                            entries.add(ModItems.neko_copper_coil);
+                            entries.add(ModItems.pig_iron_framework);
+
 
                         })).build());
 
@@ -92,6 +96,7 @@ public class ModItemGroups {
                             entries.add(ModBlocks.wooden_casing);
                             entries.add(ModBlocks.flux_storage);
                             entries.add(ModBlocks.work_bench);
+                            entries.add(ModBlocks.coil_block);
 
                         })).build());
 

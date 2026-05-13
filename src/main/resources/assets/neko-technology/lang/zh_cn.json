@@ -70,7 +70,14 @@
   "item.neko-technology.brass_item_inputer": "黄铜物品输入零件",
   "item.neko-technology.brass_item_inputer.tooltip": "物品输入效率: 0.05 个/tick",
   "item.neko-technology.glass_cover": "玻璃罩",
-
+  "item.neko-technology.copper_coil": "铜丝线圈",
+  "item.neko-technology.copper_coil.tooltip": "用于提升线圈方块性能的铜线圈",
+  "item.neko-technology.pig_iron_coil": "生铁丝线圈",
+  "item.neko-technology.pig_iron_coil.tooltip": "用于加热的生铁线圈",
+  "item.neko-technology.neko_copper_coil": "猫猫紫铜丝线圈",
+  "item.neko-technology.neko_copper_coil.tooltip": "用于吸引铁质物品的紫铜线圈",
+  "item.neko-technology.pig_iron_framework": "生铁框架",
+  "item.neko-technology.pig_iron_framework.tooltip": "用于固定线圈的框架",
 
   "block.neko-technology.yes": "是",
   "block.neko-technology.no": "否",
@@ -94,6 +101,14 @@
   "message.neko-technology.forging.hammer_broken": "§c锤子快要坏了！",
   "message.neko-technology.forging.success": "§a锻造成功！获得了：",
   "message.neko-technology.forging.failed": "§7锻造失败了，材料被消耗了...",
+  "block.neko-technology.coil": "线圈方块",
+  "hud.coil.copper": "铜线圈: %d",
+  "hud.coil.pig_iron": "生铁线圈: %d",
+  "hud.coil.neko_copper": "紫铜线圈: %d",
+  "hud.coil.flux": "通量: %s/%s NF",
+  "hud.coil.fixed": "已固定: %s",
+  "hud.yes": "是",
+  "hud.no": "否",
 
 
   "message.nekotech.item_put": "%s 已放入喵~",
