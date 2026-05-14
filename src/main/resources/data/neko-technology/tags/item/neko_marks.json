@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    "neko-technology:white_neko_mark",
+    "neko-technology:orange_neko_mark",
+    "neko-technology:magenta_neko_mark",
+    "neko-technology:light_blue_neko_mark",
+    "neko-technology:yellow_neko_mark",
+    "neko-technology:lime_neko_mark",
+    "neko-technology:pink_neko_mark",
+    "neko-technology:gray_neko_mark",
+    "neko-technology:light_gray_neko_mark",
+    "neko-technology:cyan_neko_mark",
+    "neko-technology:purple_neko_mark",
+    "neko-technology:blue_neko_mark",
+    "neko-technology:brown_neko_mark",
+    "neko-technology:green_neko_mark",
+    "neko-technology:red_neko_mark",
+    "neko-technology:black_neko_mark"
+  ]
+}

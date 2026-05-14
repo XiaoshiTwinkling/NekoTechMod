@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "neko-technology:item/neko_mark/orange_neko_mark"
+  }
+}

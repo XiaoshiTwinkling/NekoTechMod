@@ -59,15 +59,14 @@ public class AlloyPotBlockEntityRenderer implements BlockEntityRenderer<AlloyPot
             renderItem(entity, stack,
                     seed, time,
                     xOffset, zOffset,
-                    matrices, vertexConsumers, light);
+                    matrices, vertexConsumers);
         }
     }
 
     private void renderItem(AlloyPotBlockEntity be, ItemStack stack,
                             long seed, float time,
                             float xOffset, float zOffset,
-                            MatrixStack matrices, VertexConsumerProvider vcp,
-                            int light) {
+                            MatrixStack matrices, VertexConsumerProvider vcp) {
 
         matrices.push();
 
