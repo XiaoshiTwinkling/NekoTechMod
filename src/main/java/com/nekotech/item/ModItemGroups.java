@@ -79,6 +79,22 @@ public class ModItemGroups {
                             entries.add(ModItems.pig_iron_coil);
                             entries.add(ModItems.neko_copper_coil);
                             entries.add(ModItems.pig_iron_framework);
+                            entries.add(ModItems.white_neko_mark);
+                            entries.add(ModItems.orange_neko_mark);
+                            entries.add(ModItems.magenta_neko_mark);
+                            entries.add(ModItems.light_blue_neko_mark);
+                            entries.add(ModItems.yellow_neko_mark);
+                            entries.add(ModItems.lime_neko_mark);
+                            entries.add(ModItems.pink_neko_mark);
+                            entries.add(ModItems.gray_neko_mark);
+                            entries.add(ModItems.light_gray_neko_mark);
+                            entries.add(ModItems.cyan_neko_mark);
+                            entries.add(ModItems.purple_neko_mark);
+                            entries.add(ModItems.blue_neko_mark);
+                            entries.add(ModItems.brown_neko_mark);
+                            entries.add(ModItems.green_neko_mark);
+                            entries.add(ModItems.red_neko_mark);
+                            entries.add(ModItems.black_neko_mark);
 
 
                         })).build());
