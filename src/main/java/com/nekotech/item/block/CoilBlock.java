@@ -2,13 +2,17 @@ package com.nekotech.item.block;
 
 import com.mojang.serialization.MapCodec;
 import com.nekotech.block.entity.ModBlockEntities;
+import com.nekotech.block.entity.api.electrical.conductor.ConductorSystem;
 import com.nekotech.block.entity.machines.CoilBlockEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.ItemStack;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.hit.BlockHitResult;
@@ -74,6 +78,15 @@ public class CoilBlock extends DirectionalMachineBlock {
     public BlockState getPlacementState(ItemPlacementContext ctx) {
         return this.getDefaultState()
                 .with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());
+    }
+
+    @Override
+    public void onPlaced(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
+        super.onPlaced(world, pos, state, placer, itemStack);
+
+        if (!world.isClient) {
+            ConductorSystem.onBlockPlaced((ServerWorld) world, pos);
+        }
     }
 
     @Override

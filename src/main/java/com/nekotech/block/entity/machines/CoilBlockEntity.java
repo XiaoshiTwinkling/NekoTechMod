@@ -1,6 +1,5 @@
 package com.nekotech.block.entity.machines;
 
-import com.nekotech.NekoTechnology;
 import com.nekotech.block.entity.CushionBlockEntity;
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.block.entity.api.ICatNeedMachine;
@@ -12,16 +11,15 @@ import com.nekotech.item.ModItems;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
-import com.nekotech.modTags.ModTags;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.*;
+import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.mob.HostileEntity;
+import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ArmorMaterials;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.entity.vehicle.MinecartEntity;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
@@ -32,13 +30,13 @@ import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
@@ -46,7 +44,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.text.html.parser.Entity;
 import java.util.*;
 
 public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
@@ -54,7 +51,7 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
 
     private static final int MAX_COILS = 6;
     private static final int MAX_FLUX = 200;
-    private static final float BASE_POWER_CONSUMPTION = 1.5f; // 每个铜线圈的耗电速度
+    private static final float BASE_POWER_CONSUMPTION = 0.12f; // 每个铜线圈的耗电速度
     private static final int HEAT_MULTIPLIER = 180; // 生铁线圈热量乘数
     private static final float HEAT_RATE_MULTIPLIER = 1.0f; // 生铁线圈升温速度乘数
     private static final int ATTRACTION_RANGE_MULTIPLIER = 4; // 紫铜线圈吸引范围乘数
@@ -84,9 +81,9 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         }
     }
 
-    private final DefaultedList<CoilType> coils = DefaultedList.ofSize(MAX_COILS, CoilType.EMPTY); //线圈栏
+    private List<CoilType> coils = new ArrayList<>(MAX_COILS); //线圈栏
     private boolean isFixed = false; //有没有安装框架
-    private float nekoFlux = 0;
+    private float nekoFlux = 100;
     private float temperature = 0;
     private float maxTemperature = 0;
     private float heatRate = 0;
@@ -101,6 +98,11 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
 
     public CoilBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.coil_block, pos, state, MAX_COILS);
+
+        for (int i = 0; i < MAX_COILS; i++) {
+            coils.add(CoilType.EMPTY);
+        }
+
         initValidComponents();
     }
 
@@ -150,7 +152,12 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
      * 检查是否有空槽位喵
      */
     public boolean hasEmptySlots() {
-        return coils.contains(CoilType.EMPTY);
+        for (CoilType coil : coils) {
+            if (coil == CoilType.EMPTY) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -210,7 +217,270 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
      * 吸引附近的含铁实体喵
      */
     private void attractEntities() {
+        if (world == null || world.isClient) return;
 
+        int[] counts = getCoilCounts();
+        int copperCount = counts[0];
+        int nekoCopperCount = counts[2];
+
+        int range = nekoCopperCount * copperCount * ATTRACTION_RANGE_MULTIPLIER;
+        if (range <= 0) return;
+
+        if (attractionTickCounter % 10 != 0) {
+            attractionTickCounter++;
+            return;
+        }
+
+        Box attractionBox = new Box(
+                pos.getX() - range, pos.getY() - range, pos.getZ() - range,
+                pos.getX() + range + 1, pos.getY() + range + 1, pos.getZ() + range + 1
+        );
+
+        List<Entity> entities = world.getOtherEntities(null, attractionBox, this::shouldAttract);
+
+        for (Entity entity : entities) {
+            if (entity.squaredDistanceTo(Vec3d.ofCenter(pos)) <= range * range) {
+                attractSingleEntity(entity, range);
+            }
+        }
+
+        attractionTickCounter++;
+
+        if (attractionTickCounter % 100 == 0) {
+            cleanupAttractedEntities();
+        }
+    }
+
+    /**
+     * 吸引单个实体喵
+     */
+    private void attractSingleEntity(Entity entity, int range) {
+        Vec3d entityPos = entity.getPos();
+        Vec3d centerPos = Vec3d.ofCenter(pos);
+
+        double distance = entityPos.distanceTo(centerPos);
+        if (distance < 0.5) return; // 已经在中心附近
+
+        Vec3d direction = centerPos.subtract(entityPos).normalize();
+
+        double strength = calculateAttractionStrength(entity, distance, range);
+
+        double velocityMultiplier = 0.1;
+        if (entity instanceof ItemEntity) {
+            velocityMultiplier = 0.3;
+        }
+
+        entity.addVelocity(direction.multiply(strength * velocityMultiplier));
+        entity.velocityModified = true;
+
+        spawnAttractionParticles(entityPos, direction);
+    }
+
+    /**
+     * 计算吸引力强度喵
+     */
+    private double calculateAttractionStrength(Entity entity, double distance, int range) {
+        double baseStrength = 0.3;
+
+        //离得越近，吸引力越弱
+        double distanceFactor = 1.0 - (distance / range);
+        distanceFactor = Math.max(0.1, distanceFactor);
+
+        double typeMultiplier = 1.0;
+        if (entity instanceof ItemEntity) {
+            typeMultiplier = 2.0;
+        } else if (entity instanceof HostileEntity) {
+            typeMultiplier = 0.8;
+        } else if (entity instanceof IronGolemEntity) {
+            typeMultiplier = 1.5;
+        } else if (entity instanceof MinecartEntity) {
+            typeMultiplier = 1.2;
+        }
+
+        return baseStrength * distanceFactor * typeMultiplier;
+    }
+
+    /**
+     * 判断实体是否应该被吸引喵
+     */
+    private boolean shouldAttract(Entity entity) {
+
+        if (entity instanceof ItemEntity itemEntity) {
+            return isIronItem(itemEntity.getStack());
+        }
+
+        if (entity instanceof LivingEntity livingEntity) {
+            return isWearingIronArmor(livingEntity) ||
+                    isIronGolem(entity) ||
+                    isArmorStandWithIron(livingEntity);
+        }
+
+        if (entity instanceof MinecartEntity) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 检查生物是否穿戴铁/锁链甲喵
+     */
+    private boolean isWearingIronArmor(LivingEntity entity) {
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            if (slot.getType() == EquipmentSlot.Type.ANIMAL_ARMOR || slot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR) {
+                ItemStack armor = entity.getEquippedStack(slot);
+                if (isIronArmor(armor)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 检查是否为铁/锁链盔甲喵
+     */
+    private boolean isIronArmor(ItemStack stack) {
+        if (stack.isEmpty() || !(stack.getItem() instanceof ArmorItem armor)) {
+            return false;
+        }
+
+        ArmorMaterial material = armor.getMaterial().value();
+        if (material.equals(ArmorMaterials.IRON.value())  || material.equals(ArmorMaterials.CHAIN.value())) {
+            return true;
+        }
+
+        // 检查物品名
+        String armorId = Registries.ITEM.getId(armor).toString().toLowerCase();
+        return armorId.contains("iron") || armorId.contains("chain");
+    }
+
+
+    /**
+     * 检查物品是否为铁制品喵
+     */
+    private boolean isIronItem(ItemStack stack) {
+        if (stack.isEmpty()) return false;
+
+        Item item = stack.getItem();
+
+        if (stack.isIn(ItemTags.IRON_ORES) ||
+                isIronTool(item) ||
+                isIronArmor(item)) {
+            return true;
+        }
+
+        String itemId = Registries.ITEM.getId(item).toString().toLowerCase();
+        return itemId.contains("iron") ||
+                itemId.contains("steel") ||
+                itemId.contains("chain") ||
+                itemId.contains("minecart") ||
+                itemId.contains("anvil") ||
+                itemId.contains("cauldron") ||
+                itemId.contains("bucket") ||
+                itemId.contains("hopper") ||
+                itemId.contains("rail");
+    }
+
+    /**
+     * 检查是否为铁制工具喵
+     */
+    private boolean isIronTool(Item item) {
+        if (item instanceof ToolItem toolItem) {
+            return toolItem.getMaterial().equals(ToolMaterials.IRON);
+        }
+        return false;
+    }
+
+    /**
+     * 检查是否为铁制盔甲喵
+     */
+    private boolean isIronArmor(Item item) {
+        if (item instanceof ArmorItem armorItem) {
+            return armorItem.getMaterial().value().equals(ArmorMaterials.IRON.value());
+        }
+        return false;
+    }
+
+
+    /**
+     * 检查是否为铁傀儡喵
+     */
+    private boolean isIronGolem(Entity entity) {
+        return entity.getType() == EntityType.IRON_GOLEM;
+    }
+
+    /**
+     * 检查是否为铁制盔甲架喵
+     */
+    private boolean isArmorStandWithIron(LivingEntity entity) {
+        if (!(entity instanceof ArmorStandEntity)) return false;
+
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            if (slot.getType() == EquipmentSlot.Type.ANIMAL_ARMOR || slot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR) {
+                ItemStack armor = entity.getEquippedStack(slot);
+                if (isIronArmor(armor)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 清理过期的吸引实体记录喵
+     */
+    private void cleanupAttractedEntities() {
+        if (world == null || world.isClient) return;
+
+        if (world instanceof ServerWorld serverWorld) {
+            attractedEntities.removeIf(uuid -> serverWorld.getEntity(uuid) == null);
+        }
+    }
+
+    /**
+     * 生成吸引粒子效果喵
+     */
+    private void spawnAttractionParticles(Vec3d fromPos, Vec3d direction) {
+        if (world == null || world.isClient) return;
+
+        if (world.random.nextInt(5) != 0) return;
+
+        for (int i = 0; i < 3; i++) {
+            double offsetX = (world.random.nextDouble() - 0.5) * 0.2;
+            double offsetY = (world.random.nextDouble() - 0.5) * 0.2;
+            double offsetZ = (world.random.nextDouble() - 0.5) * 0.2;
+
+            double progress = world.random.nextDouble() * 0.5;
+            double x = fromPos.x + direction.x * progress + offsetX;
+            double y = fromPos.y + direction.y * progress + offsetY;
+            double z = fromPos.z + direction.z * progress + offsetZ;
+
+            world.addParticle(ParticleTypes.ENCHANT, x, y, z, 0, 0, 0);
+        }
+    }
+
+    /**
+     * 客户端吸引特效喵
+     */
+    private void spawnClientAttractionParticles() {
+        if (world == null || !world.isClient) return;
+
+        int[] counts = getCoilCounts();
+        if (counts[2] == 0 || counts[0] == 0) return;
+
+        // 在方块周围生成旋转粒子
+        for (int i = 0; i < 3; i++) {
+            double angle = (world.getTime() + i * 120) * 0.1;
+            double radius = 0.8;
+
+            double x = pos.getX() + 0.5 + Math.cos(angle) * radius;
+            double y = pos.getY() + 0.5 + (world.random.nextDouble() - 0.5) * 0.3;
+            double z = pos.getZ() + 0.5 + Math.sin(angle) * radius;
+
+            // 紫色粒子
+            world.addParticle(ParticleTypes.ENCHANT, x, y, z, 0, 0, 0);
+        }
     }
 
     //api
@@ -301,21 +571,39 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
             }
         }
 
-        // 3. 默认物品交互
         return super.handleRightClick(player, stack);
     }
 
-    // 覆盖putInItem，只允许放入线圈相关物品
     @Override
     public boolean putInItem(PlayerEntity player, ItemStack stack) {
         Item item = stack.getItem();
-        if (item == ModItems.copper_coil ||
+
+        if (item == ModItems.pig_iron_framework ||
+                item == ModItems.copper_coil ||
                 item == ModItems.pig_iron_coil ||
-                item == ModItems.neko_copper_coil ||
-                item == ModItems.pig_iron_framework) {
-            return handleRightClick(player, stack);
+                item == ModItems.neko_copper_coil) {
+
+            if (item == ModItems.pig_iron_framework) {
+                return fixCoils() && consumeItem(player, stack);
+            } else if (item == ModItems.copper_coil ||
+                    item == ModItems.pig_iron_coil ||
+                    item == ModItems.neko_copper_coil) {
+                if (isFixed) return false;
+                if (hasEmptySlots()) {
+                    return addCoil(item) && consumeItem(player, stack);
+                }
+                return false;
+            }
         }
-        return false;
+
+        return super.putInItem(player, stack);
+    }
+
+    private boolean consumeItem(PlayerEntity player, ItemStack stack) {
+        if (!player.getAbilities().creativeMode) {
+            stack.decrement(1);
+        }
+        return true;
     }
 
     @Override
@@ -353,14 +641,18 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
     }
 
     public void clientTick() {
-        // 客户端粒子效果
+
         if (world != null && world.getTime() % 5 == 0 && temperature > 50) {
             spawnHeatParticles();
+        }
+
+        if (world != null && world.getTime() % 3 == 0) {
+            spawnClientAttractionParticles();
         }
     }
 
     public void serverTick(World world, BlockPos pos, BlockState state) {
-        lazytick(world, pos, state);
+        baseTick(world, pos, state);
 
         if (!canMachineRun()) {
             return;
@@ -368,19 +660,30 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
 
         int[] counts = getCoilCounts();
         int copperCount = counts[0];
+        int pigIronCount = counts[1];
+        int nekoCopperCount = counts[2];
 
         if (copperCount > 0 && nekoFlux > 0) {
             float consumption = copperCount * BASE_POWER_CONSUMPTION;
             nekoFlux = Math.max(0, nekoFlux - consumption);
         }
 
-        if (temperature < maxTemperature) {
-            temperature = Math.min(maxTemperature, temperature + heatRate);
-        } else if (temperature > 0) {
-            temperature = Math.max(0, temperature - 0.5f);
+        if (pigIronCount > 0) {
+            if (temperature < maxTemperature) {
+                temperature = Math.min(maxTemperature, temperature + heatRate);
+
+                // 生成加热粒子
+                if (world.getTime() % 5 == 0 && temperature > 50) {
+                    spawnHeatParticles();
+                }
+            } else if (temperature > 0) {
+                temperature = Math.max(0, temperature - 0.5f);
+            }
         }
 
-        attractEntities();
+        if (nekoCopperCount > 0 && copperCount > 0) {
+            attractEntities();
+        }
 
         tickComponents();
 
