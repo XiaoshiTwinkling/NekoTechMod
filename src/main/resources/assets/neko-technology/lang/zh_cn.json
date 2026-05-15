@@ -101,7 +101,7 @@
   "message.neko-technology.forging.hammer_broken": "§c锤子快要坏了！",
   "message.neko-technology.forging.success": "§a锻造成功！获得了：",
   "message.neko-technology.forging.failed": "§7锻造失败了，材料被消耗了...",
-  "block.neko-technology.coil": "线圈方块",
+  "block.neko-technology.coil_block": "线圈方块",
   "hud.coil.copper": "铜线圈: %d",
   "hud.coil.pig_iron": "生铁线圈: %d",
   "hud.coil.neko_copper": "紫铜线圈: %d",

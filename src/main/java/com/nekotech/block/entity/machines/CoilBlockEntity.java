@@ -53,6 +53,7 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
     private static final int MAX_FLUX = 200;
     private static final float BASE_POWER_CONSUMPTION = 0.12f; // 每个铜线圈的耗电速度
     private static final int HEAT_MULTIPLIER = 180; // 生铁线圈热量乘数
+    private static final float STRENGTH_MULTIPLIER = 3; //吸引的力量乘数
     private static final float HEAT_RATE_MULTIPLIER = 1.0f; // 生铁线圈升温速度乘数
     private static final int ATTRACTION_RANGE_MULTIPLIER = 4; // 紫铜线圈吸引范围乘数
 
@@ -263,7 +264,7 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
 
         Vec3d direction = centerPos.subtract(entityPos).normalize();
 
-        double strength = calculateAttractionStrength(entity, distance, range);
+        double strength = calculateAttractionStrength(entity, distance, range) * STRENGTH_MULTIPLIER;
 
         double velocityMultiplier = 0.1;
         if (entity instanceof ItemEntity) {
@@ -613,7 +614,7 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         List<GoogleAbstractHUD> huds = new ArrayList<>();
         int[] counts = getCoilCounts();
 
-        Text title = Text.translatable("block.neko-technology.coil").formatted(Formatting.GOLD);
+        Text title = Text.translatable("block.neko-technology.coil_block").formatted(Formatting.GOLD);
         Text content = Text.literal("")
                 .append(Text.translatable("hud.coil.copper", counts[0]).formatted(Formatting.YELLOW))
                 .append("\n")
