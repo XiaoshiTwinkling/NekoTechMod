@@ -1,4 +1,4 @@
-package com.nekotech.block.entity.machines;
+package com.nekotech.block.entity.machines.coil;
 
 import com.nekotech.block.entity.CushionBlockEntity;
 import com.nekotech.block.entity.ModBlockEntities;
@@ -7,10 +7,14 @@ import com.nekotech.block.entity.api.component.ComponentAdaptation;
 import com.nekotech.block.entity.api.electrical.IElectricalMachine;
 import com.nekotech.block.entity.api.electrical.ITransferElectrical;
 import com.nekotech.block.entity.api.electrical.conductor.ConductorSystem;
+import com.nekotech.block.entity.machines.HeaterBlockEntity;
+import com.nekotech.block.entity.machines.TakeFreelyMachineBlockEntity;
 import com.nekotech.item.ModItems;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
+import com.nekotech.item.block.CoilBlock;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.*;
@@ -55,32 +59,8 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
     private static final int HEAT_MULTIPLIER = 180; // 生铁线圈热量乘数
     private static final float STRENGTH_MULTIPLIER = 3; //吸引的力量乘数
     private static final float HEAT_RATE_MULTIPLIER = 1.0f; // 生铁线圈升温速度乘数
-    private static final int ATTRACTION_RANGE_MULTIPLIER = 4; // 紫铜线圈吸引范围乘数
+    private static final int ATTRACTION_RANGE_MULTIPLIER = 2; // 紫铜线圈吸引范围乘数
 
-    // 线圈の枚举
-    private enum CoilType {
-        COPPER(ModItems.copper_coil, 0xFFD700, "copper"),
-        PIG_IRON(ModItems.pig_iron_coil, 0xC0C0C0, "pig_iron"),
-        NEKO_COPPER(ModItems.neko_copper_coil, 0x8B4513, "neko_copper"),
-        EMPTY(null, 0x000000, "empty");
-
-        final Item item;
-        final int color;
-        final String id;
-
-        CoilType(Item item, int color, String id) {
-            this.item = item;
-            this.color = color;
-            this.id = id;
-        }
-
-        static CoilType fromItem(Item item) {
-            for (CoilType type : values()) {
-                if (type.item == item) return type;
-            }
-            return EMPTY;
-        }
-    }
 
     private List<CoilType> coils = new ArrayList<>(MAX_COILS); //线圈栏
     private boolean isFixed = false; //有没有安装框架
@@ -132,6 +112,10 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
             }
         }
         return false;
+    }
+
+    public List<CoilType> getCoils(){
+        return coils;
     }
 
     /**
@@ -227,7 +211,7 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         int range = nekoCopperCount * copperCount * ATTRACTION_RANGE_MULTIPLIER;
         if (range <= 0) return;
 
-        if (attractionTickCounter % 10 != 0) {
+        if (attractionTickCounter % 2 != 0) {
             attractionTickCounter++;
             return;
         }
@@ -252,6 +236,10 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         }
     }
 
+    public boolean isFixed() {
+        return isFixed;
+    }
+
     /**
      * 吸引单个实体喵
      */
@@ -266,9 +254,11 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
 
         double strength = calculateAttractionStrength(entity, distance, range) * STRENGTH_MULTIPLIER;
 
-        double velocityMultiplier = 0.1;
+        double velocityMultiplier;
         if (entity instanceof ItemEntity) {
-            velocityMultiplier = 0.3;
+            velocityMultiplier = 0.04;
+        } else {
+            velocityMultiplier = 0.08;
         }
 
         entity.addVelocity(direction.multiply(strength * velocityMultiplier));
@@ -554,6 +544,7 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
                 if (!player.getAbilities().creativeMode) {
                     stack.decrement(1);
                 }
+                updateBlockState();
                 return true;
             }
         }
@@ -566,13 +557,14 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
                 if (!player.getAbilities().creativeMode) {
                     stack.decrement(1);
                 }
-                world.playSound(null, pos, SoundEvents.BLOCK_WOOL_PLACE,
+                world.playSound(null, pos, SoundEvents.BLOCK_COPPER_BULB_PLACE,
                         SoundCategory.BLOCKS, 0.5f, 1.0f);
+                updateBlockState();
                 return true;
             }
         }
 
-        return super.handleRightClick(player, stack);
+        return false;
     }
 
     @Override
@@ -689,6 +681,22 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         tickComponents();
 
         markDirty();
+    }
+
+    private void updateBlockState() {
+        if (world != null && !world.isClient) {
+            BlockState currentState = world.getBlockState(pos);
+
+            int filledLayers = 0;
+            for (CoilType coil : coils) {
+                if (coil != CoilType.EMPTY) filledLayers++;
+            }
+
+            if (currentState.get(CoilBlock.LAYERS) != filledLayers) {
+                BlockState newState = currentState.with(CoilBlock.LAYERS, filledLayers);
+                world.setBlockState(pos, newState, Block.NOTIFY_ALL);
+            }
+        }
     }
 
     private void spawnHeatParticles() {

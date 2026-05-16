@@ -45,6 +45,11 @@ public class NekoTechnologyClient implements ClientModInitializer {
                 AlloyPotBlockEntityRenderer::new
         );
 
+        BlockEntityRendererFactories.register(
+                ModBlockEntities.coil_block,
+                CoilBlockEntityRenderer::new
+        );
+
         registerComponentAttachmentRenderer();
 
         ClientHudNetworkHandler.initialize();
@@ -95,13 +100,6 @@ public class NekoTechnologyClient implements ClientModInitializer {
             }
         });
         BlockEntityRendererRegistry.register(ModBlockEntities.heater, new BlockEntityRendererFactory<BlockEntity>() {
-            @Override
-            public BlockEntityRenderer<BlockEntity> create(Context ctx) {
-                return new ComponentAttachmentRenderer();
-            }
-        });
-
-        BlockEntityRendererRegistry.register(ModBlockEntities.coil_block, new BlockEntityRendererFactory<BlockEntity>() {
             @Override
             public BlockEntityRenderer<BlockEntity> create(Context ctx) {
                 return new ComponentAttachmentRenderer();

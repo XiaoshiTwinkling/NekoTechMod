@@ -3,6 +3,7 @@ package com.nekotech.block.entity.machines;
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.block.entity.api.component.ComponentAdaptation;
 import com.nekotech.block.entity.api.TakeFreelyInventory;
+import com.nekotech.block.entity.machines.coil.CoilBlockEntity;
 import com.nekotech.item.ModItems;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;

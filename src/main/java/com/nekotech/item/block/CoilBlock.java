@@ -3,7 +3,7 @@ package com.nekotech.item.block;
 import com.mojang.serialization.MapCodec;
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.block.entity.api.electrical.conductor.ConductorSystem;
-import com.nekotech.block.entity.machines.CoilBlockEntity;
+import com.nekotech.block.entity.machines.coil.CoilBlockEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -14,6 +14,7 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
+import net.minecraft.state.property.IntProperty;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -30,13 +31,16 @@ public class CoilBlock extends DirectionalMachineBlock {
             Block.createCuboidShape(6, 0, 6, 10, 16, 10)
     );
 
+    public static final IntProperty LAYERS = IntProperty.of("layers", 0, 6);
+
     public static final MapCodec<CoilBlock> CODEC = createCodec(CoilBlock::new);
 
 
     public CoilBlock(Settings settings) {
         super(settings);
         this.setDefaultState(this.stateManager.getDefaultState()
-                .with(FACING, Direction.NORTH));
+                .with(FACING, Direction.NORTH)
+                .with(LAYERS, 0));
     }
 
     @Override
@@ -52,7 +56,21 @@ public class CoilBlock extends DirectionalMachineBlock {
 
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return SHAPE;
+
+        int layers = state.get(LAYERS);
+
+        float coreRadius = 2.0f;
+
+        float currentRadius = coreRadius + layers;
+
+        float min = 8.0f - currentRadius;
+        float max = 8.0f + currentRadius;
+
+        if(layers == 6){
+            return Block.createCuboidShape(min+1, 0, min+1, max-1, 16, max-1);
+        }
+
+        return Block.createCuboidShape(min, 0, min, max, 16, max);
     }
 
     @Override
@@ -70,7 +88,7 @@ public class CoilBlock extends DirectionalMachineBlock {
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+        builder.add(FACING).add(LAYERS);
     }
 
     @Nullable

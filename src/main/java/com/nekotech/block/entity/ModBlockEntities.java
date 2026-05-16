@@ -3,6 +3,7 @@ package com.nekotech.block.entity;
 import com.mojang.datafixers.types.Type;
 import com.nekotech.NekoTechnology;
 import com.nekotech.block.entity.machines.*;
+import com.nekotech.block.entity.machines.coil.CoilBlockEntity;
 import com.nekotech.item.block.ModBlocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;

@@ -163,6 +163,4 @@ public class TakeFreelyMachineBlockEntity extends MachineBlockEntity
             world.updateListeners(pos, getCachedState(), getCachedState(), 3);
         }
     }
-
-
 }
