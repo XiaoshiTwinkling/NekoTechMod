@@ -66,6 +66,11 @@ public class HeaterBlockEntity extends MachineBlockEntity
     private int burnTime = 0;
     private int maxBurnTime = 0;
 
+    private float brickTemperatureBonus = 0;  // 砖块提供的温度加成
+    private float brickHeatRateBonus = 0;     // 砖块提供的升温速率加成
+    private float coilTemperatureBonus = 0;   // 线圈提供的温度加成
+    private float coilHeatRateBonus = 0;      // 线圈提供的升温速率加成
+
     private boolean isLit = false;
 
     private final Map<Direction, Item> attachedComponents = new EnumMap<>(Direction.class);
@@ -235,16 +240,30 @@ public class HeaterBlockEntity extends MachineBlockEntity
     }
 
     public void temperatureRising(){
-        if(isHeating()){
-            if(temperature + getTemperatureRisingRate() >= getMax_temperature()){
+        float effectiveHeatRate = 0;
+
+        if (isHeating()) {
+            effectiveHeatRate += getTemperatureRisingRate();
+        }
+
+        if (coilHeatRateBonus > 0) {
+            effectiveHeatRate += coilHeatRateBonus;
+        }
+
+        if (effectiveHeatRate > 0) {
+
+            float targetTemperature = temperature + effectiveHeatRate;
+
+            if (targetTemperature >= getMax_temperature()) {
                 temperature = getMax_temperature();
             } else {
-                temperature += getTemperatureRisingRate();
+                temperature = targetTemperature;
             }
         } else {
-            if(temperature > 1){
+            if (temperature > 1) {
                 temperature -= 1.0F;
-            } else {
+
+            } else if (temperature > 0) {
                 temperature = 0F;
             }
         }
@@ -371,15 +390,9 @@ public class HeaterBlockEntity extends MachineBlockEntity
     @Override
     public void lazytick(World world, BlockPos pos, BlockState state) {
         final int countBricks = countBricksInRange(world, pos);
-        float[] coilBonus = getCoilBonus();
 
-        max_temperature = MAX_TEMPERATURE +
-                countBricks * BRICK_TEMPERATURE_BONUS +
-                coilBonus[0];
-
-        temperature_rising_rate = TEMPERATURE_RISING_RATE +
-                countBricks * BRICK_HEAT_RATE_BONUS +
-                coilBonus[1];
+        brickTemperatureBonus = countBricks * BRICK_TEMPERATURE_BONUS;
+        brickHeatRateBonus = countBricks * BRICK_HEAT_RATE_BONUS;
     }
 
     public DefaultedList<ItemStack> getItems() {
@@ -419,9 +432,16 @@ public class HeaterBlockEntity extends MachineBlockEntity
     public void serverTick(World world, BlockPos pos, BlockState state) {
         if (world.isClient) return;
 
-        baseTick(world, pos, state); //启动lazytick
+        baseTick(world, pos, state); // 启动lazytick
 
         tickComponents();
+
+        float[] coilBonus = getCoilBonus();
+        coilTemperatureBonus = coilBonus[0];
+        coilHeatRateBonus = coilBonus[1];
+
+        max_temperature = MAX_TEMPERATURE + brickTemperatureBonus + coilTemperatureBonus;
+        temperature_rising_rate = TEMPERATURE_RISING_RATE + brickHeatRateBonus + coilHeatRateBonus;
 
         if (getStack(FUEL_SLOT).getCount() > 0) {
             if (!isHeating()) {
@@ -439,17 +459,20 @@ public class HeaterBlockEntity extends MachineBlockEntity
 
         if(temperature > 10){
             if(world.random.nextFloat() < 0.05f){
-                world.playSound(null, pos,SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE, SoundCategory.BLOCKS,0.5f,1.0f);
+                world.playSound(null, pos, SoundEvents.BLOCK_FURNACE_FIRE_CRACKLE,
+                        SoundCategory.BLOCKS, 0.5f, 1.0f);
             }
         }
+
         markDirty(world, pos, state);
 
-        boolean shouldBeLit = isHeating();
+        boolean shouldBeLit = isHeating() || (temperature > 50);
         this.isLit = shouldBeLit;
-        // 更新方块状态
+
         BlockState currentState = world.getBlockState(pos);
-        if (currentState.contains(Heater.LIT)) {
-            world.setBlockState(pos, currentState.with(Heater.LIT, shouldBeLit));
+        if (currentState.contains(Heater.LIT) &&
+                currentState.get(Heater.LIT) != shouldBeLit) {
+            world.setBlockState(pos, currentState.with(Heater.LIT, shouldBeLit), 3);
         }
 
         this.markDirty();
@@ -489,27 +512,20 @@ public class HeaterBlockEntity extends MachineBlockEntity
         float tempBonus = 0;
         float rateBonus = 0;
 
-        for (int x = -COIL_CHECK_RANGE; x <= COIL_CHECK_RANGE; x++) {
-            for (int y = -COIL_CHECK_RANGE; y <= COIL_CHECK_RANGE; y++) {
-                for (int z = -COIL_CHECK_RANGE; z <= COIL_CHECK_RANGE; z++) {
-                    if (x == 0 && y == 0 && z == 0) continue;
+        BlockPos checkPos = pos.down();
+        BlockEntity be = world.getBlockEntity(checkPos);
 
-                    BlockPos checkPos = pos.add(x, y, z);
-                    BlockEntity be = world.getBlockEntity(checkPos);
-                    if (be instanceof CoilBlockEntity coil) {
-                        float[] bonus = coil.getHeatBonus();
-                        tempBonus += bonus[0];
-                        rateBonus += bonus[1];
-                    }
-                }
-            }
+        if (be instanceof CoilBlockEntity coil) {
+            float[] bonus = coil.getHeatBonus();
+            tempBonus += bonus[0];
+            rateBonus += bonus[1];
         }
 
         return new float[]{tempBonus, rateBonus};
     }
 
     public boolean isHeating() {
-        return this.burnTime > 0;
+        return this.burnTime > 0 || coilHeatRateBonus > 0;
     }
 
 

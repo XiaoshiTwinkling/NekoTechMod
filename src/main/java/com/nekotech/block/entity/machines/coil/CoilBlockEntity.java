@@ -58,7 +58,7 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
     private static final float BASE_POWER_CONSUMPTION = 0.12f; // 每个铜线圈的耗电速度
     private static final int HEAT_MULTIPLIER = 180; // 生铁线圈热量乘数
     private static final float STRENGTH_MULTIPLIER = 3; //吸引的力量乘数
-    private static final float HEAT_RATE_MULTIPLIER = 1.0f; // 生铁线圈升温速度乘数
+    private static final float HEAT_RATE_MULTIPLIER = 0.2f; // 生铁线圈升温速度乘数
     private static final int ATTRACTION_RANGE_MULTIPLIER = 2; // 紫铜线圈吸引范围乘数
 
 
@@ -178,10 +178,19 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
      * @return 最大温度加成, 升温速度加成
      */
     public float[] getHeatBonus() {
+        if (!isActivelyHeating()) {
+            return new float[]{0, 0};
+        }
         int[] counts = getCoilCounts();
         float tempBonus = counts[1] * counts[0] * HEAT_MULTIPLIER;
         float rateBonus = counts[1] * counts[0] * HEAT_RATE_MULTIPLIER;
         return new float[]{tempBonus, rateBonus};
+    }
+
+    public boolean isActivelyHeating() {
+        int[] counts = getCoilCounts();
+        int pigIronCount = counts[1];
+        return pigIronCount > 0 && nekoFlux > 0.01f && canMachineRun();
     }
 
     /**
@@ -647,10 +656,6 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
     public void serverTick(World world, BlockPos pos, BlockState state) {
         baseTick(world, pos, state);
 
-        if (!canMachineRun()) {
-            return;
-        }
-
         int[] counts = getCoilCounts();
         int copperCount = counts[0];
         int pigIronCount = counts[1];
@@ -661,11 +666,9 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
             nekoFlux = Math.max(0, nekoFlux - consumption);
         }
 
-        if (pigIronCount > 0) {
+        if (pigIronCount > 0 && nekoFlux > 0.01f) {
             if (temperature < maxTemperature) {
                 temperature = Math.min(maxTemperature, temperature + heatRate);
-
-                // 生成加热粒子
                 if (world.getTime() % 5 == 0 && temperature > 50) {
                     spawnHeatParticles();
                 }
@@ -675,11 +678,13 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         }
 
         if (nekoCopperCount > 0 && copperCount > 0) {
+            if (!canMachineRun()) {
+                return;
+            }
             attractEntities();
         }
 
         tickComponents();
-
         markDirty();
     }
 
