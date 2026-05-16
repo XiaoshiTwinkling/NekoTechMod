@@ -13,7 +13,7 @@ import java.util.*;
 public class ConductorGroup {
     static int NEXT_ID = 0;
 
-    public final int id;
+    public int id;
     public final Set<ConductorNode> nodes = new HashSet<>();
     public final Set<Port> inputPorts = new HashSet<>();
     public final Set<Port> outputPorts = new HashSet<>();

@@ -865,8 +865,12 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
     @Override
     public void markRemoved() {
         if (world != null && !world.isClient && !isFixed) {
-            // 在方块实体被移除前，生成掉落物
-            dropAllContents(world, pos, null, false);
+            BlockState currentState = world.getBlockState(pos);
+            boolean isStillCoilBlock = currentState.getBlock() instanceof CoilBlock;
+
+            if (!isStillCoilBlock) {
+                dropAllContents(world, pos, null, false);
+            }
         }
         super.markRemoved();
     }
