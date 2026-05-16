@@ -240,33 +240,45 @@ public class HeaterBlockEntity extends MachineBlockEntity
     }
 
     public void temperatureRising(){
-        float effectiveHeatRate = 0;
+        float totalHeatInputRate = 0.0f;
 
-        if (isHeating()) {
-            effectiveHeatRate += getTemperatureRisingRate();
+        if (isBurning()) {
+            totalHeatInputRate += getTemperatureRisingRate();
         }
 
-        if (coilHeatRateBonus > 0) {
-            effectiveHeatRate += coilHeatRateBonus;
-        }
+        float heatFromCoil = calculateHeatInputFromCoil();
+        totalHeatInputRate += heatFromCoil;
 
-        if (effectiveHeatRate > 0) {
-
-            float targetTemperature = temperature + effectiveHeatRate;
-
-            if (targetTemperature >= getMax_temperature()) {
-                temperature = getMax_temperature();
-            } else {
-                temperature = targetTemperature;
-            }
+        if (totalHeatInputRate > 0) {
+            float newTemperature = temperature + totalHeatInputRate;
+            temperature = Math.min(newTemperature, getMax_temperature());
         } else {
-            if (temperature > 1) {
-                temperature -= 1.0F;
-
-            } else if (temperature > 0) {
-                temperature = 0F;
-            }
+            temperature = Math.max(temperature - 1.0f, 0.0f);
         }
+    }
+
+    private float calculateHeatInputFromCoil() {
+        if (world == null) return 0.0f;
+
+        BlockPos coilPos = pos.down();
+        BlockEntity be = world.getBlockEntity(coilPos);
+
+        if (!(be instanceof CoilBlockEntity coil)) {
+            return 0.0f;
+        }
+
+        float coilTemperature = coil.getTemperature();
+        boolean isCoilActive = coil.isActivelyHeating();
+
+        if (!isCoilActive || coilTemperature <= this.temperature) {
+            return 0.0f;
+        }
+
+        float temperatureDifference = coilTemperature - this.temperature;
+        float heatTransferRate = temperatureDifference * 0.05f;
+
+        float coilMaxHeatOutput = coil.getHeatRate();
+        return Math.min(heatTransferRate, coilMaxHeatOutput);
     }
 
     @Override
@@ -502,6 +514,9 @@ public class HeaterBlockEntity extends MachineBlockEntity
         }
     }
 
+    public boolean isBurning() {
+        return this.burnTime > 0;
+    }
 
     /**
      * 计算线圈加成
@@ -510,18 +525,16 @@ public class HeaterBlockEntity extends MachineBlockEntity
         if (world == null) return new float[]{0, 0};
 
         float tempBonus = 0;
-        float rateBonus = 0;
 
         BlockPos checkPos = pos.down();
         BlockEntity be = world.getBlockEntity(checkPos);
 
         if (be instanceof CoilBlockEntity coil) {
-            float[] bonus = coil.getHeatBonus();
-            tempBonus += bonus[0];
-            rateBonus += bonus[1];
+            int[] counts = coil.getCoilCounts();
+            tempBonus = counts[1] * counts[0] * 180;
         }
 
-        return new float[]{tempBonus, rateBonus};
+        return new float[]{tempBonus, 0};
     }
 
     public boolean isHeating() {

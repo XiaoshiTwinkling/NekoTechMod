@@ -37,42 +37,40 @@ public class CoilBlockEntityRenderer implements BlockEntityRenderer<CoilBlockEnt
     @Override
     public void render(CoilBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         matrices.push();
-
         var coils = entity.getCoils();
-        boolean isFixed = entity.isFixed();
+        int totalFilledLayers = 0;
+        for (CoilType coil : coils) {
+            if (coil != CoilType.EMPTY) totalFilledLayers++;
+        }
 
         for (int layerIndex = 0; layerIndex < coils.size(); layerIndex++) {
             CoilType coilType = coils.get(layerIndex);
-            if (coilType == CoilType.EMPTY) {
-                break;
-            }
-
+            if (coilType == CoilType.EMPTY) break;
 
             float currentOuterRadius = CORE_RADIUS + (layerIndex + 1) * LAYER_THICKNESS;
             float currentInnerRadius = CORE_RADIUS + layerIndex * LAYER_THICKNESS;
-
             Identifier layerTexture = getTextureForType(coilType);
+
+            boolean isOutermostLayer = (layerIndex == totalFilledLayers - 1);
 
             renderHollowCubeLayer(matrices, vertexConsumers, layerTexture,
                     currentInnerRadius, currentOuterRadius, light, overlay,
-                    entity.getWorld().getTime() + tickDelta, entity.getPos());
+                    entity.getWorld().getTime() + tickDelta, entity.getPos(),
+                    isOutermostLayer);
         }
-
-        if (isFixed) {
-            renderFixationFrame(matrices, vertexConsumers, light, overlay, entity);
-        }
-
-        matrices.pop();
 
         renderAttachedComponents(entity, matrices, vertexConsumers, light, overlay);
+
+        matrices.pop();
     }
 
     private void renderHollowCubeLayer(MatrixStack matrices, VertexConsumerProvider vertexConsumers,
                                        Identifier texture, float innerR, float outerR,
-                                       int light, int overlay, float worldTime, BlockPos pos) {
-
+                                       int light, int overlay, float worldTime, BlockPos pos,
+                                       boolean isOutermostLayer) {
         Matrix4f matrix = matrices.peek().getPositionMatrix();
         VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEntityCutout(texture));
+
         float xOuterNeg = 0.5f - outerR;
         float xOuterPos = 0.5f + outerR;
         float zOuterNeg = 0.5f - outerR;
@@ -86,16 +84,17 @@ public class CoilBlockEntityRenderer implements BlockEntityRenderer<CoilBlockEnt
         float yBottom = 0.0f;
         float yTop = 1.0f;
 
-        buildWestFace(matrix, vertexConsumer, xOuterNeg, zOuterNeg, zOuterPos, yBottom, yTop, pos, light, overlay);
-        buildEastFace(matrix, vertexConsumer, xOuterPos, zOuterNeg, zOuterPos, yBottom, yTop, pos, light, overlay);
-        buildNorthFace(matrix, vertexConsumer, zOuterNeg, xOuterNeg, xOuterPos, yBottom, yTop, pos, light, overlay);
-        buildSouthFace(matrix, vertexConsumer, zOuterPos, xOuterNeg, xOuterPos, yBottom, yTop, pos, light, overlay);
-
         buildTopRingFace(matrix, vertexConsumer, xInnerNeg, xInnerPos, zInnerNeg, zInnerPos,
                 xOuterNeg, xOuterPos, zOuterNeg, zOuterPos, yTop, pos, light, overlay);
-
         buildBottomRingFace(matrix, vertexConsumer, xInnerNeg, xInnerPos, zInnerNeg, zInnerPos,
                 xOuterNeg, xOuterPos, zOuterNeg, zOuterPos, yBottom, pos, light, overlay);
+
+        if (isOutermostLayer) {
+            buildWestFace(matrix, vertexConsumer, xOuterNeg, zOuterNeg, zOuterPos, yBottom, yTop, pos, light, overlay);
+            buildEastFace(matrix, vertexConsumer, xOuterPos, zOuterNeg, zOuterPos, yBottom, yTop, pos, light, overlay);
+            buildNorthFace(matrix, vertexConsumer, zOuterNeg, xOuterNeg, xOuterPos, yBottom, yTop, pos, light, overlay);
+            buildSouthFace(matrix, vertexConsumer, zOuterPos, xOuterNeg, xOuterPos, yBottom, yTop, pos, light, overlay);
+        }
     }
 
     private void buildWestFace(Matrix4f matrix, VertexConsumer consumer, float x, float zStart, float zEnd, float yStart, float yEnd, BlockPos pos, int light, int overlay) {

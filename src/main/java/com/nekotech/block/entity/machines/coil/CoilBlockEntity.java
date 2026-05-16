@@ -41,6 +41,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
@@ -93,6 +94,13 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         validComponents.add(ModItems.neko_copper_flux_inputer);
         validComponents.add(ModItems.neko_copper_flux_outputer);
         validComponents.add(ModItems.component_casing);
+    }
+
+    public float getTemperature() {
+        return this.temperature;
+    }
+    public float getHeatRate() {
+        return this.heatRate;
     }
 
     /**
@@ -174,18 +182,37 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
     }
 
     /**
-     * 获取加热效果喵
-     * @return 最大温度加成, 升温速度加成
+     * 在方块被破坏时生成所有掉落物
+     * @param world 世界
+     * @param pos 位置
+     * @param player 破坏方块的玩家
+     * @param willHarvest 是否可以通过精准采集获取方块本身
      */
-    public float[] getHeatBonus() {
-        if (!isActivelyHeating()) {
-            return new float[]{0, 0};
+    public void dropAllContents(World world, BlockPos pos, @Nullable PlayerEntity player, boolean willHarvest) {
+        if (isFixed || (player != null && player.getAbilities().creativeMode)) {
+            return;
         }
-        int[] counts = getCoilCounts();
-        float tempBonus = counts[1] * counts[0] * HEAT_MULTIPLIER;
-        float rateBonus = counts[1] * counts[0] * HEAT_RATE_MULTIPLIER;
-        return new float[]{tempBonus, rateBonus};
+
+        for (CoilType coilType : coils) {
+            if (coilType != CoilType.EMPTY && coilType.item != null) {
+                ItemStack coilStack = new ItemStack(coilType.item, 1);
+                ItemScatterer.spawn(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, coilStack);
+            }
+        }
+
+        for (Map.Entry<Direction, Item> entry : attachedComponents.entrySet()) {
+            Item componentItem = entry.getValue();
+            if (componentItem != null) {
+                ItemStack componentStack = new ItemStack(componentItem, 1);
+                ItemScatterer.spawn(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, componentStack);
+            }
+        }
+
+        // 4. 清空本地数据，防止重复生成
+        coils.replaceAll(c -> CoilType.EMPTY);
+        attachedComponents.clear();
     }
+
 
     public boolean isActivelyHeating() {
         int[] counts = getCoilCounts();
@@ -661,6 +688,15 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         int pigIronCount = counts[1];
         int nekoCopperCount = counts[2];
 
+        if (!canMachineRun()) {
+            if (temperature > 0) {
+                temperature = Math.max(0, temperature - 1.0f);
+            }
+            tickComponents();
+            markDirty();
+            return;
+        }
+
         if (copperCount > 0 && nekoFlux > 0) {
             float consumption = copperCount * BASE_POWER_CONSUMPTION;
             nekoFlux = Math.max(0, nekoFlux - consumption);
@@ -677,10 +713,7 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
             }
         }
 
-        if (nekoCopperCount > 0 && copperCount > 0) {
-            if (!canMachineRun()) {
-                return;
-            }
+        if (nekoCopperCount > 0 && copperCount > 0 && nekoFlux > 0.01f) {
             attractEntities();
         }
 
@@ -827,5 +860,14 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         NbtCompound nbt = new NbtCompound();
         this.writeNbt(nbt, registries);
         return nbt;
+    }
+
+    @Override
+    public void markRemoved() {
+        if (world != null && !world.isClient && !isFixed) {
+            // 在方块实体被移除前，生成掉落物
+            dropAllContents(world, pos, null, false);
+        }
+        super.markRemoved();
     }
 }
