@@ -107,49 +107,34 @@ public class ModItems {
 
     public static final Item white_neko_mark = registerItems("white_neko_mark",
             new NekoMarkItem(new Item.Settings(), "white_neko_mark", DyeColor.WHITE));
-
     public static final Item orange_neko_mark = registerItems("orange_neko_mark",
             new NekoMarkItem(new Item.Settings(), "orange_neko_mark", DyeColor.ORANGE));
-
     public static final Item magenta_neko_mark = registerItems("magenta_neko_mark",
             new NekoMarkItem(new Item.Settings(), "magenta_neko_mark", DyeColor.MAGENTA));
-
     public static final Item light_blue_neko_mark = registerItems("light_blue_neko_mark",
             new NekoMarkItem(new Item.Settings(), "light_blue_neko_mark", DyeColor.LIGHT_BLUE));
-
     public static final Item yellow_neko_mark = registerItems("yellow_neko_mark",
             new NekoMarkItem(new Item.Settings(), "yellow_neko_mark", DyeColor.YELLOW));
-
     public static final Item lime_neko_mark = registerItems("lime_neko_mark",
             new NekoMarkItem(new Item.Settings(), "lime_neko_mark", DyeColor.LIME));
-
     public static final Item pink_neko_mark = registerItems("pink_neko_mark",
             new NekoMarkItem(new Item.Settings(), "pink_neko_mark", DyeColor.PINK));
-
     public static final Item gray_neko_mark = registerItems("gray_neko_mark",
             new NekoMarkItem(new Item.Settings(), "gray_neko_mark", DyeColor.GRAY));
-
     public static final Item light_gray_neko_mark = registerItems("light_gray_neko_mark",
             new NekoMarkItem(new Item.Settings(), "light_gray_neko_mark", DyeColor.LIGHT_GRAY));
-
     public static final Item cyan_neko_mark = registerItems("cyan_neko_mark",
             new NekoMarkItem(new Item.Settings(), "cyan_neko_mark", DyeColor.CYAN));
-
     public static final Item purple_neko_mark = registerItems("purple_neko_mark",
             new NekoMarkItem(new Item.Settings(), "purple_neko_mark", DyeColor.PURPLE));
-
     public static final Item blue_neko_mark = registerItems("blue_neko_mark",
             new NekoMarkItem(new Item.Settings(), "blue_neko_mark", DyeColor.BLUE));
-
     public static final Item brown_neko_mark = registerItems("brown_neko_mark",
             new NekoMarkItem(new Item.Settings(), "brown_neko_mark", DyeColor.BROWN));
-
     public static final Item green_neko_mark = registerItems("green_neko_mark",
             new NekoMarkItem(new Item.Settings(), "green_neko_mark", DyeColor.GREEN));
-
     public static final Item red_neko_mark = registerItems("red_neko_mark",
             new NekoMarkItem(new Item.Settings(), "red_neko_mark", DyeColor.RED));
-
     public static final Item black_neko_mark = registerItems("black_neko_mark",
             new NekoMarkItem(new Item.Settings(), "black_neko_mark", DyeColor.BLACK));
 
