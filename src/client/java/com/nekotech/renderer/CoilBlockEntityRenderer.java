@@ -43,6 +43,10 @@ public class CoilBlockEntityRenderer implements BlockEntityRenderer<CoilBlockEnt
             if (coil != CoilType.EMPTY) totalFilledLayers++;
         }
 
+        if (entity.isFixed()){
+            renderFixationFrame(matrices, vertexConsumers, light, overlay, entity);
+        }
+
         for (int layerIndex = 0; layerIndex < coils.size(); layerIndex++) {
             CoilType coilType = coils.get(layerIndex);
             if (coilType == CoilType.EMPTY) break;
