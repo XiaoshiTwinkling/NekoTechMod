@@ -2,6 +2,7 @@ package com.nekotech.mixin;
 
 import com.nekotech.NekoTechnology;
 import com.nekotech.goal.MoveToLaserGoal;
+import com.nekotech.goal.nekotask.NekoTagInventoryTaskGoal;
 import com.nekotech.item.ModItems;
 import com.nekotech.item.custom.NekoMark.NekoMarkAccess;
 import com.nekotech.mixin.Accessor.MobEntityAccessor;
@@ -15,6 +16,7 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Hand;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -41,7 +43,18 @@ public class CatEntityMixin implements NekoMarkAccess {
     private static final String NEKO_MARK_COLOR_KEY = "NekoMarkColor";
 
     @Unique
-    private DyeColor nekoMarkColor = DyeColor.WHITE;
+    private static final String NEKO_TASK_DATA_KEY = "neko_task_data";
+
+    private NbtCompound nekoTaskData = new NbtCompound();
+
+    @Override
+    public NbtCompound neko_technology$getNekoTaskData() {
+        return this.nekoTaskData;
+    }
+
+    @Unique
+    @Nullable
+    private DyeColor nekoMarkColor = null;
 
 
     @Unique
@@ -50,11 +63,12 @@ public class CatEntityMixin implements NekoMarkAccess {
     }
 
     @Override
-    public void neko_technology$setNekoMarkColor(DyeColor color) {
+    public void neko_technology$setNekoMarkColor(@Nullable DyeColor color) {
         this.nekoMarkColor = color;
     }
 
     @Override
+    @Nullable
     public DyeColor neko_technology$getNekoMarkColor() {
         return this.nekoMarkColor;
     }
@@ -70,6 +84,12 @@ public class CatEntityMixin implements NekoMarkAccess {
                 g -> g.getGoal() instanceof MoveToLaserGoal)) {
 
             goalSelector.add(4, new MoveToLaserGoal(cat, 1.5));
+        }
+
+        if (goalSelector.getGoals().stream().noneMatch(
+                g -> g.getGoal() instanceof NekoTagInventoryTaskGoal)) {
+
+            goalSelector.add(1, new NekoTagInventoryTaskGoal(cat, 1.0));
         }
     }
 
@@ -104,7 +124,11 @@ public class CatEntityMixin implements NekoMarkAccess {
     private void onWriteCustomData(NbtCompound nbt, CallbackInfo ci) {
         nbt.putInt(DROP_TIMER_KEY, nekoDropTimer);
         nbt.putInt(DROP_INTERVAL_KEY, nextDropInterval);
-        nbt.putString(NEKO_MARK_COLOR_KEY, nekoMarkColor.getName());
+
+        if (nekoMarkColor != null) {
+            nbt.putString(NEKO_MARK_COLOR_KEY, nekoMarkColor.getName());
+        }
+        nbt.put(NEKO_TASK_DATA_KEY, this.nekoTaskData.copy());
     }
 
     @Inject(method = "readCustomDataFromNbt", at = @At("HEAD"))
@@ -127,7 +151,13 @@ public class CatEntityMixin implements NekoMarkAccess {
                     DyeColor.WHITE
             );
         } else {
-            nekoMarkColor = DyeColor.WHITE;
+            nekoMarkColor = null;
+        }
+
+        if (nbt.contains(NEKO_TASK_DATA_KEY, NbtElement.COMPOUND_TYPE)) {
+            this.nekoTaskData = nbt.getCompound(NEKO_TASK_DATA_KEY).copy();
+        } else {
+            this.nekoTaskData = new NbtCompound();
         }
     }
 

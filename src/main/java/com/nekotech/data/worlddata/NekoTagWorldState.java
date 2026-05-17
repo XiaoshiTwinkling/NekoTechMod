@@ -134,6 +134,17 @@ public class NekoTagWorldState extends PersistentState {
         return ToggleResult.ADDED;
     }
 
+    public boolean clearAt(ServerWorld world, BlockPos pos) {
+        LocationKey key = LocationKey.of(world, pos);
+
+        if (tagsByLocation.remove(key) != null) {
+            markDirty();
+            return true;
+        }
+
+        return false;
+    }
+
     public List<NekoPlacedTag> getTagsAt(ServerWorld world, BlockPos pos) {
         LocationKey key = LocationKey.of(world, pos);
         List<NekoPlacedTag> tags = tagsByLocation.get(key);
@@ -173,5 +184,52 @@ public class NekoTagWorldState extends PersistentState {
     public enum ToggleResult {
         ADDED,
         REMOVED
+    }
+
+    public List<TaskCandidate> findTasksNear(
+            ServerWorld world,
+            BlockPos center,
+            String color,
+            int radius
+    ) {
+        if (color == null || color.isEmpty()) {
+            return List.of();
+        }
+
+        String dimension = world.getRegistryKey().getValue().toString();
+        double radiusSq = radius * radius;
+
+        List<TaskCandidate> result = new ArrayList<>();
+
+        for (Map.Entry<LocationKey, List<NekoPlacedTag>> entry : tagsByLocation.entrySet()) {
+            LocationKey key = entry.getKey();
+
+            if (!key.dimension().equals(dimension)) {
+                continue;
+            }
+
+            BlockPos taskPos = key.toBlockPos();
+
+            if (taskPos.getSquaredDistance(center) > radiusSq) {
+                continue;
+            }
+
+            for (NekoPlacedTag tag : entry.getValue()) {
+                if (!color.equals(tag.color())) {
+                    continue;
+                }
+
+                result.add(new TaskCandidate(key, taskPos, tag));
+            }
+        }
+
+        return result;
+    }
+
+    public record TaskCandidate(
+            LocationKey location,
+            BlockPos pos,
+            NekoPlacedTag tag
+    ) {
     }
 }
