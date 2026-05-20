@@ -50,6 +50,11 @@ public class NekoTechnologyClient implements ClientModInitializer {
                 CoilBlockEntityRenderer::new
         );
 
+        BlockEntityRendererFactories.register(
+                ModBlockEntities.ELEVATOR_CORE_BLOCK_ENTITY,
+                ElevatorCoreBlockEntityRenderer::new
+        );
+
         registerComponentAttachmentRenderer();
 
         ClientHudNetworkHandler.initialize();
@@ -72,7 +77,7 @@ public class NekoTechnologyClient implements ClientModInitializer {
                 }
         );
         HandledScreens.register(ModScreenHandlers.NEKO_TAG, NekoTagScreen::new);
-        BlockEntityRendererRegistry.register(ModBlockEntities.work_bench, WorkBenchBlockEntityRenderer::new);
+        BlockEntityRendererFactories.register(ModBlockEntities.work_bench, WorkBenchBlockEntityRenderer::new);
 
         ModelPredicateProviderRegistry.register(
                 ModItems.neko_tag,
@@ -80,26 +85,28 @@ public class NekoTechnologyClient implements ClientModInitializer {
                 (stack, world, entity, seed) -> NekoTagData.readColor(stack).getId()/15.0F
 
         );
-	}
+
+
+    }
 
     public static GogglesHudRenderer getHudRenderer() {
         return HUD_RENDERER;
     }
 
     private void registerComponentAttachmentRenderer(){
-        BlockEntityRendererRegistry.register(ModBlockEntities.flux_storage, new BlockEntityRendererFactory<BlockEntity>() {
+        BlockEntityRendererFactories.register(ModBlockEntities.flux_storage, new BlockEntityRendererFactory<BlockEntity>() {
             @Override
             public BlockEntityRenderer<BlockEntity> create(Context ctx) {
                 return new ComponentAttachmentRenderer();
             }
         });
-        BlockEntityRendererRegistry.register(ModBlockEntities.basic_storage_enclosure, new BlockEntityRendererFactory<BlockEntity>() {
+        BlockEntityRendererFactories.register(ModBlockEntities.basic_storage_enclosure, new BlockEntityRendererFactory<BlockEntity>() {
             @Override
             public BlockEntityRenderer<BlockEntity> create(Context ctx) {
                 return new ComponentAttachmentRenderer();
             }
         });
-        BlockEntityRendererRegistry.register(ModBlockEntities.heater, new BlockEntityRendererFactory<BlockEntity>() {
+        BlockEntityRendererFactories.register(ModBlockEntities.heater, new BlockEntityRendererFactory<BlockEntity>() {
             @Override
             public BlockEntityRenderer<BlockEntity> create(Context ctx) {
                 return new ComponentAttachmentRenderer();
@@ -109,5 +116,7 @@ public class NekoTechnologyClient implements ClientModInitializer {
 
     private void registerRenderLayerMap(){
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.work_bench, RenderLayer.getTranslucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ELEVATOR_CORE_BLOCK, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ELEVATOR_PART_BLOCK, RenderLayer.getCutout());
     }
 }

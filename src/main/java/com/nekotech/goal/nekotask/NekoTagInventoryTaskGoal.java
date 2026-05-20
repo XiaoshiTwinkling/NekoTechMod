@@ -1,8 +1,10 @@
 package com.nekotech.goal.nekotask;
 
 import com.nekotech.data.worlddata.NekoTagWorldState;
+import com.nekotech.item.block.elevator.ElevatorPartBlock;
 import com.nekotech.item.custom.NekoMark.NekoMarkAccess;
 import com.nekotech.item.custom.NekoTag.NekoPlacedTag;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.passive.CatEntity;
@@ -259,13 +261,15 @@ public class NekoTagInventoryTaskGoal extends Goal {
             return;
         }
 
-        Inventory inventory = NekoInventoryOps.getInventoryAt(world, this.target.pos());
+        BlockPos pos = this.target.pos();
+        BlockState state = world.getBlockState(pos);
 
-        if (inventory == null) {
-            // 寻路到了，但是目标不是 Inventory，认为标签失效。
-            NekoTagWorldState.get(world.getServer()).clearAt(world, this.target.pos());
-            completeCurrentTask(world);
-            return;
+        Inventory inventory;
+
+        if (state.getBlock() instanceof ElevatorPartBlock) {
+            inventory = NekoInventoryOps.getElevatorInventory(world, pos);
+        } else {
+            inventory = NekoInventoryOps.getInventoryAt(world, pos);
         }
 
         NekoPlacedTag tag = this.target.tag();

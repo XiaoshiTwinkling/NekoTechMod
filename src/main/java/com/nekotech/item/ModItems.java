@@ -104,7 +104,11 @@ public class ModItems {
     public static final Item pig_iron_coil = registerItems("pig_iron_coil", new ModItem(new Item.Settings(), "pig_iron_coil"));
     public static final Item neko_copper_coil = registerItems("neko_copper_coil", new ModItem(new Item.Settings(), "neko_copper_coil"));
     public static final Item pig_iron_framework = registerItems("pig_iron_framework", new ModItem(new Item.Settings(), "pig_iron_framework"));
+
     public static final Item empty_neko_mark = registerItems("empty_neko_mark", new Item(new Item.Settings()));
+
+    public static final Item ELEVATOR_ITEM = registerItems("elevator", new ElevatorItem(new Item.Settings().maxCount(16)));
+
     public static final Item white_neko_mark = registerItems("white_neko_mark",
             new NekoMarkItem(new Item.Settings(), "white_neko_mark", DyeColor.WHITE));
     public static final Item orange_neko_mark = registerItems("orange_neko_mark",
@@ -137,7 +141,6 @@ public class ModItems {
             new NekoMarkItem(new Item.Settings(), "red_neko_mark", DyeColor.RED));
     public static final Item black_neko_mark = registerItems("black_neko_mark",
             new NekoMarkItem(new Item.Settings(), "black_neko_mark", DyeColor.BLACK));
-
     private static Item registerItems(String id, Item item){
         return Registry.register(Registries.ITEM, Identifier.of(NekoTechnology.MOD_ID ,id), item);
     }

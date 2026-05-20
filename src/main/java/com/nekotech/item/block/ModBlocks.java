@@ -2,6 +2,8 @@ package com.nekotech.item.block;
 
 import com.nekotech.NekoTechnology;
 import com.nekotech.block.entity.ModBlockEntities;
+import com.nekotech.item.block.elevator.ElevatorCoreBlock;
+import com.nekotech.item.block.elevator.ElevatorPartBlock;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -68,13 +70,26 @@ public class ModBlocks {
                             .strength(3.5f)
             )
     );
+    public static final Block ELEVATOR_CORE_BLOCK = Registry.register(
+            Registries.BLOCK,
+            Identifier.of(NekoTechnology.MOD_ID, "elevator_core"),
+            new ElevatorCoreBlock(AbstractBlock.Settings.create()
+                    .strength(3.0F, 6.0F)
+                    .nonOpaque())
+    );
+
+    public static final Block ELEVATOR_PART_BLOCK = Registry.register(
+            Registries.BLOCK,
+            Identifier.of(NekoTechnology.MOD_ID, "elevator_part"),
+            new ElevatorPartBlock(AbstractBlock.Settings.create()
+                    .strength(3.0F, 6.0F)
+                    .nonOpaque())
+    );
 
 
     public static void registerBlockItems(String id, Block block){
-        Item item = Registry.register(Registries.ITEM, Identifier.of(NekoTechnology.MOD_ID, id), new BlockItem(block, new Item.Settings()));
-        if(item instanceof BlockItem){
-            ((BlockItem)item).appendBlocks(Item.BLOCK_ITEMS, item);
-        }
+        BlockItem item = Registry.register(Registries.ITEM, Identifier.of(NekoTechnology.MOD_ID, id), new BlockItem(block, new Item.Settings()));
+        item.appendBlocks(Item.BLOCK_ITEMS, item);
     }
 
     public static Block register(String id, Block block){

@@ -1,11 +1,14 @@
 package com.nekotech.goal.nekotask;
 
+import com.nekotech.block.entity.ElevatorCoreBlockEntity;
+import com.nekotech.item.block.elevator.ElevatorPartBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.Nullable;
 
 public final class NekoInventoryOps {
 
@@ -20,6 +23,26 @@ public final class NekoInventoryOps {
         }
 
         return null;
+    }
+
+    @Nullable
+    public static Inventory getElevatorInventory(ServerWorld world, BlockPos pos) {
+        ElevatorCoreBlockEntity core = ElevatorPartBlock.findCoreBelow(world, pos);
+
+        if (core == null) {
+            return null;
+        }
+
+        int clickedFloor = pos.getY() - core.getPos().getY();
+
+        /*
+         * 猫访问 part 时，尝试把电梯移动到该 part 对应楼层。
+         * startMoveTo 内部已经会处理非法楼层、正在移动、已经在目标层等情况。
+         * 不论移动是否真正开始，只要找到了 core，就返回 core inventory。
+         */
+        core.startMoveTo(clickedFloor);
+
+        return core;
     }
 
     public static ItemStack insertStack(Inventory inventory, ItemStack stack) {

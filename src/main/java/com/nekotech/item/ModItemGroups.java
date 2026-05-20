@@ -79,6 +79,7 @@ public class ModItemGroups {
                             entries.add(ModItems.pig_iron_coil);
                             entries.add(ModItems.neko_copper_coil);
                             entries.add(ModItems.pig_iron_framework);
+                            entries.add(ModItems.empty_neko_mark);
                             entries.add(ModItems.white_neko_mark);
                             entries.add(ModItems.orange_neko_mark);
                             entries.add(ModItems.magenta_neko_mark);
@@ -113,6 +114,7 @@ public class ModItemGroups {
                             entries.add(ModBlocks.flux_storage);
                             entries.add(ModBlocks.work_bench);
                             entries.add(ModBlocks.coil_block);
+                            entries.add(ModItems.ELEVATOR_ITEM);
 
                         })).build());
 

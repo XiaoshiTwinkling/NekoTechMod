@@ -15,6 +15,13 @@ import net.minecraft.util.Util;
 
 public class ModBlockEntities {
 
+    public static final BlockEntityType<ElevatorCoreBlockEntity> ELEVATOR_CORE_BLOCK_ENTITY =
+            create("elevator_core",
+                    BlockEntityType.Builder.create(
+                            ElevatorCoreBlockEntity::new,
+                            ModBlocks.ELEVATOR_CORE_BLOCK
+                    ));
+
     public static BlockEntityType<BoxBlockEntity> basic_storage_enclosure=
             create("basic_storage_enclosure", BlockEntityType.Builder.create(BoxBlockEntity::new, ModBlocks.basic_storage_enclosure));
 

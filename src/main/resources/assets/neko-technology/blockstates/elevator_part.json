@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "section=middle": {
+      "model": "neko-technology:block/elevator/elevator_part_middle"
+    },
+    "section=top": {
+      "model": "neko-technology:block/elevator/elevator_part_top"
+    }
+  }
+}

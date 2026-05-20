@@ -154,5 +154,16 @@
   "screen.neko-technology.neko_tag.priority": "优先级",
   "screen.neko-technology.neko_tag.task": "任务",
   "message.neko-technology.neko_tag.added": "任务标签已放置喵",
-  "message.neko-technology.neko_tag.removed": "任务标签已移除喵"
+  "message.neko-technology.neko_tag.removed": "任务标签已移除喵",
+
+  "item.neko-technology.elevator": "升降机",
+  "block.neko-technology.elevator_core": "升降机核心",
+  "block.neko-technology.elevator_part": "升降机结构",
+  "container.neko-technology.elevator": "升降机",
+  "message.neko-technology.first_pos": "已选择升降机第一个位置。",
+  "message.neko-technology.invalid": "升降机摆放无效。",
+  "message.neko-technology.not_vertical": "两个位置必须上下垂直对齐。",
+  "message.neko-technology.too_far": "两个位置的垂直距离必须在 20 格以内。",
+  "message.neko-technology.blocked": "升降机井内存在不可替换方块。",
+  "message.neko-technology.placed": "升降机已生成。"
 }
