@@ -61,6 +61,6 @@ public class NekoTagScreenHandler extends ScreenHandler {
     @Override
     public boolean canUse(PlayerEntity player) {
         ItemStack stack = player.getStackInHand(hand);
-        return stack.isOf(ModItems.neko_tag);
+        return stack.isOf(ModItems.NEKO_TAG);
     }
 }

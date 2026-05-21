@@ -18,53 +18,53 @@ import net.minecraft.util.Identifier;
 public class ModBlocks {
 
 
-    public static final Block basic_storage_enclosure= register("basic_storage_enclosure", new BoxBlock(AbstractBlock.Settings.copy(Blocks.CHEST)
-            .strength(1.5F, 6.0F), () -> ModBlockEntities.basic_storage_enclosure));
+    public static final Block BASIC_STORAGE_ENCLOSURE = register("basic_storage_enclosure", new BoxBlock(AbstractBlock.Settings.copy(Blocks.CHEST)
+            .strength(1.5F, 6.0F), () -> ModBlockEntities.BASIC_STORAGE_ENCLOSURE));
 
-    public static final Block cushion_block= register("cushion_block", new Cushion(
+    public static final Block CUSHION_BLOCK = register("cushion_block", new Cushion(
             FabricBlockSettings.create()
                     .strength(0.3f)  // 软垫子
                     .sounds(BlockSoundGroup.WOOL)
     ));
 
-    public static final Block heater= register("heater", new Heater(AbstractBlock.Settings.create()
+    public static final Block HEATER = register("heater", new Heater(AbstractBlock.Settings.create()
             .strength(1.5F, 6.0F)));
 
-    public static final Block bellows = register("bellows",
+    public static final Block BELLOWS = register("bellows",
             new Bellows(AbstractBlock.Settings.create()
                     .strength(1.5f)
             )
     );
 
-    public static final Block alloy_pot = register("alloy_pot",
+    public static final Block ALLOY_POT = register("alloy_pot",
             new AlloyPot(
                     Block.Settings.create()
                             .strength(3.5f)
             )
     );
 
-    public static final Block flux_storage = register("flux_storage",
+    public static final Block FLUX_STORAGE = register("flux_storage",
             new FluxStorage(
                     Block.Settings.create()
                             .strength(3.5f)
             )
     );
 
-    public static final Block wooden_casing = register("wooden_casing",
+    public static final Block WOODEN_CASING = register("wooden_casing",
             new WoodenCasing(
                     Block.Settings.create()
                             .strength(3.5f)
             )
     );
 
-    public static final Block work_bench = register("work_bench",
+    public static final Block WORK_BENCH = register("work_bench",
             new WorkBench(
                     Block.Settings.create()
                             .strength(3.5f)
             )
     );
 
-    public static final Block coil_block = register("coil_block",
+    public static final Block COIL_BLOCK = register("coil_block",
             new CoilBlock(
                     Block.Settings.create()
                             .strength(3.5f)

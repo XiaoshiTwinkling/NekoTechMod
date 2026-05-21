@@ -27,7 +27,7 @@ public class BellowsBlockEntity extends BlockEntity implements ICatNeedMachine {
     private BlockPos boundCushionPos = null;
 
     public BellowsBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.bellows, pos, state);
+        super(ModBlockEntities.BELLOWS, pos, state);
     }
 
     // ===== Tick =====

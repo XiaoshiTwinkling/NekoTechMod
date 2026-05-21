@@ -27,7 +27,7 @@ public class CushionBlockEntity extends BlockEntity implements IHaveGoogleHUD {
     private int machineCount = 0;
 
     public CushionBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.cushion, pos, state);
+        super(ModBlockEntities.CUSHION, pos, state);
     }
 
     public static void tick(World world, BlockPos pos, BlockState state, CushionBlockEntity be) {

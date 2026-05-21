@@ -29,7 +29,7 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity
         implements IHaveGoogleHUD, ICatNeedMachine {
 
     public AlloyPotBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.alloy_pot, pos, state, 4);
+        super(ModBlockEntities.ALLOY_POT, pos, state, 4);
     }
 
     private RecipeEntry<AlloyRecipe> cachedRecipe = null;
@@ -227,7 +227,7 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity
     }
 
     private boolean isHeater(BlockState belowState) {
-        return belowState.isOf(ModBlocks.heater);
+        return belowState.isOf(ModBlocks.HEATER);
     }
 
     public HeaterBlockEntity getHeaterBelow() {

@@ -7,7 +7,6 @@ import com.nekotech.item.ModItems;
 import com.nekotech.item.custom.NekoMark.NekoMarkAccess;
 import com.nekotech.mixin.Accessor.MobEntityAccessor;
 import net.minecraft.entity.ai.goal.GoalSelector;
-import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.CatEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -18,7 +17,6 @@ import net.minecraft.util.DyeColor;
 import net.minecraft.util.Hand;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -107,7 +105,7 @@ public class CatEntityMixin implements NekoMarkAccess {
             nekoDropTimer++;
 
             if (nekoDropTimer >= nextDropInterval) {
-                ItemStack hairStack = new ItemStack(ModItems.neko_hair);
+                ItemStack hairStack = new ItemStack(ModItems.NEKO_HAIR);
                 cat.dropStack(hairStack);
 
                 nekoDropTimer = 0;
@@ -167,7 +165,7 @@ public class CatEntityMixin implements NekoMarkAccess {
 
         ItemStack stack = player.getStackInHand(hand);
 
-        if (!stack.isOf(ModItems.neko_box)) {
+        if (!stack.isOf(ModItems.NEKO_BOX)) {
             return;
         }
 

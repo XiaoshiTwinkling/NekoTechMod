@@ -19,9 +19,9 @@ public abstract class AbstractFurnaceBlockEntityMixin {
 
     @Inject(method = "createFuelTimeMap", at= @At("TAIL"))
     private static void addFuelItem(CallbackInfoReturnable<Map<Item, Integer>> cir) {
-        fuelTimes.put(ModItems.neko_hair, 25);
-        fuelTimes.put(ModItems.neko_silk, 140);
-        fuelTimes.put(ModItems.enhanced_neko_hair, 50);
-        fuelTimes.put(ModItems.burnt_fish, 50);
+        fuelTimes.put(ModItems.NEKO_HAIR, 25);
+        fuelTimes.put(ModItems.NEKO_SILK, 140);
+        fuelTimes.put(ModItems.ENHANCED_NEKO_HAIR, 50);
+        fuelTimes.put(ModItems.BURNT_FISH, 50);
     }
 }

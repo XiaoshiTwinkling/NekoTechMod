@@ -80,7 +80,7 @@ public class NetworkHandler {
         Hand hand = Hand.valueOf(payload.hand());
         ItemStack tagStack = player.getStackInHand(hand);
 
-        if (!tagStack.isOf(ModItems.neko_tag)) {
+        if (!tagStack.isOf(ModItems.NEKO_TAG)) {
             return;
         }
 

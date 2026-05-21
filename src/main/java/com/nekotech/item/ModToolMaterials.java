@@ -2,7 +2,6 @@ package com.nekotech.item;
 
 import com.google.common.base.Suppliers;
 import net.minecraft.block.Block;
-import net.minecraft.item.Items;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.registry.tag.BlockTags;
@@ -13,7 +12,7 @@ import java.util.function.Supplier;
 public enum ModToolMaterials implements ToolMaterial{
 
     PIG_IRON(BlockTags.INCORRECT_FOR_IRON_TOOL, 721, 4.0f, 2.0f, 50,
-            () -> Ingredient.ofItems(ModItems.pig_iron_ingot)),
+            () -> Ingredient.ofItems(ModItems.PIG_IRON_INGOT)),
     ;
 
 

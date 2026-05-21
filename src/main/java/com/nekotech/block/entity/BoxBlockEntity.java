@@ -1,6 +1,5 @@
 package com.nekotech.block.entity;
 
-import com.nekotech.block.entity.machines.FluxStorageBlockEntity;
 import com.nekotech.block.entity.api.component.ComponentAdaptation;
 import com.nekotech.item.ModItems;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
@@ -43,11 +42,11 @@ public class BoxBlockEntity extends LootableContainerBlockEntity implements IHav
 
     public BoxBlockEntity(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState) {
         super(blockEntityType, blockPos, blockState);
-        validComponents.add(ModItems.brass_item_inputer);
+        validComponents.add(ModItems.BRASS_ITEM_INPUTER);
     }
     public BoxBlockEntity(BlockPos blockPos, BlockState blockState) {
-        this(ModBlockEntities.basic_storage_enclosure, blockPos, blockState);
-        validComponents.add(ModItems.brass_item_inputer);
+        this(ModBlockEntities.BASIC_STORAGE_ENCLOSURE, blockPos, blockState);
+        validComponents.add(ModItems.BRASS_ITEM_INPUTER);
     }
 
     @Override

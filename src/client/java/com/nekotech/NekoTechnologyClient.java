@@ -12,7 +12,6 @@ import com.nekotech.screens.NekoTagScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
@@ -36,17 +35,17 @@ public class NekoTechnologyClient implements ClientModInitializer {
 		NekoTechnology.LOGGER.info("NekoTechnologyClient initialized");
 
         BlockEntityRendererFactories.register(
-                ModBlockEntities.bellows,
+                ModBlockEntities.BELLOWS,
                 BellowsBlockEntityRenderer::new
         );
 
         BlockEntityRendererFactories.register(
-                ModBlockEntities.alloy_pot,
+                ModBlockEntities.ALLOY_POT,
                 AlloyPotBlockEntityRenderer::new
         );
 
         BlockEntityRendererFactories.register(
-                ModBlockEntities.coil_block,
+                ModBlockEntities.COIL_BLOCK,
                 CoilBlockEntityRenderer::new
         );
 
@@ -77,10 +76,10 @@ public class NekoTechnologyClient implements ClientModInitializer {
                 }
         );
         HandledScreens.register(ModScreenHandlers.NEKO_TAG, NekoTagScreen::new);
-        BlockEntityRendererFactories.register(ModBlockEntities.work_bench, WorkBenchBlockEntityRenderer::new);
+        BlockEntityRendererFactories.register(ModBlockEntities.WORK_BENCH, WorkBenchBlockEntityRenderer::new);
 
         ModelPredicateProviderRegistry.register(
-                ModItems.neko_tag,
+                ModItems.NEKO_TAG,
                 Identifier.of("neko-technology", "color"),
                 (stack, world, entity, seed) -> NekoTagData.readColor(stack).getId()/15.0F
 
@@ -94,19 +93,19 @@ public class NekoTechnologyClient implements ClientModInitializer {
     }
 
     private void registerComponentAttachmentRenderer(){
-        BlockEntityRendererFactories.register(ModBlockEntities.flux_storage, new BlockEntityRendererFactory<BlockEntity>() {
+        BlockEntityRendererFactories.register(ModBlockEntities.FLUX_STORAGE, new BlockEntityRendererFactory<BlockEntity>() {
             @Override
             public BlockEntityRenderer<BlockEntity> create(Context ctx) {
                 return new ComponentAttachmentRenderer();
             }
         });
-        BlockEntityRendererFactories.register(ModBlockEntities.basic_storage_enclosure, new BlockEntityRendererFactory<BlockEntity>() {
+        BlockEntityRendererFactories.register(ModBlockEntities.BASIC_STORAGE_ENCLOSURE, new BlockEntityRendererFactory<BlockEntity>() {
             @Override
             public BlockEntityRenderer<BlockEntity> create(Context ctx) {
                 return new ComponentAttachmentRenderer();
             }
         });
-        BlockEntityRendererFactories.register(ModBlockEntities.heater, new BlockEntityRendererFactory<BlockEntity>() {
+        BlockEntityRendererFactories.register(ModBlockEntities.HEATER, new BlockEntityRendererFactory<BlockEntity>() {
             @Override
             public BlockEntityRenderer<BlockEntity> create(Context ctx) {
                 return new ComponentAttachmentRenderer();
@@ -115,7 +114,7 @@ public class NekoTechnologyClient implements ClientModInitializer {
     }
 
     private void registerRenderLayerMap(){
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.work_bench, RenderLayer.getTranslucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.WORK_BENCH, RenderLayer.getTranslucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ELEVATOR_CORE_BLOCK, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ELEVATOR_PART_BLOCK, RenderLayer.getCutout());
     }

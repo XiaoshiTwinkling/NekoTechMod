@@ -23,7 +23,7 @@ public class ModArmorMaterials {
         map.put(ArmorItem.Type.CHESTPLATE, 8);
         map.put(ArmorItem.Type.HELMET, 3);
         map.put(ArmorItem.Type.BODY, 11);
-    }), 15, SoundEvents.ITEM_ARMOR_EQUIP_NETHERITE, 3.0F, 0.1F, () -> Ingredient.ofItems(ModItems.neko_copper_plate));
+    }), 15, SoundEvents.ITEM_ARMOR_EQUIP_NETHERITE, 3.0F, 0.1F, () -> Ingredient.ofItems(ModItems.NEKO_COPPER_PLATE));
     private static RegistryEntry<ArmorMaterial> register(
             String id,
             EnumMap<ArmorItem.Type, Integer> defense,

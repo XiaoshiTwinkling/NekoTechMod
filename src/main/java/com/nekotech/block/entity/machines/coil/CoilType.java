@@ -4,9 +4,9 @@ import com.nekotech.item.ModItems;
 import net.minecraft.item.Item;
 
 public enum CoilType {
-    COPPER(ModItems.copper_coil, 0xFFD700, "copper"),
-    PIG_IRON(ModItems.pig_iron_coil, 0xC0C0C0, "pig_iron"),
-    NEKO_COPPER(ModItems.neko_copper_coil, 0x8B4513, "neko_copper"),
+    COPPER(ModItems.COPPER_COIL, 0xFFD700, "copper"),
+    PIG_IRON(ModItems.PIG_IRON_COIL, 0xC0C0C0, "pig_iron"),
+    NEKO_COPPER(ModItems.NEKO_COPPER_COIL, 0x8B4513, "neko_copper"),
     EMPTY(null, 0x000000, "empty");
 
     final Item item;

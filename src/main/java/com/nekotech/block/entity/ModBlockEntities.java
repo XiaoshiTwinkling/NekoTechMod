@@ -21,41 +21,40 @@ public class ModBlockEntities {
                             ElevatorCoreBlockEntity::new,
                             ModBlocks.ELEVATOR_CORE_BLOCK
                     ));
+    public static BlockEntityType<BoxBlockEntity> BASIC_STORAGE_ENCLOSURE =
+            create("basic_storage_enclosure", BlockEntityType.Builder.create(BoxBlockEntity::new, ModBlocks.BASIC_STORAGE_ENCLOSURE));
 
-    public static BlockEntityType<BoxBlockEntity> basic_storage_enclosure=
-            create("basic_storage_enclosure", BlockEntityType.Builder.create(BoxBlockEntity::new, ModBlocks.basic_storage_enclosure));
+    public static BlockEntityType<HeaterBlockEntity> HEATER =
+            create("heater", BlockEntityType.Builder.create(HeaterBlockEntity::new, ModBlocks.HEATER));
 
-    public static BlockEntityType<HeaterBlockEntity> heater=
-            create("heater", BlockEntityType.Builder.create(HeaterBlockEntity::new, ModBlocks.heater));
-
-    public static BlockEntityType<BellowsBlockEntity> bellows =
+    public static BlockEntityType<BellowsBlockEntity> BELLOWS =
             create("bellows",
                     BlockEntityType.Builder.create(
                             BellowsBlockEntity::new,
-                            ModBlocks.bellows
+                            ModBlocks.BELLOWS
                     ));
 
-    public static BlockEntityType<CushionBlockEntity> cushion =
+    public static BlockEntityType<CushionBlockEntity> CUSHION =
             create("cushion",
                     BlockEntityType.Builder.create(
                             CushionBlockEntity::new,
-                            ModBlocks.cushion_block
+                            ModBlocks.CUSHION_BLOCK
                     ));
 
-    public static BlockEntityType<AlloyPotBlockEntity> alloy_pot =
-            create("alloy_pot", BlockEntityType.Builder.create(AlloyPotBlockEntity::new, ModBlocks.alloy_pot));
+    public static BlockEntityType<AlloyPotBlockEntity> ALLOY_POT =
+            create("alloy_pot", BlockEntityType.Builder.create(AlloyPotBlockEntity::new, ModBlocks.ALLOY_POT));
 
-    public static BlockEntityType<FluxStorageBlockEntity> flux_storage =
-            create("flux_storage", BlockEntityType.Builder.create(FluxStorageBlockEntity::new, ModBlocks.flux_storage));
+    public static BlockEntityType<FluxStorageBlockEntity> FLUX_STORAGE =
+            create("flux_storage", BlockEntityType.Builder.create(FluxStorageBlockEntity::new, ModBlocks.FLUX_STORAGE));
 
-    public static BlockEntityType<MachineCasingBlockEntity> wooden_casing =
-            create("wooden_casing", BlockEntityType.Builder.create(MachineCasingBlockEntity::new, ModBlocks.wooden_casing));
+    public static BlockEntityType<MachineCasingBlockEntity> WOODEN_CASING =
+            create("wooden_casing", BlockEntityType.Builder.create(MachineCasingBlockEntity::new, ModBlocks.WOODEN_CASING));
 
-    public static BlockEntityType<WorkBenchBlockEntity> work_bench =
-            create("work_bench", BlockEntityType.Builder.create(WorkBenchBlockEntity::new, ModBlocks.work_bench));
+    public static BlockEntityType<WorkBenchBlockEntity> WORK_BENCH =
+            create("work_bench", BlockEntityType.Builder.create(WorkBenchBlockEntity::new, ModBlocks.WORK_BENCH));
 
-    public static BlockEntityType<CoilBlockEntity> coil_block =
-            create("coil_block", BlockEntityType.Builder.create(CoilBlockEntity::new, ModBlocks.coil_block));
+    public static BlockEntityType<CoilBlockEntity> COIL_BLOCK =
+            create("coil_block", BlockEntityType.Builder.create(CoilBlockEntity::new, ModBlocks.COIL_BLOCK));
 
 
 

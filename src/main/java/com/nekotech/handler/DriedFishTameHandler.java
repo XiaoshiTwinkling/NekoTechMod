@@ -6,7 +6,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.random.Random;
 
 public class DriedFishTameHandler {
     public static ActionResult handleTameAttempt(PlayerEntity player, Hand hand, Object entity) {
@@ -19,7 +18,7 @@ public class DriedFishTameHandler {
         }
 
         ItemStack stack = player.getStackInHand(hand);
-        if (!stack.isOf(ModItems.fish_can)) { // 替换为你的物品实例
+        if (!stack.isOf(ModItems.FISH_CAN)) { // 替换为你的物品实例
             return ActionResult.PASS; // 未持有指定物品，跳过
         }
 
@@ -29,7 +28,7 @@ public class DriedFishTameHandler {
 
         stack.decrement(1); // 减少物品数量
 
-        player.giveItemStack(new ItemStack(ModItems.tin_can));
+        player.giveItemStack(new ItemStack(ModItems.TIN_CAN));
         // 4. 执行90%概率驯服逻辑
         if (cat.getRandom().nextFloat() < 0.9f) { // 90% 成功
             // 驯服猫

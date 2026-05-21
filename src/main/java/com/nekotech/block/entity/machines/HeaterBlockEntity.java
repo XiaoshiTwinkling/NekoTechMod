@@ -102,9 +102,9 @@ public class HeaterBlockEntity extends MachineBlockEntity
     }
 
     public HeaterBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.heater, pos, state);
+        super(ModBlockEntities.HEATER, pos, state);
         validComponents= new HashSet<>();
-        validComponents.add(ModItems.brass_item_inputer);
+        validComponents.add(ModItems.BRASS_ITEM_INPUTER);
     }
 
 

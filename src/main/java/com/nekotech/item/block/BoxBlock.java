@@ -27,7 +27,7 @@ import java.util.function.Supplier;
 
 public class BoxBlock extends AbstractChestBlock<BoxBlockEntity> {
 
-    public static final MapCodec<BoxBlock> CODEC = createCodec(settings -> new BoxBlock(settings, () -> ModBlockEntities.basic_storage_enclosure));
+    public static final MapCodec<BoxBlock> CODEC = createCodec(settings -> new BoxBlock(settings, () -> ModBlockEntities.BASIC_STORAGE_ENCLOSURE));
 
     public BoxBlock(Settings settings, Supplier<BlockEntityType<? extends BoxBlockEntity>> blockEntityTypeSupplier) {
         super(settings, blockEntityTypeSupplier);

@@ -2,7 +2,6 @@ package com.nekotech.item.block;
 
 import com.mojang.serialization.MapCodec;
 import com.nekotech.block.entity.ModBlockEntities;
-import com.nekotech.block.entity.api.electrical.conductor.ConductorManager;
 import com.nekotech.block.entity.api.electrical.conductor.ConductorSystem;
 import com.nekotech.block.entity.machines.FluxStorageBlockEntity;
 import net.minecraft.block.*;
@@ -44,7 +43,7 @@ public class FluxStorage extends BlockWithEntity implements BlockEntityProvider 
     @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(
             World world, BlockState state, BlockEntityType<T> type
     ) {
-        return validateTicker(type, ModBlockEntities.flux_storage,
+        return validateTicker(type, ModBlockEntities.FLUX_STORAGE,
                 FluxStorageBlockEntity::tick);
     }
 

@@ -5,17 +5,14 @@ import com.nekotech.block.entity.api.component.ComponentAdaptation;
 import com.nekotech.block.entity.machines.coil.CoilBlockEntity;
 import com.nekotech.block.entity.machines.coil.CoilType;
 import com.nekotech.item.ModItems;
-import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
-import net.minecraft.scoreboard.ScoreboardCriterion;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -301,7 +298,7 @@ public class CoilBlockEntityRenderer implements BlockEntityRenderer<CoilBlockEnt
 
         MinecraftClient client = MinecraftClient.getInstance();
 
-        net.minecraft.item.Item frameItem = ModItems.pig_iron_framework;
+        net.minecraft.item.Item frameItem = ModItems.PIG_IRON_FRAMEWORK;
         if (frameItem == null) {
             NekoTechnology.LOGGER.warn("Pig iron framework item not registered");
             return;

@@ -88,7 +88,7 @@ public class NekoTagScreen extends HandledScreen<NekoTagScreenHandler> {
 
         ItemStack tagStack = MinecraftClient.getInstance().player.getStackInHand(handler.getHand());
 
-        if (!tagStack.isOf(ModItems.neko_tag)) {
+        if (!tagStack.isOf(ModItems.NEKO_TAG)) {
             return;
         }
 

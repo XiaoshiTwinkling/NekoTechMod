@@ -10,9 +10,7 @@ import com.nekotech.item.ModItems;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
-import com.nekotech.item.custom.component.AbstractComponentItem;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -51,12 +49,12 @@ public class FluxStorageBlockEntity extends MachineBlockEntity
     private boolean isActive = false;
 
     public FluxStorageBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.flux_storage, pos, state);
+        super(ModBlockEntities.FLUX_STORAGE, pos, state);
         validComponents= new HashSet<>();
-        validComponents.add(ModItems.brass_flux_outputer);
-        validComponents.add(ModItems.brass_flux_inputer);
-        validComponents.add(ModItems.neko_copper_flux_inputer);
-        validComponents.add(ModItems.neko_copper_flux_outputer);
+        validComponents.add(ModItems.BRASS_FLUX_OUTPUTER);
+        validComponents.add(ModItems.BRASS_FLUX_INPUTER);
+        validComponents.add(ModItems.NEKO_COPPER_FLUX_INPUTER);
+        validComponents.add(ModItems.NEKO_COPPER_FLUX_OUTPUTER);
     }
 
     /**

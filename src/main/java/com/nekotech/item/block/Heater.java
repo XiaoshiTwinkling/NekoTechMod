@@ -92,7 +92,7 @@ public class Heater extends DirectionalMachineBlock {
     @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(
             World world, BlockState state, BlockEntityType<T> type
     ) {
-        return validateTicker(type, ModBlockEntities.heater,
+        return validateTicker(type, ModBlockEntities.HEATER,
                 HeaterBlockEntity::tick);
     }
 }

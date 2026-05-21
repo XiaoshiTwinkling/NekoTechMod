@@ -11,8 +11,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.registry.Registry;
 
-import javax.swing.text.html.parser.Entity;
-
 public class ModItemGroups {
 
     public static final RegistryKey<ItemGroup> NekoTech_INGREDIENTS = register("nekotech_ingredients");  //材料
@@ -27,75 +25,75 @@ public class ModItemGroups {
         Registry.register(Registries.ITEM_GROUP, NekoTech_INGREDIENTS,
                 ItemGroup.create(ItemGroup.Row.TOP, 7)
                         .displayName(Text.translatable("itemGroup.nekotech_ingredients"))
-                        .icon(() -> new ItemStack(ModItems.neko_silk))
+                        .icon(() -> new ItemStack(ModItems.NEKO_SILK))
                         .entries(((displayContext, entries) -> {
-                            entries.add(ModItems.neko_silk);
-                            entries.add(ModItems.neko_hair);
-                            entries.add(ModItems.enhanced_neko_hair);
-                            entries.add(ModItems.stone_powder);
-                            entries.add(ModItems.neko_feather);
-                            entries.add(ModItems.dried_fish);
-                            entries.add(ModItems.burnt_fish);
-                            entries.add(ModItems.tin_can);
-                            entries.add(ModItems.pig_iron_ingot);
-                            entries.add(ModItems.pig_iron_plate);
-                            entries.add(ModItems.fish_can);
-                            entries.add(ModItems.neko_web);
-                            entries.add(ModItems.neko_copper_ingot);
-                            entries.add(ModItems.slag);
-                            entries.add(ModItems.small_handful_of_slag);
-                            entries.add(ModItems.neko_copper_plate);
-                            entries.add(ModItems.pink_len);
+                            entries.add(ModItems.NEKO_SILK);
+                            entries.add(ModItems.NEKO_HAIR);
+                            entries.add(ModItems.ENHANCED_NEKO_HAIR);
+                            entries.add(ModItems.STONE_POWDER);
+                            entries.add(ModItems.NEKO_FEATHER);
+                            entries.add(ModItems.DRIED_FISH);
+                            entries.add(ModItems.BURNT_FISH);
+                            entries.add(ModItems.TIN_CAN);
+                            entries.add(ModItems.PIG_IRON_INGOT);
+                            entries.add(ModItems.PIG_IRON_PLATE);
+                            entries.add(ModItems.FISH_CAN);
+                            entries.add(ModItems.NEKO_WEB);
+                            entries.add(ModItems.NEKO_COPPER_INGOT);
+                            entries.add(ModItems.SLAG);
+                            entries.add(ModItems.SMALL_HANDFUL_OF_SLAG);
+                            entries.add(ModItems.NEKO_COPPER_PLATE);
+                            entries.add(ModItems.PINK_LEN);
                         })).build());
 
         Registry.register(Registries.ITEM_GROUP, NekoTech_TOOLS,
                 ItemGroup.create(ItemGroup.Row.TOP, 7)
                         .displayName(Text.translatable("itemGroup.nekotech_tools"))
-                        .icon(() -> new ItemStack(ModItems.pink_neko_goggles))
+                        .icon(() -> new ItemStack(ModItems.PINK_NEKO_GOGGLES))
                         .entries(((displayContext, entries) -> {
-                            entries.add(ModItems.hammer);
-                            entries.add(ModItems.neko_ears);
+                            entries.add(ModItems.HAMMER);
+                            entries.add(ModItems.NEKO_EARS);
                             entries.add(ModItems.NEKO_COPPER_HELMET);
                             entries.add(ModItems.NEKO_COPPER_CHESTPLATE);
                             entries.add(ModItems.NEKO_COPPER_LEGGINGS);
                             entries.add(ModItems.NEKO_COPPER_BOOTS);
-                            entries.add(ModItems.neko_box);
+                            entries.add(ModItems.NEKO_BOX);
                             entries.add(ModItems.NEKO_TAIL);
-                            entries.add(ModItems.thermometer);
-                            entries.add(ModItems.pink_neko_goggles);
-                            entries.add(ModItems.blue_neko_goggles);
-                            entries.add(ModItems.yellow_neko_goggles);
-                            entries.add(ModItems.green_neko_goggles);
-                            entries.add(ModItems.ray_item);
-                            entries.add(ModItems.neko_tag);
-                            entries.add(ModItems.component_casing);
-                            entries.add(ModItems.brass_item_inputer);
-                            entries.add(ModItems.brass_flux_outputer);
-                            entries.add(ModItems.brass_flux_inputer);
-                            entries.add(ModItems.neko_copper_flux_outputer);
-                            entries.add(ModItems.neko_copper_flux_inputer);
-                            entries.add(ModItems.glass_cover);
-                            entries.add(ModItems.copper_coil);
-                            entries.add(ModItems.pig_iron_coil);
-                            entries.add(ModItems.neko_copper_coil);
-                            entries.add(ModItems.pig_iron_framework);
-                            entries.add(ModItems.empty_neko_mark);
-                            entries.add(ModItems.white_neko_mark);
-                            entries.add(ModItems.orange_neko_mark);
-                            entries.add(ModItems.magenta_neko_mark);
-                            entries.add(ModItems.light_blue_neko_mark);
-                            entries.add(ModItems.yellow_neko_mark);
-                            entries.add(ModItems.lime_neko_mark);
-                            entries.add(ModItems.pink_neko_mark);
-                            entries.add(ModItems.gray_neko_mark);
-                            entries.add(ModItems.light_gray_neko_mark);
-                            entries.add(ModItems.cyan_neko_mark);
-                            entries.add(ModItems.purple_neko_mark);
-                            entries.add(ModItems.blue_neko_mark);
-                            entries.add(ModItems.brown_neko_mark);
-                            entries.add(ModItems.green_neko_mark);
-                            entries.add(ModItems.red_neko_mark);
-                            entries.add(ModItems.black_neko_mark);
+                            entries.add(ModItems.THERMOMETER);
+                            entries.add(ModItems.PINK_NEKO_GOGGLES);
+                            entries.add(ModItems.BLUE_NEKO_GOGGLES);
+                            entries.add(ModItems.YELLOW_NEKO_GOGGLES);
+                            entries.add(ModItems.GREEN_NEKO_GOGGLES);
+                            entries.add(ModItems.RAY_ITEM);
+                            entries.add(ModItems.NEKO_TAG);
+                            entries.add(ModItems.COMPONENT_CASING);
+                            entries.add(ModItems.BRASS_ITEM_INPUTER);
+                            entries.add(ModItems.BRASS_FLUX_OUTPUTER);
+                            entries.add(ModItems.BRASS_FLUX_INPUTER);
+                            entries.add(ModItems.NEKO_COPPER_FLUX_OUTPUTER);
+                            entries.add(ModItems.NEKO_COPPER_FLUX_INPUTER);
+                            entries.add(ModItems.GLASS_COVER);
+                            entries.add(ModItems.COPPER_COIL);
+                            entries.add(ModItems.PIG_IRON_COIL);
+                            entries.add(ModItems.NEKO_COPPER_COIL);
+                            entries.add(ModItems.PIG_IRON_FRAMEWORK);
+                            entries.add(ModItems.EMPTY_NEKO_MARK);
+                            entries.add(ModItems.WHITE_NEKO_MARK);
+                            entries.add(ModItems.ORANGE_NEKO_MARK);
+                            entries.add(ModItems.MAGENTA_NEKO_MARK);
+                            entries.add(ModItems.LIGHT_BLUE_NEKO_MARK);
+                            entries.add(ModItems.YELLOW_NEKO_MARK);
+                            entries.add(ModItems.LIME_NEKO_MARK);
+                            entries.add(ModItems.PINK_NEKO_MARK);
+                            entries.add(ModItems.GRAY_NEKO_MARK);
+                            entries.add(ModItems.LIGHT_GRAY_NEKO_MARK);
+                            entries.add(ModItems.CYAN_NEKO_MARK);
+                            entries.add(ModItems.PURPLE_NEKO_MARK);
+                            entries.add(ModItems.BLUE_NEKO_MARK);
+                            entries.add(ModItems.BROWN_NEKO_MARK);
+                            entries.add(ModItems.GREEN_NEKO_MARK);
+                            entries.add(ModItems.RED_NEKO_MARK);
+                            entries.add(ModItems.BLACK_NEKO_MARK);
 
 
                         })).build());
@@ -103,17 +101,17 @@ public class ModItemGroups {
         Registry.register(Registries.ITEM_GROUP, NekoTech_BLOCKS,
                 ItemGroup.create(ItemGroup.Row.TOP, 7)
                         .displayName(Text.translatable("itemGroup.nekotech_blocks"))
-                        .icon(() -> new ItemStack(ModBlocks.heater))
+                        .icon(() -> new ItemStack(ModBlocks.HEATER))
                         .entries(((displayContext, entries) -> {
-                            entries.add(ModBlocks.basic_storage_enclosure);
-                            entries.add(ModBlocks.cushion_block);
-                            entries.add(ModBlocks.bellows);
-                            entries.add(ModBlocks.heater);
-                            entries.add(ModBlocks.alloy_pot);
-                            entries.add(ModBlocks.wooden_casing);
-                            entries.add(ModBlocks.flux_storage);
-                            entries.add(ModBlocks.work_bench);
-                            entries.add(ModBlocks.coil_block);
+                            entries.add(ModBlocks.BASIC_STORAGE_ENCLOSURE);
+                            entries.add(ModBlocks.CUSHION_BLOCK);
+                            entries.add(ModBlocks.BELLOWS);
+                            entries.add(ModBlocks.HEATER);
+                            entries.add(ModBlocks.ALLOY_POT);
+                            entries.add(ModBlocks.WOODEN_CASING);
+                            entries.add(ModBlocks.FLUX_STORAGE);
+                            entries.add(ModBlocks.WORK_BENCH);
+                            entries.add(ModBlocks.COIL_BLOCK);
                             entries.add(ModItems.ELEVATOR_ITEM);
 
                         })).build());

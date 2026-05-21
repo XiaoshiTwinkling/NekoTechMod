@@ -79,7 +79,7 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
     private int attractionTickCounter = 0;
 
     public CoilBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.coil_block, pos, state, MAX_COILS);
+        super(ModBlockEntities.COIL_BLOCK, pos, state, MAX_COILS);
 
         for (int i = 0; i < MAX_COILS; i++) {
             coils.add(CoilType.EMPTY);
@@ -89,11 +89,11 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
     }
 
     private void initValidComponents() {
-        validComponents.add(ModItems.brass_flux_inputer);
-        validComponents.add(ModItems.brass_flux_outputer);
-        validComponents.add(ModItems.neko_copper_flux_inputer);
-        validComponents.add(ModItems.neko_copper_flux_outputer);
-        validComponents.add(ModItems.component_casing);
+        validComponents.add(ModItems.BRASS_FLUX_INPUTER);
+        validComponents.add(ModItems.BRASS_FLUX_OUTPUTER);
+        validComponents.add(ModItems.NEKO_COPPER_FLUX_INPUTER);
+        validComponents.add(ModItems.NEKO_COPPER_FLUX_OUTPUTER);
+        validComponents.add(ModItems.COMPONENT_CASING);
     }
 
     public float getTemperature() {
@@ -575,7 +575,7 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
 
         Item item = stack.getItem();
 
-        if (item == ModItems.pig_iron_framework) {
+        if (item == ModItems.PIG_IRON_FRAMEWORK) {
             if (fixCoils()) {
                 if (!player.getAbilities().creativeMode) {
                     stack.decrement(1);
@@ -585,9 +585,9 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
             }
         }
 
-        if (item == ModItems.copper_coil ||
-                item == ModItems.pig_iron_coil ||
-                item == ModItems.neko_copper_coil) {
+        if (item == ModItems.COPPER_COIL ||
+                item == ModItems.PIG_IRON_COIL ||
+                item == ModItems.NEKO_COPPER_COIL) {
 
             if (addCoil(item)) {
                 if (!player.getAbilities().creativeMode) {
@@ -607,16 +607,16 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
     public boolean putInItem(PlayerEntity player, ItemStack stack) {
         Item item = stack.getItem();
 
-        if (item == ModItems.pig_iron_framework ||
-                item == ModItems.copper_coil ||
-                item == ModItems.pig_iron_coil ||
-                item == ModItems.neko_copper_coil) {
+        if (item == ModItems.PIG_IRON_FRAMEWORK ||
+                item == ModItems.COPPER_COIL ||
+                item == ModItems.PIG_IRON_COIL ||
+                item == ModItems.NEKO_COPPER_COIL) {
 
-            if (item == ModItems.pig_iron_framework) {
+            if (item == ModItems.PIG_IRON_FRAMEWORK) {
                 return fixCoils() && consumeItem(player, stack);
-            } else if (item == ModItems.copper_coil ||
-                    item == ModItems.pig_iron_coil ||
-                    item == ModItems.neko_copper_coil) {
+            } else if (item == ModItems.COPPER_COIL ||
+                    item == ModItems.PIG_IRON_COIL ||
+                    item == ModItems.NEKO_COPPER_COIL) {
                 if (isFixed) return false;
                 if (hasEmptySlots()) {
                     return addCoil(item) && consumeItem(player, stack);

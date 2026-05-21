@@ -1,7 +1,6 @@
 package com.nekotech.item.block;
 
 import com.mojang.serialization.MapCodec;
-import com.nekotech.block.entity.machines.AlloyPotBlockEntity;
 import com.nekotech.block.entity.machines.WorkBenchBlockEntity;
 import com.nekotech.item.ModItems;
 import com.nekotech.item.custom.Hammer;
@@ -9,14 +8,12 @@ import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -92,7 +89,7 @@ public class WorkBench extends DirectionalMachineBlock {
             world.updateNeighbors(pos, this);
 
             if (!player.getAbilities().creativeMode) {
-                var coverStack = new ItemStack(ModItems.glass_cover);
+                var coverStack = new ItemStack(ModItems.GLASS_COVER);
                 if (!player.getInventory().insertStack(coverStack)) {
                     player.dropItem(coverStack, false);
                 }

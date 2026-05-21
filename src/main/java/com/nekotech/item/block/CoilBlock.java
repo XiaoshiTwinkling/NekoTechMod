@@ -82,7 +82,7 @@ public class CoilBlock extends DirectionalMachineBlock {
     @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(
             World world, BlockState state, BlockEntityType<T> type
     ) {
-        return validateTicker(type, ModBlockEntities.coil_block,
+        return validateTicker(type, ModBlockEntities.COIL_BLOCK,
                 CoilBlockEntity::tick);
     }
 

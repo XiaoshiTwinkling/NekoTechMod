@@ -40,7 +40,7 @@ public class Bellows extends BlockWithEntity {
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(
             World world, BlockState state, BlockEntityType<T> type
     ) {
-        return validateTicker(type, ModBlockEntities.bellows,
+        return validateTicker(type, ModBlockEntities.BELLOWS,
                 BellowsBlockEntity::tick);
     }
 }
