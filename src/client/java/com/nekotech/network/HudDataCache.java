@@ -12,6 +12,8 @@ public class HudDataCache {
 
     private static final java.util.HashMap<BlockPos, java.util.List<GoogleAbstractHUD>> hudListCache = new java.util.HashMap<>();
 
+    private static final HashMap<BlockPos, Long> lastUpdateTime = new HashMap<>();
+    private static final long CACHE_TIMEOUT_MS = 1000; // 1秒超时
     /**
      * 存储HUD数据
      */
@@ -31,8 +33,9 @@ public class HudDataCache {
      * 移除HUD数据
      */
     public static void removeHudData(BlockPos pos) {
-        currentData.remove(pos);      // 清理单个HUD缓存
-        hudListCache.remove(pos);     // 清理HUD列表缓存
+        currentData.remove(pos);
+        hudListCache.remove(pos);
+        lastUpdateTime.remove(pos);
     }
 
     /**
@@ -54,6 +57,7 @@ public class HudDataCache {
      */
     public static void storeHudDataList(BlockPos pos, java.util.List<GoogleAbstractHUD> huds) {
         hudListCache.put(pos, huds);
+        lastUpdateTime.put(pos, System.currentTimeMillis());
     }
 
     /**
@@ -61,6 +65,16 @@ public class HudDataCache {
      */
     @Nullable
     public static java.util.List<GoogleAbstractHUD> getHudDataList(BlockPos pos) {
+        Long lastTime = lastUpdateTime.get(pos);
+        if (lastTime != null && System.currentTimeMillis() - lastTime > CACHE_TIMEOUT_MS) {
+            // 缓存超时，自动清理
+            removeHudData(pos);
+            return null;
+        }
         return hudListCache.get(pos);
     }
+
+
+
+
 }

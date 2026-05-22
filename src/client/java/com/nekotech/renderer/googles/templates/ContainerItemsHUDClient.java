@@ -1,18 +1,14 @@
-package com.nekotech.client.hud.templates;
+package com.nekotech.renderer.googles.templates;
 
-import com.nekotech.NekoTechnology;
-import com.nekotech.client.hud.GoogleAbstractHUDClient;
+import com.nekotech.renderer.googles.GoogleAbstractHUDClient;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.templates.ContainerHUDData;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

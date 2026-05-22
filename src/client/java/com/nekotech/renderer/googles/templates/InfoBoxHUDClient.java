@@ -1,7 +1,7 @@
-package com.nekotech.client.hud.templates;
+package com.nekotech.renderer.googles.templates;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.nekotech.client.hud.GoogleAbstractHUDClient;
+import com.nekotech.renderer.googles.GoogleAbstractHUDClient;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
 import net.minecraft.client.MinecraftClient;
@@ -9,7 +9,6 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;

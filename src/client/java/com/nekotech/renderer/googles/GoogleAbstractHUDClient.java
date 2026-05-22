@@ -1,7 +1,6 @@
-package com.nekotech.client.hud;
+package com.nekotech.renderer.googles;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.nekotech.NekoTechnology;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;

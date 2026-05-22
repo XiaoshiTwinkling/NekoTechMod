@@ -1,7 +1,7 @@
 package com.nekotech.renderer;
 
-import com.nekotech.client.hud.GoogleAbstractHUDClient;
-import com.nekotech.client.hud.HudFactory;
+import com.nekotech.renderer.googles.GoogleAbstractHUDClient;
+import com.nekotech.renderer.googles.HudFactory;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.custom.GogglesItem;
 import com.nekotech.network.ClientHudNetworkHandler;

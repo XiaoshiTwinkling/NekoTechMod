@@ -1,7 +1,7 @@
-package com.nekotech.client.hud;
+package com.nekotech.renderer.googles;
 
-import com.nekotech.client.hud.templates.ContainerItemsHUDClient;
-import com.nekotech.client.hud.templates.InfoBoxHUDClient;
+import com.nekotech.renderer.googles.templates.ContainerItemsHUDClient;
+import com.nekotech.renderer.googles.templates.InfoBoxHUDClient;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.templates.ContainerHUDData;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
