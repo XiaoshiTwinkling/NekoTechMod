@@ -1,6 +1,7 @@
 package com.nekotech.block.entity;
 
 import com.nekotech.block.entity.api.ImplementedInventory;
+import com.nekotech.item.api.googles.IHaveGoogleHUD;
 import com.nekotech.item.block.ModBlocks;
 import com.nekotech.util.ElevatorMath;
 import net.minecraft.block.BlockState;
@@ -25,7 +26,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class ElevatorCoreBlockEntity extends BlockEntity implements ImplementedInventory, NamedScreenHandlerFactory {
+public class ElevatorCoreBlockEntity extends BlockEntity implements ImplementedInventory, NamedScreenHandlerFactory, IHaveGoogleHUD {
     public static final int INVENTORY_SIZE = 27;
     public static final int MAX_VERTICAL_DISTANCE = 20;
     public static final int TICKS_PER_FLOOR = 12;
@@ -299,5 +300,10 @@ public class ElevatorCoreBlockEntity extends BlockEntity implements ImplementedI
     @Override
     public Packet<ClientPlayPacketListener> toUpdatePacket() {
         return BlockEntityUpdateS2CPacket.create(this);
+    }
+
+    @Override
+    public boolean shouldShowHUD(World world, BlockPos pos, BlockState state) {
+        return false;
     }
 }
