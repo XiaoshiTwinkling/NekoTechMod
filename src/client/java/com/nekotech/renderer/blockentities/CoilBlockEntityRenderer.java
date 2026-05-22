@@ -1,4 +1,4 @@
-package com.nekotech.renderer;
+package com.nekotech.renderer.blockentities;
 
 import com.nekotech.NekoTechnology;
 import com.nekotech.block.entity.api.component.ComponentAdaptation;

@@ -1,4 +1,4 @@
-package com.nekotech.renderer;
+package com.nekotech.renderer.blockentities;
 
 import com.nekotech.block.entity.ElevatorCoreBlockEntity;
 import net.minecraft.block.Blocks;

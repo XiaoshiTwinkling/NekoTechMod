@@ -6,6 +6,7 @@ import com.nekotech.item.block.ModBlocks;
 import com.nekotech.item.custom.NekoTag.NekoTagData;
 import com.nekotech.renderer.*;
 import com.nekotech.network.ClientHudNetworkHandler;
+import com.nekotech.renderer.blockentities.*;
 import com.nekotech.renderer.components.ComponentAttachmentRenderer;
 import com.nekotech.screen.ModScreenHandlers;
 import com.nekotech.screens.NekoTagScreen;
