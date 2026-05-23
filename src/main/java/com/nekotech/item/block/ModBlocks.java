@@ -92,6 +92,9 @@ public class ModBlocks {
                     .nonOpaque())
     );
 
+    public static final Block CIRCUIT_BREAKER = register("circuit_breaker",
+            new CircuitBreakerBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque()));
+
     public static final Block CATNIP_CROP = Registry.register(Registries.BLOCK, Identifier.of(NekoTechnology.MOD_ID, "catnip_crop"),
             new CatnipCropBlock(AbstractBlock.Settings.copy(Blocks.WHEAT)));
 

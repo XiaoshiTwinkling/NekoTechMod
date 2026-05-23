@@ -1,14 +1,14 @@
-package com.nekotech.block.entity.machines;
+package com.nekotech.block.entity.machines.conductor;
 
 import com.nekotech.block.entity.api.component.ComponentAdaptation;
 import com.nekotech.block.entity.api.electrical.IElectricalMachine;
 import com.nekotech.block.entity.api.electrical.ITransferElectrical;
+import com.nekotech.block.entity.machines.MachineBlockEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.Item;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
 
 import java.util.EnumMap;
 import java.util.HashSet;

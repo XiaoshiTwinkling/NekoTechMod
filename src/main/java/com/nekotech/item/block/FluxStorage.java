@@ -3,7 +3,7 @@ package com.nekotech.item.block;
 import com.mojang.serialization.MapCodec;
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.block.entity.api.electrical.conductor.ConductorSystem;
-import com.nekotech.block.entity.machines.FluxStorageBlockEntity;
+import com.nekotech.block.entity.machines.conductor.FluxStorageBlockEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;

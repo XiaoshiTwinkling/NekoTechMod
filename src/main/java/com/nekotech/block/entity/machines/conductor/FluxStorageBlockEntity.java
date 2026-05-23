@@ -1,4 +1,4 @@
-package com.nekotech.block.entity.machines;
+package com.nekotech.block.entity.machines.conductor;
 
 import com.nekotech.block.entity.CushionBlockEntity;
 import com.nekotech.block.entity.ModBlockEntities;
@@ -6,6 +6,7 @@ import com.nekotech.block.entity.api.component.ComponentAdaptation;
 import com.nekotech.block.entity.api.ICatNeedMachine;
 import com.nekotech.block.entity.api.electrical.IElectricalMachine;
 import com.nekotech.block.entity.api.electrical.ITransferElectrical;
+import com.nekotech.block.entity.machines.MachineBlockEntity;
 import com.nekotech.item.ModItems;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;

@@ -4,7 +4,11 @@ import com.mojang.datafixers.types.Type;
 import com.nekotech.NekoTechnology;
 import com.nekotech.block.entity.machines.*;
 import com.nekotech.block.entity.machines.coil.CoilBlockEntity;
+import com.nekotech.block.entity.machines.conductor.CircuitBreakerBlockEntity;
+import com.nekotech.block.entity.machines.conductor.FluxStorageBlockEntity;
+import com.nekotech.block.entity.machines.conductor.MachineCasingBlockEntity;
 import com.nekotech.item.block.ModBlocks;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.datafixer.TypeReferences;
@@ -52,7 +56,8 @@ public class ModBlockEntities {
     public static BlockEntityType<CoilBlockEntity> COIL_BLOCK =
             create("coil_block", BlockEntityType.Builder.create(CoilBlockEntity::new, ModBlocks.COIL_BLOCK));
 
-
+    public static BlockEntityType<CircuitBreakerBlockEntity> CIRCUIT_BREAKER =
+            create("circuit_breaker", BlockEntityType.Builder.create(CircuitBreakerBlockEntity::new, ModBlocks.CIRCUIT_BREAKER));
 
     private static <T extends BlockEntity> BlockEntityType<T> create(String id, BlockEntityType.Builder<T> builder){
         Type<?> type = Util.getChoiceType(TypeReferences.BLOCK_ENTITY, id);

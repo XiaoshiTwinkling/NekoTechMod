@@ -430,7 +430,10 @@ public class ConductorManager {
 
     private boolean isConductor(World world, BlockPos pos) {
         BlockEntity be = world.getBlockEntity(pos);
-        return be instanceof ITransferElectrical;
+        if (be instanceof ITransferElectrical electrical) {
+            return electrical.canTransfer();
+        }
+        return false;
     }
 
     private Set<ConductorGroup> findAdjacentGroups(World world, BlockPos pos) {
@@ -582,8 +585,18 @@ public class ConductorManager {
         int processedGroups = 0;
 
         for (ConductorGroup group : conductorGroups.values()) {
+            // 临时存储需要移除的节点
+            Set<ConductorNode> nodesToRemove = new HashSet<>();
+
             // 遍历组中所有节点
             for (ConductorNode node : new HashSet<>(group.nodes)) {
+                // 检查这个节点是否还是有效的导体
+                if (!isConductor(world, node.pos)) {
+                    // 如果不再是导体，标记为需要移除
+                    nodesToRemove.add(node);
+                    continue;
+                }
+
                 // 清除旧端口
                 group.removePortsFromNode(node);
                 node.inputPort = null;
@@ -594,6 +607,12 @@ public class ConductorManager {
 
                 // 更新端口映射
                 group.updatePortsFromNode(node);
+            }
+
+            // 移除无效的节点
+            for (ConductorNode node : nodesToRemove) {
+                group.removeNode(node);
+                blockToGroup.remove(node.pos);
             }
 
             processedGroups++;

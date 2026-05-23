@@ -1,7 +1,8 @@
-package com.nekotech.block.entity.machines;
+package com.nekotech.block.entity.machines.conductor;
 
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.block.entity.api.electrical.ITransferElectrical;
+import com.nekotech.block.entity.machines.MachineBlockEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

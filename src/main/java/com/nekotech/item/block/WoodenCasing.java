@@ -1,9 +1,8 @@
 package com.nekotech.item.block;
 
 import com.mojang.serialization.MapCodec;
-import com.nekotech.block.entity.api.electrical.conductor.ConductorManager;
 import com.nekotech.block.entity.api.electrical.conductor.ConductorSystem;
-import com.nekotech.block.entity.machines.MachineCasingBlockEntity;
+import com.nekotech.block.entity.machines.conductor.MachineCasingBlockEntity;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
