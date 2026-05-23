@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "age=0": {"model": "neko-technology:block/crops/petgrass/petgrass_crop_1"},
+    "age=1": {"model": "neko-technology:block/crops/petgrass/petgrass_crop_2"},
+    "age=2": {"model": "neko-technology:block/crops/petgrass/petgrass_crop_3"},
+    "age=3": {"model": "neko-technology:block/crops/petgrass/petgrass_crop_4"},
+    "age=4": {"model": "neko-technology:block/crops/petgrass/petgrass_crop_4"},
+    "age=5": {"model": "neko-technology:block/crops/petgrass/petgrass_crop_5"}
+  }
+}
