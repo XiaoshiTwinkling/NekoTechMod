@@ -2,6 +2,7 @@ package com.nekotech.item;
 
 import com.nekotech.NekoTechnology;
 import com.nekotech.block.entity.api.component.ComponentAdaptation;
+import com.nekotech.item.block.ModBlocks;
 import com.nekotech.item.custom.*;
 import com.nekotech.item.custom.NekoMark.NekoMarkItem;
 import com.nekotech.item.custom.NekoTag.NekoTagItem;
@@ -21,6 +22,8 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
 import java.util.*;
+
+import static net.minecraft.item.Items.register;
 
 
 public class ModItems {
@@ -44,6 +47,11 @@ public class ModItems {
     public static final Item SLAG = registerItems("slag", new Item(new Item.Settings()));
     public static final Item SMALL_HANDFUL_OF_SLAG = registerItems("small_handful_of_slag", new Item(new Item.Settings()));
     public static final Item NEKO_COPPER_PLATE = registerItems("neko_copper_plate", new Item(new Item.Settings()));
+    public static final Item PETGRASS = registerItems("petgrass", new Item(new Item.Settings()));
+    public static final Item PETGRASS_SEEDS = registerItems("petgrass_seeds", new AliasedBlockItem(ModBlocks.PETGRASS_CROP, new Item.Settings()));
+    public static final Item CATNIP = registerItems("catnip", new Item(new Item.Settings()));
+    public static final Item CATNIP_SEEDS = registerItems("catnip_seeds", new AliasedBlockItem(ModBlocks.CATNIP_CROP, new Item.Settings()));
+
 
     public static final Item NEKO_BOX = registerItems("neko_box", new CatBoxItem(new Item.Settings()));
     public static final Item THERMOMETER = registerItems("thermometer", new Thermometer(new Item.Settings(),"thermometer"));

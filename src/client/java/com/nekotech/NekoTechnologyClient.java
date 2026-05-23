@@ -89,10 +89,6 @@ public class NekoTechnologyClient implements ClientModInitializer {
 
     }
 
-    public static GogglesHudRenderer getHudRenderer() {
-        return HUD_RENDERER;
-    }
-
     private void registerComponentAttachmentRenderer(){
         BlockEntityRendererFactories.register(ModBlockEntities.FLUX_STORAGE, new BlockEntityRendererFactory<BlockEntity>() {
             @Override
@@ -118,5 +114,7 @@ public class NekoTechnologyClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.WORK_BENCH, RenderLayer.getTranslucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ELEVATOR_CORE_BLOCK, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ELEVATOR_PART_BLOCK, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.CATNIP_CROP, RenderLayer.getCutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.PETGRASS_CROP, RenderLayer.getCutout());
     }
 }

@@ -44,6 +44,10 @@ public class ModItemGroups {
                             entries.add(ModItems.SMALL_HANDFUL_OF_SLAG);
                             entries.add(ModItems.NEKO_COPPER_PLATE);
                             entries.add(ModItems.PINK_LEN);
+                            entries.add(ModItems.CATNIP);
+                            entries.add(ModItems.CATNIP_SEEDS);
+                            entries.add(ModItems.PETGRASS);
+                            entries.add(ModItems.PETGRASS_SEEDS);
                         })).build());
 
         Registry.register(Registries.ITEM_GROUP, NekoTech_TOOLS,

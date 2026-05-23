@@ -2,6 +2,8 @@ package com.nekotech.item.block;
 
 import com.nekotech.NekoTechnology;
 import com.nekotech.block.entity.ModBlockEntities;
+import com.nekotech.item.block.crops.CatnipCropBlock;
+import com.nekotech.item.block.crops.PetgrassCropBlock;
 import com.nekotech.item.block.elevator.ElevatorCoreBlock;
 import com.nekotech.item.block.elevator.ElevatorPartBlock;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -94,6 +96,12 @@ public class ModBlocks {
                     .nonOpaque())
     );
 
+    public static final Block CATNIP_CROP = Registry.register(Registries.BLOCK, Identifier.of(NekoTechnology.MOD_ID, "catnip_crop"),
+            new CatnipCropBlock(AbstractBlock.Settings.copy(Blocks.WHEAT)));
+
+    public static final Block PETGRASS_CROP = Registry.register(Registries.BLOCK, Identifier.of(NekoTechnology.MOD_ID, "petgrass_crop"),
+            new PetgrassCropBlock(AbstractBlock.Settings.copy(Blocks.WHEAT)));
+
 
     public static void registerBlockItems(String id, Block block){
         BlockItem item = Registry.register(Registries.ITEM, Identifier.of(NekoTechnology.MOD_ID, id), new BlockItem(block, new Item.Settings()));
@@ -104,6 +112,7 @@ public class ModBlocks {
         registerBlockItems(id, block);
         return Registry.register(Registries.BLOCK, Identifier.of(NekoTechnology.MOD_ID, id), block);
     }
+
     public static void registerModBlocks(){
         NekoTechnology.LOGGER.info("Registering Mod Blocks");
     }
