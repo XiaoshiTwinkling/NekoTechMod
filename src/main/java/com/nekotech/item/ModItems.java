@@ -48,8 +48,7 @@ public class ModItems {
     public static final Item SMALL_HANDFUL_OF_SLAG = registerItems("small_handful_of_slag", new Item(new Item.Settings()));
     public static final Item NEKO_COPPER_PLATE = registerItems("neko_copper_plate", new Item(new Item.Settings()));
     public static final Item PETGRASS = registerItems("petgrass", new Item(new Item.Settings()));
-    public static final Item PETGRASS_SEEDS = registerItems("petgrass_seeds", new AliasedBlockItem(ModBlocks.PETGRASS_CROP, new Item.Settings()));
-    public static final Item CATNIP = registerItems("catnip", new Item(new Item.Settings()));
+    public static final Item PETGRASS_SEEDS = registerItems("petgrass_seeds", new AliasedBlockItem(ModBlocks.PETGRASS_CROP, new Item.Settings()));public static final Item CATNIP = registerItems("catnip", new CatnipItem(new Item.Settings().food(new FoodComponent.Builder().saturationModifier(0.1f).build()), "catnip"));
     public static final Item CATNIP_SEEDS = registerItems("catnip_seeds", new AliasedBlockItem(ModBlocks.CATNIP_CROP, new Item.Settings()));
 
 
