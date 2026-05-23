@@ -86,6 +86,14 @@ public class ModBlocks {
                     .nonOpaque())
     );
 
+    public static final Block ELEVATOR_CORE_BOX = Registry.register(
+            Registries.BLOCK,
+            Identifier.of(NekoTechnology.MOD_ID, "elevator_core_box"),
+            new Block(AbstractBlock.Settings.create()
+                    .strength(3.0F, 6.0F)
+                    .nonOpaque())
+    );
+
 
     public static void registerBlockItems(String id, Block block){
         BlockItem item = Registry.register(Registries.ITEM, Identifier.of(NekoTechnology.MOD_ID, id), new BlockItem(block, new Item.Settings()));

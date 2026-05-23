@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "neko-technology:block/elevator/elevator_core_box"
+    }
+  }
+}

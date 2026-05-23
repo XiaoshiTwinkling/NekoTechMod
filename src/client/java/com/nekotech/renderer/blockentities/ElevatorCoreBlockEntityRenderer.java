@@ -1,6 +1,7 @@
 package com.nekotech.renderer.blockentities;
 
 import com.nekotech.block.entity.ElevatorCoreBlockEntity;
+import com.nekotech.item.block.ModBlocks;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
@@ -28,7 +29,6 @@ public class ElevatorCoreBlockEntityRenderer implements BlockEntityRenderer<Elev
 
         /*
          * 动态轿厢相对于核心方块移动。
-         * 铁块当占位视觉模型。
          */
         matrices.translate(0.10D, floor + 0.10D, 0.10D);
         matrices.scale(0.80F, 0.80F, 0.80F);
@@ -36,7 +36,7 @@ public class ElevatorCoreBlockEntityRenderer implements BlockEntityRenderer<Elev
         MinecraftClient.getInstance()
                 .getBlockRenderManager()
                 .renderBlockAsEntity(
-                        Blocks.IRON_BLOCK.getDefaultState(),
+                        ModBlocks.ELEVATOR_CORE_BOX.getDefaultState(),
                         matrices,
                         vertexConsumers,
                         light,
