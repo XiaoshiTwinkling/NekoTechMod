@@ -19,10 +19,6 @@ import net.minecraft.util.Identifier;
 
 public class ModBlocks {
 
-
-    public static final Block BASIC_STORAGE_ENCLOSURE = register("basic_storage_enclosure", new BoxBlock(AbstractBlock.Settings.copy(Blocks.CHEST)
-            .strength(1.5F, 6.0F), () -> ModBlockEntities.BASIC_STORAGE_ENCLOSURE));
-
     public static final Block CUSHION_BLOCK = register("cushion_block", new Cushion(
             FabricBlockSettings.create()
                     .strength(0.3f)  // 软垫子

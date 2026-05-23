@@ -107,7 +107,6 @@ public class ModItemGroups {
                         .displayName(Text.translatable("itemGroup.nekotech_blocks"))
                         .icon(() -> new ItemStack(ModBlocks.HEATER))
                         .entries(((displayContext, entries) -> {
-                            entries.add(ModBlocks.BASIC_STORAGE_ENCLOSURE);
                             entries.add(ModBlocks.CUSHION_BLOCK);
                             entries.add(ModBlocks.BELLOWS);
                             entries.add(ModBlocks.HEATER);

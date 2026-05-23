@@ -21,9 +21,6 @@ public class ModBlockEntities {
                             ElevatorCoreBlockEntity::new,
                             ModBlocks.ELEVATOR_CORE_BLOCK
                     ));
-    public static BlockEntityType<BoxBlockEntity> BASIC_STORAGE_ENCLOSURE =
-            create("basic_storage_enclosure", BlockEntityType.Builder.create(BoxBlockEntity::new, ModBlocks.BASIC_STORAGE_ENCLOSURE));
-
     public static BlockEntityType<HeaterBlockEntity> HEATER =
             create("heater", BlockEntityType.Builder.create(HeaterBlockEntity::new, ModBlocks.HEATER));
 
@@ -33,7 +30,6 @@ public class ModBlockEntities {
                             BellowsBlockEntity::new,
                             ModBlocks.BELLOWS
                     ));
-
     public static BlockEntityType<CushionBlockEntity> CUSHION =
             create("cushion",
                     BlockEntityType.Builder.create(

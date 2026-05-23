@@ -44,10 +44,6 @@ public class BoxBlockEntity extends LootableContainerBlockEntity implements IHav
         super(blockEntityType, blockPos, blockState);
         validComponents.add(ModItems.BRASS_ITEM_INPUTER);
     }
-    public BoxBlockEntity(BlockPos blockPos, BlockState blockState) {
-        this(ModBlockEntities.BASIC_STORAGE_ENCLOSURE, blockPos, blockState);
-        validComponents.add(ModItems.BRASS_ITEM_INPUTER);
-    }
 
     @Override
     protected Text getContainerName() {

@@ -1,0 +1,94 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "neko-technology:blocks/catnip_crop",
+  "pools": [
+    {
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "neko-technology:catnip_crop",
+          "properties": {
+            "age": "5"
+          }
+        }
+      ],
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "neko-technology:catnip"
+        }
+      ],
+      "functions": [
+        {
+          "function": "minecraft:set_count",
+          "count": {
+            "type": "minecraft:uniform",
+            "min": 2.0,
+            "max": 3.0
+          }
+        }
+      ]
+    },
+    {
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "neko-technology:catnip_crop",
+          "properties": {
+            "age": "5"
+          }
+        }
+      ],
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "neko-technology:catnip_seeds"
+        }
+      ],
+      "functions": [
+        {
+          "function": "minecraft:set_count",
+          "count": {
+            "type": "minecraft:uniform",
+            "min": 1.0,
+            "max": 2.0
+          }
+        }
+      ]
+    },
+    {
+      "conditions": [
+        {
+          "condition": "minecraft:inverted",
+          "term": {
+            "condition": "minecraft:block_state_property",
+            "block": "neko-technology:catnip_crop",
+            "properties": {
+              "age": "5"
+            }
+          }
+        }
+      ],
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "neko-technology:catnip_seeds"
+        }
+      ],
+      "functions": [
+        {
+          "function": "minecraft:set_count",
+          "count": 1
+        }
+      ]
+    }
+  ],
+  "conditions": [
+    {
+      "condition": "minecraft:survives_explosion"
+    }
+  ]
+}
