@@ -1,3 +1,3 @@
 {
-	"parent":"neko-technology:block/circuit_breaker"
+	"parent":"neko-technology:block/circuit_breaker/circuit_breaker"
 }

@@ -5,6 +5,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
 
 public class ConductorSystem implements ModInitializer {
     @Override
@@ -52,6 +53,20 @@ public class ConductorSystem implements ModInitializer {
         ConductorManager manager = ConductorManager.get(world);
         if (manager != null) {
             manager.onComponentChanged(world, pos, side);
+        }
+    }
+
+    /**
+     * 当导体方块实体状态变化时调用喵~
+     * 用于通知导体系统重新扫描网络
+     *
+     * @param world 服务器世界
+     * @param pos 方块位置
+     */
+    public static void onBlockEntityStateChange(ServerWorld world, BlockPos pos) {
+        ConductorManager manager = ConductorManager.get(world);
+        if (manager != null) {
+            manager.onBlockEntityStateChange(world, pos);
         }
     }
 }

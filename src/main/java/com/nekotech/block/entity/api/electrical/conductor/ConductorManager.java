@@ -39,7 +39,7 @@ public class ConductorManager {
 
     // 操作类型枚举
     private enum OperationType {
-        PLACE, BREAK, COMPONENT_CHANGE
+        PLACE, BREAK, COMPONENT_CHANGE, BLOCK_ENTITY_STATE_CHANGE
     }
 
     private static class PendingOperation {
@@ -326,6 +326,88 @@ public class ConductorManager {
         NekoTechnology.LOGGER.debug("[导体管理器] 缓存零件变更操作: {} {}", pos, side);
     }
 
+    // 在 ConductorManager 类中添加新的公共方法
+    /**
+     * 当导体方块实体状态变化时调用喵~
+     * 这包括但不限于：断路器开关、机器状态变化、能量水平变化等
+     * 使用1tick延迟，避免立即处理导致的问题
+     *
+     * @param world 世界对象
+     * @param pos 方块位置
+     */
+    public void onBlockEntityStateChange(World world, BlockPos pos) {
+        operationQueue.add(new PendingOperation(pos, OperationType.BLOCK_ENTITY_STATE_CHANGE, null));
+        NekoTechnology.LOGGER.debug("[导体管理器] 缓存方块实体状态变化操作: {}", pos);
+    }
+
+// 添加新的处理方法 handleBlockEntityStateChange
+    /**
+     * 处理方块实体状态变化喵~
+     * 方块实体状态变化可能影响导体网络的连接和能量传输
+     * 需要重新扫描端口并更新导体组
+     *
+     * @param world 世界对象
+     * @param pos 发生状态变化的方块位置
+     */
+    private void handleBlockEntityStateChange(World world, BlockPos pos) {
+        NekoTechnology.LOGGER.info("[导体管理器] 处理方块实体状态变化: {}", pos);
+
+        // 获取方块实体
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+        if (blockEntity == null) {
+            NekoTechnology.LOGGER.warn("[导体管理器] 位置 {} 没有方块实体", pos);
+            return;
+        }
+
+        // 检查是否是导体方块
+        if (blockEntity instanceof ITransferElectrical electrical) {
+            // 检查当前是否可以传输
+            boolean canTransfer = electrical.canTransfer();
+            NekoTechnology.LOGGER.debug("[导体管理器] 方块 {} 的 canTransfer = {}", pos, canTransfer);
+
+            // 获取这个位置的导体组
+            ConductorGroup group = blockToGroup.get(pos);
+
+            if (group != null) {
+                // 如果这个方块原来在导体组中
+                if (!canTransfer) {
+                    // 如果现在不能传输，需要从导体组中移除
+                    NekoTechnology.LOGGER.info("[导体管理器] 方块 {} 变为不可传输，从导体组#{} 中移除", pos, group.id);
+                    handleBlockBreak(world, pos);
+                } else {
+                    // 如果可以传输，需要重新扫描端口
+                    NekoTechnology.LOGGER.debug("[导体管理器] 方块 {} 状态变化，重新扫描端口", pos);
+
+                    ConductorNode node = group.getNode(pos);
+                    if (node != null) {
+                        // 移除旧端口
+                        group.removePortsFromNode(node);
+
+                        // 重新扫描端口
+                        portScanner.scanPorts(world, node);
+
+                        // 更新端口
+                        group.updatePortsFromNode(node);
+
+                        NekoTechnology.LOGGER.info("[导体管理器] 导体组#{} 的方块 {} 端口已更新", group.id, pos);
+                    }
+                }
+            } else {
+                // 如果这个方块原来不在导体组中
+                if (canTransfer) {
+                    // 如果可以传输，尝试加入导体组
+                    NekoTechnology.LOGGER.info("[导体管理器] 方块 {} 变为可传输，尝试加入导体组", pos);
+                    handleBlockPlace(world, pos);
+                }
+            }
+        } else {
+            NekoTechnology.LOGGER.debug("[导体管理器] 方块 {} 不是 ITransferElectrical 实例", pos);
+        }
+
+        // 保存到世界状态
+        saveToWorldState();
+    }
+
     private void processOperation(World world, PendingOperation operation) {
         if (processedPositions.contains(operation.pos)) {
             NekoTechnology.LOGGER.debug("[导体管理器] 跳过已处理的位置: {}", operation.pos);
@@ -336,6 +418,7 @@ public class ConductorManager {
             case PLACE -> handleBlockPlace(world, operation.pos);
             case BREAK -> handleBlockBreak(world, operation.pos);
             case COMPONENT_CHANGE -> handleComponentChange(world, operation.pos, operation.side);
+            case BLOCK_ENTITY_STATE_CHANGE -> handleBlockEntityStateChange(world, operation.pos);
         }
 
         processedPositions.add(operation.pos);

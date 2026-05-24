@@ -12,6 +12,7 @@ import com.nekotech.item.block.ModBlocks;
 import com.nekotech.network.NetworkHandler;
 import com.nekotech.recipe.ModRecipes;
 import com.nekotech.screen.ModScreenHandlers;
+import com.nekotech.util.DelayManager;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.world.ServerWorld;
@@ -46,6 +47,7 @@ public class NekoTechnology implements ModInitializer {
         ModRecipes.init();
 		NetworkHandler.initialize();
         ServerTick.init();
+		DelayManager.initialize();
         BlockBreakEvents.register();
 		new ConductorSystem().onInitialize();
 

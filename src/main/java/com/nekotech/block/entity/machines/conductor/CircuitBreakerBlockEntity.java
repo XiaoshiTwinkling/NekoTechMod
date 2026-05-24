@@ -2,17 +2,21 @@ package com.nekotech.block.entity.machines.conductor;
 
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.block.entity.api.electrical.ITransferElectrical;
+import com.nekotech.block.entity.api.electrical.conductor.ConductorSystem;
 import com.nekotech.block.entity.machines.MachineBlockEntity;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
+import com.nekotech.item.block.CircuitBreakerBlock;
+import com.nekotech.util.DelayManager;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
@@ -52,14 +56,49 @@ public class CircuitBreakerBlockEntity extends MachineBlockEntity implements IHa
         // 如果红石信号状态发生变化
         if (currentRedstoneState != lastRedstoneState) {
             lastRedstoneState = currentRedstoneState;
-
-            updateBreakerState(currentRedstoneState);
+            isPoweredByRedstone = currentRedstoneState;
 
             this.markDirty();
 
-            updateBlockState(world, pos, state);
+            BlockEntity blockEntity = world.getBlockEntity(pos);
+            if (blockEntity instanceof CircuitBreakerBlockEntity breaker) {
+                BlockState newState = world.getBlockState(pos)
+                        .with(CircuitBreakerBlock.POWERED, currentRedstoneState)
+                        .with(CircuitBreakerBlock.OPEN, breaker.isManuallyOpen());
 
-            updateConductorSystem();
+                world.setBlockState(pos, newState, Block.NOTIFY_ALL);
+
+                world.updateListeners(pos, newState, newState, 3);
+
+                DelayManager.schedule(1, server -> {
+                    breaker.updateConductorSystem();
+                });
+            }
+        }
+
+        lastSwitchAnimationProgress = switchAnimationProgress;
+        updateSwitchAnimation();
+    }
+
+    /**
+     * 设置红石电源状态并同步到方块喵~
+     * @param powered 是否被红石激活
+     */
+    public void setRedstonePower(boolean powered) {
+        this.isPoweredByRedstone = powered;
+        this.lastRedstoneState = powered;
+
+        this.markDirty();
+
+        if (world != null && !world.isClient()) {
+            BlockState newState = getCachedState()
+                    .with(CircuitBreakerBlock.POWERED, powered)
+                    .with(CircuitBreakerBlock.OPEN, manuallyOpen);
+
+            world.setBlockState(pos, newState, Block.NOTIFY_ALL);
+
+            // 同步到客户端
+            world.updateListeners(pos, newState, newState, 3);
         }
     }
 
@@ -93,7 +132,6 @@ public class CircuitBreakerBlockEntity extends MachineBlockEntity implements IHa
             // 更新方块状态
             updateBlockState(world, pos, getCachedState());
         }
-
         // 通知导体管理器状态变化喵~
         updateConductorSystem();
 
@@ -105,16 +143,10 @@ public class CircuitBreakerBlockEntity extends MachineBlockEntity implements IHa
      * 这会让导体系统重新扫描网络
      */
     public void updateConductorSystem() {
-        if (world != null && !world.isClient() && world instanceof net.minecraft.server.world.ServerWorld serverWorld) {
-            long currentTick = serverWorld.getServer().getTicks();
 
-            net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents.END_SERVER_TICK.register(server -> {
-                if (server.getTicks() > currentTick) {
-                    com.nekotech.block.entity.api.electrical.conductor.ConductorSystem.onBlockPlaced(serverWorld, pos);
-                    return;
-                }
-                return;
-            });
+        if (world != null && !world.isClient() && world instanceof net.minecraft.server.world.ServerWorld serverWorld) {
+            DelayManager.schedule(1, server -> {});
+            ConductorSystem.onBlockEntityStateChange(serverWorld, pos);
         }
     }
 
@@ -139,21 +171,6 @@ public class CircuitBreakerBlockEntity extends MachineBlockEntity implements IHa
     public boolean canTransfer() {
         // 如果被手动断开，或者被红石激活，都不能导电
         return !(manuallyOpen || isPoweredByRedstone);
-    }
-
-    /**
-     * 获取断路器当前的状态描述喵~
-     *
-     * @return 状态描述字符串
-     */
-    public String getStatus() {
-        if (manuallyOpen) {
-            return "手动断开";
-        } else if (isPoweredByRedstone) {
-            return "红石断开";
-        } else {
-            return "闭合导电";
-        }
     }
 
     /**
@@ -243,4 +260,63 @@ public class CircuitBreakerBlockEntity extends MachineBlockEntity implements IHa
         this.writeNbt(nbt, registries);
         return nbt;
     }
+
+    /**
+     * 下面是动画
+     */
+
+    // 添加以下字段
+    private float switchAnimationProgress = 0.0f;  // 0.0-1.0
+    private float lastSwitchAnimationProgress = 0.0f;
+    private boolean isSwitchAnimating = false;
+    private int animationTicks = 0;
+    private static final int ANIMATION_DURATION = 10;  // 动画持续10tick
+
+    // 在tick方法中添加动画更新
+    private void updateSwitchAnimation() {
+        // 获取目标状态
+        float targetProgress = manuallyOpen ? 1.0f : 0.0f;
+
+        // 如果当前进度不等于目标进度，开始动画
+        if (Math.abs(switchAnimationProgress - targetProgress) > 0.001f) {
+            isSwitchAnimating = true;
+            animationTicks++;
+
+            // 计算动画进度（线性插值）
+            float animationDelta = (float)animationTicks / ANIMATION_DURATION;
+
+            if (manuallyOpen) {
+                // 向打开方向动画
+                switchAnimationProgress = Math.min(targetProgress, animationDelta);
+            } else {
+                // 向关闭方向动画
+                switchAnimationProgress = Math.max(targetProgress, 1.0f - animationDelta);
+            }
+
+            // 标记需要保存
+            this.markDirty();
+
+            // 动画完成
+            if (animationTicks >= ANIMATION_DURATION) {
+                switchAnimationProgress = targetProgress;
+                isSwitchAnimating = false;
+                animationTicks = 0;
+            }
+        } else {
+            isSwitchAnimating = false;
+            animationTicks = 0;
+        }
+    }
+
+    // 添加获取动画进度的方法（客户端使用）
+    public float getSwitchAnimationProgress(float tickDelta) {
+        if (!isSwitchAnimating) {
+            return switchAnimationProgress;
+        }
+
+        // 线性插值，使动画更平滑
+        float progressDelta = switchAnimationProgress - lastSwitchAnimationProgress;
+        return lastSwitchAnimationProgress + progressDelta * tickDelta;
+    }
+
 }

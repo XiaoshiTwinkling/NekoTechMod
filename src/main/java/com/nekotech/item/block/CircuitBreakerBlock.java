@@ -5,6 +5,7 @@ import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.block.entity.api.electrical.conductor.ConductorSystem;
 import com.nekotech.block.entity.machines.conductor.CircuitBreakerBlockEntity;
 import com.nekotech.block.entity.machines.conductor.FluxStorageBlockEntity;
+import com.nekotech.util.DelayManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
@@ -28,7 +29,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-public class CircuitBreakerBlock extends BlockWithEntity {
+import static com.nekotech.item.block.DirectionalMachineBlock.FACING;
+
+
+public class CircuitBreakerBlock extends DirectionalMachineBlock {
 
     public static final BooleanProperty POWERED = Properties.POWERED;
 
@@ -38,7 +42,7 @@ public class CircuitBreakerBlock extends BlockWithEntity {
 
     public CircuitBreakerBlock(Settings settings) {
         super(settings);
-        this.setDefaultState(this.stateManager.getDefaultState());
+        this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH).with(OPEN, false));
     }
 
     @Override
@@ -48,7 +52,7 @@ public class CircuitBreakerBlock extends BlockWithEntity {
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(POWERED, OPEN);
+        builder.add(FACING).add(POWERED, OPEN);
     }
 
     /**
@@ -83,6 +87,8 @@ public class CircuitBreakerBlock extends BlockWithEntity {
                 world.setBlockState(pos, state.with(OPEN, newOpenState)
                         .with(POWERED, breaker.isPoweredByRedstone()), Block.NOTIFY_ALL);
 
+                ConductorSystem.onBlockEntityStateChange((ServerWorld) world, pos);
+
                 return ActionResult.SUCCESS;
             }
         }
@@ -100,10 +106,19 @@ public class CircuitBreakerBlock extends BlockWithEntity {
             boolean hasPower = world.isReceivingRedstonePower(pos);
             boolean wasPowered = state.get(POWERED);
 
-            if (hasPower != wasPowered) {
-                // 更新方块的红石状态
-                world.setBlockState(pos, state.with(POWERED, hasPower)
-                        .with(OPEN, state.get(OPEN)), Block.NOTIFY_ALL);
+            BlockEntity blockEntity = world.getBlockEntity(pos);
+            if (blockEntity instanceof CircuitBreakerBlockEntity breaker) {
+                breaker.setRedstonePower(hasPower);
+
+                if (hasPower != wasPowered) {
+                    // 更新方块状态
+                    BlockState newState = state.with(POWERED, hasPower)
+                            .with(OPEN, breaker.isManuallyOpen());
+                    world.setBlockState(pos, newState, Block.NOTIFY_ALL);
+                    DelayManager.schedule(1, server -> {
+                        ConductorSystem.onBlockEntityStateChange((ServerWorld) world, pos);
+                    });
+                }
             }
         }
     }
@@ -148,7 +163,7 @@ public class CircuitBreakerBlock extends BlockWithEntity {
     @Override
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
         super.onBlockAdded(state, world, pos, oldState, notify);
-        if (!world.isClient()) {
+        if (!world.isClient() && !oldState.isOf(this)) {
             ConductorSystem.onBlockPlaced((ServerWorld) world, pos);
         }
     }
@@ -174,4 +189,5 @@ public class CircuitBreakerBlock extends BlockWithEntity {
             BlockEntityTicker<? super E> ticker) {
         return expectedType == givenType ? (BlockEntityTicker<A>) ticker : null;
     }
+
 }
