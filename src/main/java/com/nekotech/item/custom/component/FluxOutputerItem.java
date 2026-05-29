@@ -1,10 +1,7 @@
 package com.nekotech.item.custom.component;
 
 import com.nekotech.block.entity.api.component.ComponentAdaptation;
-import com.nekotech.block.entity.api.electrical.IElectricalMachine;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.Item;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 

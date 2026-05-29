@@ -1,6 +1,5 @@
 package com.nekotech.block.entity.machines;
 
-import com.nekotech.block.entity.CushionBlockEntity;
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.block.entity.api.ICatNeedMachine;
 import net.minecraft.block.BlockState;
@@ -16,29 +15,23 @@ import org.jetbrains.annotations.Nullable;
 
 public class BellowsBlockEntity extends BlockEntity implements ICatNeedMachine {
 
-    // ===== 动画（客户端）=====
     public float progress = 0.0f;
     public float lastProgress = 0.0f;
     public boolean compressing = true;
 
-    // ===== 状态（服务器同步）=====
     private boolean working = false;
 
-    private BlockPos boundCushionPos = null;
+    private BlockPos boundControllerPos = null;
 
     public BellowsBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.BELLOWS, pos, state);
     }
 
-    // ===== Tick =====
     public static void tick(World world, BlockPos pos, BlockState state, BellowsBlockEntity be) {
-
         // 服务器tick
         if (!world.isClient) {
-
             if (world.getTime() % 20 == 0) {
-
-                boolean newWorking = hasCatNearby(world, pos);
+                boolean newWorking = be.canMachineRun();
 
                 if (newWorking != be.working) {
                     be.working = newWorking;
@@ -47,11 +40,14 @@ public class BellowsBlockEntity extends BlockEntity implements ICatNeedMachine {
                     world.updateListeners(pos, state, state, 3);
                 }
             }
+
+            if (world.getTime() % 200 == 0) {
+                be.cleanupInvalidBindings();
+            }
         }
 
         // 客户端tick
         if (world.isClient) {
-
             be.lastProgress = be.progress;
 
             float downSpeedBase = 0.08f;
@@ -82,15 +78,6 @@ public class BellowsBlockEntity extends BlockEntity implements ICatNeedMachine {
         }
     }
 
-    //检测猫
-    private static boolean hasCatNearby(World world, BlockPos pos) {
-        return !world.getEntitiesByClass(
-                net.minecraft.entity.passive.CatEntity.class,
-                new net.minecraft.util.math.Box(pos).expand(1),
-                cat -> true
-        ).isEmpty();
-    }
-
     public float getRenderProgress(float tickDelta) {
         return this.lastProgress + (this.progress - this.lastProgress) * tickDelta;
     }
@@ -99,12 +86,28 @@ public class BellowsBlockEntity extends BlockEntity implements ICatNeedMachine {
     protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         super.writeNbt(nbt, registryLookup);
         nbt.putBoolean("working", working);
+
+        if (boundControllerPos != null) {
+            nbt.putInt("ControllerX", boundControllerPos.getX());
+            nbt.putInt("ControllerY", boundControllerPos.getY());
+            nbt.putInt("ControllerZ", boundControllerPos.getZ());
+        }
     }
 
     @Override
     protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         super.readNbt(nbt, registryLookup);
         working = nbt.getBoolean("working");
+
+        if (nbt.contains("ControllerX")) {
+            boundControllerPos = new BlockPos(
+                    nbt.getInt("ControllerX"),
+                    nbt.getInt("ControllerY"),
+                    nbt.getInt("ControllerZ")
+            );
+        } else {
+            boundControllerPos = null;
+        }
     }
 
     @Override
@@ -119,15 +122,18 @@ public class BellowsBlockEntity extends BlockEntity implements ICatNeedMachine {
     }
 
     @Override
-    public void setBoundCushion(BlockPos pos) {
-        this.boundCushionPos = pos;
-        markDirty();
+    public @Nullable BlockPos getBoundControllerPos() {
+        return boundControllerPos;
     }
 
     @Override
-    public CushionBlockEntity getBoundCushion() {
-        if (world == null || boundCushionPos == null) return null;
-        var be = world.getBlockEntity(boundCushionPos);
-        return be instanceof CushionBlockEntity c ? c : null;
+    public void setBoundControllerPos(@Nullable BlockPos pos) {
+        this.boundControllerPos = pos;
+        this.markDirty();
+    }
+
+    // 可选：保留一个便捷方法用于调试
+    public boolean hasBoundController() {
+        return boundControllerPos != null;
     }
 }

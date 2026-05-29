@@ -3,7 +3,7 @@ package com.nekotech.block.entity;
 import com.nekotech.block.entity.api.component.ComponentAdaptation;
 import com.nekotech.item.ModItems;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
-import com.nekotech.item.api.googles.IHaveGoogleHUD;
+import com.nekotech.block.entity.api.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.ContainerHUDData;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;

@@ -1,6 +1,5 @@
 package com.nekotech.block.entity.machines.conductor;
 
-import com.nekotech.block.entity.CushionBlockEntity;
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.block.entity.api.component.ComponentAdaptation;
 import com.nekotech.block.entity.api.ICatNeedMachine;
@@ -9,7 +8,7 @@ import com.nekotech.block.entity.api.electrical.ITransferElectrical;
 import com.nekotech.block.entity.machines.MachineBlockEntity;
 import com.nekotech.item.ModItems;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
-import com.nekotech.item.api.googles.IHaveGoogleHUD;
+import com.nekotech.block.entity.api.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
@@ -39,10 +38,10 @@ public class FluxStorageBlockEntity extends MachineBlockEntity
         implements IElectricalMachine, ICatNeedMachine, ComponentAdaptation, IHaveGoogleHUD, ITransferElectrical {
 
     private float nekoFlux = 500f;
-    private final float maxNekoFlux = 1000f;  // 最大存储容量
+    private final float maxNekoFlux = 1000f;
 
     @Nullable
-    private BlockPos boundCushionPos = null;
+    private BlockPos boundControllerPos = null;
 
     private final Map<Direction, Item> attachedComponents = new EnumMap<>(Direction.class);
     private final Set<Item> validComponents ;
@@ -58,22 +57,15 @@ public class FluxStorageBlockEntity extends MachineBlockEntity
         validComponents.add(ModItems.NEKO_COPPER_FLUX_OUTPUTER);
     }
 
-    /**
-     * 服务器端tick方法喵~
-     * 在方块实体类型注册时需要注册tick方法喵~
-     */
     public static void tick(World world, BlockPos pos, BlockState state, FluxStorageBlockEntity blockEntity) {
         if (!world.isClient()) {
-            // 服务端逻辑
             blockEntity.serverTick(world, pos, state, blockEntity);
         }
     }
 
     private void serverTick(World world, BlockPos pos, BlockState state, FluxStorageBlockEntity blockEntity){
-        // 检查机器是否可以运行（需要猫）
         blockEntity.isActive = blockEntity.canMachineRun();
 
-        // 如果机器激活，执行安装的零件
         if (blockEntity.isActive) {
             blockEntity.tickComponents();
         }
@@ -115,7 +107,6 @@ public class FluxStorageBlockEntity extends MachineBlockEntity
         this.markDirty();
     }
 
-    // 执行所有安装的零件
     public void tickComponents() {
         if (world == null || world.isClient()) return;
 
@@ -125,25 +116,6 @@ public class FluxStorageBlockEntity extends MachineBlockEntity
                 componentTick(world, side);
             }
         }
-    }
-
-    @Override
-    public void setBoundCushion(BlockPos pos) {
-        this.boundCushionPos = pos;
-        this.markDirty();
-    }
-
-    @Override
-    @Nullable
-    public CushionBlockEntity getBoundCushion() {
-        if (this.world == null || this.boundCushionPos == null) {
-            return null;
-        }
-
-        if (world.getBlockEntity(boundCushionPos) instanceof CushionBlockEntity cushion) {
-            return cushion;
-        }
-        return null;
     }
 
     @Override
@@ -166,16 +138,13 @@ public class FluxStorageBlockEntity extends MachineBlockEntity
     @Nullable
     public GoogleAbstractHUD getGoogleHUD(World world, BlockPos pos, BlockState state) {
         if (world.isClient()) {
-            return null;  // 只在服务端返回数据喵~
+            return null;
         }
 
-        // 创建HUD数据
         float currentFlux = getNekoFlux();
         float maxFlux = getMaxNekoFlux();
         float percentage = (maxFlux > 0) ? (currentFlux / maxFlux * 100) : 0;
 
-
-        // 显示安装的零件
         int componentCount = attachedComponents.size();
 
         Text title = Text.translatable("block.neko-technology.flux_storage").formatted(Formatting.GOLD);
@@ -193,18 +162,16 @@ public class FluxStorageBlockEntity extends MachineBlockEntity
     protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         super.writeNbt(nbt, registryLookup);
 
-        // 保存能量
         nbt.putFloat("NekoFlux", nekoFlux);
 
-        // 保存猫垫位置
-        if (boundCushionPos != null) {
-            nbt.putLong("BoundCushion", boundCushionPos.asLong());
+        if (boundControllerPos != null) {
+            nbt.putInt("ControllerX", boundControllerPos.getX());
+            nbt.putInt("ControllerY", boundControllerPos.getY());
+            nbt.putInt("ControllerZ", boundControllerPos.getZ());
         }
 
-        // 保存机器状态
         nbt.putBoolean("IsActive", isActive);
 
-        // 保存安装的零件
         NbtCompound componentsNbt = new NbtCompound();
         for (Map.Entry<Direction, Item> entry : attachedComponents.entrySet()) {
             String sideName = entry.getKey().getName();
@@ -213,7 +180,6 @@ public class FluxStorageBlockEntity extends MachineBlockEntity
         }
         nbt.put("AttachedComponents", componentsNbt);
 
-        // 保存允许的零件列表
         NbtList validList = new NbtList();
         for (Item item : validComponents) {
             validList.add(NbtString.of(Registries.ITEM.getId(item).toString()));
@@ -225,20 +191,22 @@ public class FluxStorageBlockEntity extends MachineBlockEntity
     public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         super.readNbt(nbt, registryLookup);
 
-        // 读取能量
         nekoFlux = nbt.getFloat("NekoFlux");
 
-        // 读取猫垫位置
-        if (nbt.contains("BoundCushion")) {
-            boundCushionPos = BlockPos.fromLong(nbt.getLong("BoundCushion"));
+        if (nbt.contains("ControllerX")) {
+            boundControllerPos = new BlockPos(
+                    nbt.getInt("ControllerX"),
+                    nbt.getInt("ControllerY"),
+                    nbt.getInt("ControllerZ")
+            );
+        } else if (nbt.contains("BoundCushion")) {
+            boundControllerPos = BlockPos.fromLong(nbt.getLong("BoundCushion"));
         } else {
-            boundCushionPos = null;
+            boundControllerPos = null;
         }
 
-        // 读取机器状态
         isActive = nbt.getBoolean("IsActive");
 
-        // 读取安装的零件
         attachedComponents.clear();
         if (nbt.contains("AttachedComponents", NbtElement.COMPOUND_TYPE)) {
             NbtCompound componentsNbt = nbt.getCompound("AttachedComponents");
@@ -252,7 +220,6 @@ public class FluxStorageBlockEntity extends MachineBlockEntity
             }
         }
 
-        // 读取允许的零件列表
         validComponents.clear();
         if (nbt.contains("ValidComponents", NbtElement.LIST_TYPE)) {
             NbtList validList = nbt.getList("ValidComponents", NbtElement.STRING_TYPE);
@@ -264,18 +231,27 @@ public class FluxStorageBlockEntity extends MachineBlockEntity
         }
     }
 
+    @Override
+    public @Nullable BlockPos getBoundControllerPos() {
+        return boundControllerPos;
+    }
+
+    @Override
+    public void setBoundControllerPos(@Nullable BlockPos pos) {
+        this.boundControllerPos = pos;
+        this.markDirty();
+    }
+
     @Nullable
     @Override
     public Packet<ClientPlayPacketListener> toUpdatePacket() {
-        // 此方法创建用于同步方块实体数据的网络包
         return BlockEntityUpdateS2CPacket.create(this);
     }
 
     @Override
     public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registries) {
-        // 这个方法返回的数据会被打包进 toUpdatePacket 发送给客户端
         NbtCompound nbt = new NbtCompound();
-        this.writeNbt(nbt, registries); // 复用你已有的保存逻辑
+        this.writeNbt(nbt, registries);
         return nbt;
     }
 }

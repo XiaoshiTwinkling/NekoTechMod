@@ -1,5 +1,6 @@
-package com.nekotech.item.api.googles;
+package com.nekotech.block.entity.api;
 
+import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

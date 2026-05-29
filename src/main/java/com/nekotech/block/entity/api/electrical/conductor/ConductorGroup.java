@@ -1,6 +1,7 @@
 package com.nekotech.block.entity.api.electrical.conductor;
 
 import com.nekotech.NekoTechnology;
+import com.nekotech.block.entity.api.electrical.ITransferElectrical;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -106,7 +107,7 @@ public class ConductorGroup {
                 if (visited.contains(neighborPos)) continue;
 
                 // 检查是否是导体方块
-                if (world.getBlockEntity(neighborPos) instanceof com.nekotech.block.entity.api.electrical.ITransferElectrical) {
+                if (world.getBlockEntity(neighborPos) instanceof ITransferElectrical) {
                     // 添加连接
                     node.addConnection(dir);
                     queue.offer(neighborPos);

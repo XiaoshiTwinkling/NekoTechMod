@@ -5,7 +5,7 @@ import com.nekotech.block.entity.api.electrical.ITransferElectrical;
 import com.nekotech.block.entity.api.electrical.conductor.ConductorSystem;
 import com.nekotech.block.entity.machines.MachineBlockEntity;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
-import com.nekotech.item.api.googles.IHaveGoogleHUD;
+import com.nekotech.block.entity.api.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
 import com.nekotech.block.CircuitBreakerBlock;
 import com.nekotech.util.DelayManager;

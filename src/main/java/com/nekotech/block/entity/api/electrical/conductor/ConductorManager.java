@@ -4,18 +4,10 @@ import com.nekotech.NekoTechnology;
 import com.nekotech.block.entity.api.electrical.ITransferElectrical;
 import com.nekotech.data.worlddata.ConductorWorldState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.nbt.NbtString;
-import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.world.PersistentState;
-import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 

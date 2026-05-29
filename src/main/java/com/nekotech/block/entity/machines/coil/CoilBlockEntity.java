@@ -11,7 +11,7 @@ import com.nekotech.block.entity.machines.HeaterBlockEntity;
 import com.nekotech.block.entity.machines.TakeFreelyMachineBlockEntity;
 import com.nekotech.item.ModItems;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
-import com.nekotech.item.api.googles.IHaveGoogleHUD;
+import com.nekotech.block.entity.api.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
 import com.nekotech.block.CoilBlock;
 import net.minecraft.block.Block;
@@ -56,26 +56,25 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
 
     private static final int MAX_COILS = 6;
     private static final int MAX_FLUX = 200;
-    private static final float BASE_POWER_CONSUMPTION = 0.12f; // 每个铜线圈的耗电速度
-    private static final int HEAT_MULTIPLIER = 180; // 生铁线圈热量乘数
-    private static final float STRENGTH_MULTIPLIER = 3; //吸引的力量乘数
-    private static final float HEAT_RATE_MULTIPLIER = 0.2f; // 生铁线圈升温速度乘数
-    private static final int ATTRACTION_RANGE_MULTIPLIER = 2; // 紫铜线圈吸引范围乘数
+    private static final float BASE_POWER_CONSUMPTION = 0.12f;
+    private static final int HEAT_MULTIPLIER = 180;
+    private static final float STRENGTH_MULTIPLIER = 3;
+    private static final float HEAT_RATE_MULTIPLIER = 0.2f;
+    private static final int ATTRACTION_RANGE_MULTIPLIER = 2;
 
-
-    private List<CoilType> coils = new ArrayList<>(MAX_COILS); //线圈栏
-    private boolean isFixed = false; //有没有安装框架
+    private List<CoilType> coils = new ArrayList<>(MAX_COILS);
+    private boolean isFixed = false;
     private float nekoFlux = 100;
     private float temperature = 0;
     private float maxTemperature = 0;
     private float heatRate = 0;
 
-    private BlockPos boundCushionPos = null;
+    private BlockPos boundControllerPos = null;
 
-    private final Map<Direction, Item> attachedComponents = new EnumMap<>(Direction.class); //经典零件二人组
+    private final Map<Direction, Item> attachedComponents = new EnumMap<>(Direction.class);
     private final Set<Item> validComponents = new HashSet<>();
 
-    private final List<UUID> attractedEntities = new ArrayList<>(); //吸引铁质物品的表
+    private final List<UUID> attractedEntities = new ArrayList<>();
     private int attractionTickCounter = 0;
 
     public CoilBlockEntity(BlockPos pos, BlockState state) {
@@ -103,10 +102,6 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         return this.heatRate;
     }
 
-    /**
-     * 尝试缠绕一个线圈喵
-     * @return 是否成功缠绕
-     */
     public boolean addCoil(Item coilItem) {
         if (isFixed) return false;
 
@@ -126,9 +121,6 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         return coils;
     }
 
-    /**
-     * 用生铁框架固定线圈喵
-     */
     public boolean fixCoils() {
         if (isFixed || hasEmptySlots()) return false;
 
@@ -141,9 +133,6 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         return true;
     }
 
-    /**
-     * 检查是否有空槽位喵
-     */
     public boolean hasEmptySlots() {
         for (CoilType coil : coils) {
             if (coil == CoilType.EMPTY) {
@@ -153,9 +142,6 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         return false;
     }
 
-    /**
-     * 获取线圈数量统计喵
-     */
     public int[] getCoilCounts() {
         int copper = 0, pigIron = 0, nekoCopper = 0;
         for (CoilType coil : coils) {
@@ -166,28 +152,16 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         return new int[]{copper, pigIron, nekoCopper};
     }
 
-    /**
-     * 重新计算线圈属性喵
-     */
     private void recalculateProperties() {
         int[] counts = getCoilCounts();
         int copper = counts[0];
         int pigIron = counts[1];
 
-        // 计算最大温度
         maxTemperature = pigIron * copper * HEAT_MULTIPLIER;
 
-        // 计算升温速度
         heatRate = pigIron * copper * HEAT_RATE_MULTIPLIER;
     }
 
-    /**
-     * 在方块被破坏时生成所有掉落物
-     * @param world 世界
-     * @param pos 位置
-     * @param player 破坏方块的玩家
-     * @param willHarvest 是否可以通过精准采集获取方块本身
-     */
     public void dropAllContents(World world, BlockPos pos, @Nullable PlayerEntity player, boolean willHarvest) {
         if (isFixed || (player != null && player.getAbilities().creativeMode)) {
             return;
@@ -208,11 +182,9 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
             }
         }
 
-        // 4. 清空本地数据，防止重复生成
         coils.replaceAll(c -> CoilType.EMPTY);
         attachedComponents.clear();
     }
-
 
     public boolean isActivelyHeating() {
         int[] counts = getCoilCounts();
@@ -220,9 +192,6 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         return pigIronCount > 0 && nekoFlux > 0.01f && canMachineRun();
     }
 
-    /**
-     * 加热器更新喵
-     */
     private void updateNeighbors() {
         if (world == null || world.isClient) return;
 
@@ -234,9 +203,6 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         }
     }
 
-    /**
-     * 吸引附近的含铁实体喵
-     */
     private void attractEntities() {
         if (world == null || world.isClient) return;
 
@@ -276,15 +242,12 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         return isFixed;
     }
 
-    /**
-     * 吸引单个实体喵
-     */
     private void attractSingleEntity(Entity entity, int range) {
         Vec3d entityPos = entity.getPos();
         Vec3d centerPos = Vec3d.ofCenter(pos);
 
         double distance = entityPos.distanceTo(centerPos);
-        if (distance < 0.5) return; // 已经在中心附近
+        if (distance < 0.5) return;
 
         Vec3d direction = centerPos.subtract(entityPos).normalize();
 
@@ -303,13 +266,9 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         spawnAttractionParticles(entityPos, direction);
     }
 
-    /**
-     * 计算吸引力强度喵
-     */
     private double calculateAttractionStrength(Entity entity, double distance, int range) {
         double baseStrength = 0.3;
 
-        //离得越近，吸引力越弱
         double distanceFactor = 1.0 - (distance / range);
         distanceFactor = Math.max(0.1, distanceFactor);
 
@@ -327,11 +286,7 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         return baseStrength * distanceFactor * typeMultiplier;
     }
 
-    /**
-     * 判断实体是否应该被吸引喵
-     */
     private boolean shouldAttract(Entity entity) {
-
         if (entity instanceof ItemEntity itemEntity) {
             return isIronItem(itemEntity.getStack());
         }
@@ -349,9 +304,6 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         return false;
     }
 
-    /**
-     * 检查生物是否穿戴铁/锁链甲喵
-     */
     private boolean isWearingIronArmor(LivingEntity entity) {
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             if (slot.getType() == EquipmentSlot.Type.ANIMAL_ARMOR || slot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR) {
@@ -364,9 +316,6 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         return false;
     }
 
-    /**
-     * 检查是否为铁/锁链盔甲喵
-     */
     private boolean isIronArmor(ItemStack stack) {
         if (stack.isEmpty() || !(stack.getItem() instanceof ArmorItem armor)) {
             return false;
@@ -377,15 +326,10 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
             return true;
         }
 
-        // 检查物品名
         String armorId = Registries.ITEM.getId(armor).toString().toLowerCase();
         return armorId.contains("iron") || armorId.contains("chain");
     }
 
-
-    /**
-     * 检查物品是否为铁制品喵
-     */
     private boolean isIronItem(ItemStack stack) {
         if (stack.isEmpty()) return false;
 
@@ -409,9 +353,6 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
                 itemId.contains("rail");
     }
 
-    /**
-     * 检查是否为铁制工具喵
-     */
     private boolean isIronTool(Item item) {
         if (item instanceof ToolItem toolItem) {
             return toolItem.getMaterial().equals(ToolMaterials.IRON);
@@ -419,9 +360,6 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         return false;
     }
 
-    /**
-     * 检查是否为铁制盔甲喵
-     */
     private boolean isIronArmor(Item item) {
         if (item instanceof ArmorItem armorItem) {
             return armorItem.getMaterial().value().equals(ArmorMaterials.IRON.value());
@@ -429,17 +367,10 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         return false;
     }
 
-
-    /**
-     * 检查是否为铁傀儡喵
-     */
     private boolean isIronGolem(Entity entity) {
         return entity.getType() == EntityType.IRON_GOLEM;
     }
 
-    /**
-     * 检查是否为铁制盔甲架喵
-     */
     private boolean isArmorStandWithIron(LivingEntity entity) {
         if (!(entity instanceof ArmorStandEntity)) return false;
 
@@ -454,9 +385,6 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         return false;
     }
 
-    /**
-     * 清理过期的吸引实体记录喵
-     */
     private void cleanupAttractedEntities() {
         if (world == null || world.isClient) return;
 
@@ -465,9 +393,6 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         }
     }
 
-    /**
-     * 生成吸引粒子效果喵
-     */
     private void spawnAttractionParticles(Vec3d fromPos, Vec3d direction) {
         if (world == null || world.isClient) return;
 
@@ -487,16 +412,12 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         }
     }
 
-    /**
-     * 客户端吸引特效喵
-     */
     private void spawnClientAttractionParticles() {
         if (world == null || !world.isClient) return;
 
         int[] counts = getCoilCounts();
         if (counts[2] == 0 || counts[0] == 0) return;
 
-        // 在方块周围生成旋转粒子
         for (int i = 0; i < 3; i++) {
             double angle = (world.getTime() + i * 120) * 0.1;
             double radius = 0.8;
@@ -505,28 +426,19 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
             double y = pos.getY() + 0.5 + (world.random.nextDouble() - 0.5) * 0.3;
             double z = pos.getZ() + 0.5 + Math.sin(angle) * radius;
 
-            // 紫色粒子
             world.addParticle(ParticleTypes.ENCHANT, x, y, z, 0, 0, 0);
         }
     }
 
-    //api
-
     @Override
-    public void setBoundCushion(BlockPos pos) {
-        this.boundCushionPos = pos;
-        markDirty();
+    public @Nullable BlockPos getBoundControllerPos() {
+        return boundControllerPos;
     }
 
     @Override
-    public CushionBlockEntity getBoundCushion() {
-        if (world != null && boundCushionPos != null) {
-            BlockEntity be = world.getBlockEntity(boundCushionPos);
-            if (be instanceof CushionBlockEntity cushion) {
-                return cushion;
-            }
-        }
-        return null;
+    public void setBoundControllerPos(@Nullable BlockPos pos) {
+        this.boundControllerPos = pos;
+        this.markDirty();
     }
 
     @Override
@@ -660,7 +572,6 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         return huds;
     }
 
-
     public static void tick(World world, BlockPos pos, BlockState state, CoilBlockEntity blockEntity) {
         if (world.isClient) {
             blockEntity.clientTick();
@@ -670,7 +581,6 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
     }
 
     public void clientTick() {
-
         if (world != null && world.getTime() % 5 == 0 && temperature > 50) {
             spawnHeatParticles();
         }
@@ -738,7 +648,6 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
     }
 
     private void spawnHeatParticles() {
-        // 热热的粒子效果喵
         if (world.random.nextFloat() < 0.1f) {
             double x = pos.getX() + 0.5 + (world.random.nextDouble() - 0.5) * 0.3;
             double y = pos.getY() + 1.5;
@@ -758,12 +667,10 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         }
     }
 
-
     @Override
     protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         super.writeNbt(nbt, registryLookup);
 
-        // 线圈数据
         NbtList coilList = new NbtList();
         for (CoilType coil : coils) {
             coilList.add(NbtString.of(coil.id));
@@ -771,20 +678,17 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         nbt.put("Coils", coilList);
         nbt.putBoolean("IsFixed", isFixed);
 
-        // 能量和温度
         nbt.putFloat("NekoFlux", nekoFlux);
         nbt.putFloat("Temperature", temperature);
         nbt.putFloat("MaxTemperature", maxTemperature);
         nbt.putFloat("HeatRate", heatRate);
 
-        // 猫垫绑定
-        if (boundCushionPos != null) {
-            nbt.putInt("CushionX", boundCushionPos.getX());
-            nbt.putInt("CushionY", boundCushionPos.getY());
-            nbt.putInt("CushionZ", boundCushionPos.getZ());
+        if (boundControllerPos != null) {
+            nbt.putInt("ControllerX", boundControllerPos.getX());
+            nbt.putInt("ControllerY", boundControllerPos.getY());
+            nbt.putInt("ControllerZ", boundControllerPos.getZ());
         }
 
-        // 零件
         NbtCompound componentsNbt = new NbtCompound();
         for (Map.Entry<Direction, Item> entry : attachedComponents.entrySet()) {
             String sideName = entry.getKey().getName();
@@ -798,7 +702,6 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
     protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         super.readNbt(nbt, registryLookup);
 
-        // 线圈数据喵
         coils.clear();
         if (nbt.contains("Coils", NbtElement.LIST_TYPE)) {
             NbtList coilList = nbt.getList("Coils", NbtElement.STRING_TYPE);
@@ -817,21 +720,23 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
 
         isFixed = nbt.getBoolean("IsFixed");
 
-        // 能量/温度喵
         nekoFlux = nbt.getFloat("NekoFlux");
         temperature = nbt.getFloat("Temperature");
         maxTemperature = nbt.getFloat("MaxTemperature");
         heatRate = nbt.getFloat("HeatRate");
 
-        // 猫垫绑定喵
-        if (nbt.contains("CushionX")) {
+        if (nbt.contains("ControllerX")) {
+            int x = nbt.getInt("ControllerX");
+            int y = nbt.getInt("ControllerY");
+            int z = nbt.getInt("ControllerZ");
+            boundControllerPos = new BlockPos(x, y, z);
+        } else if (nbt.contains("CushionX")) {
             int x = nbt.getInt("CushionX");
             int y = nbt.getInt("CushionY");
             int z = nbt.getInt("CushionZ");
-            boundCushionPos = new BlockPos(x, y, z);
+            boundControllerPos = new BlockPos(x, y, z);
         }
 
-        // 零件喵
         attachedComponents.clear();
         if (nbt.contains("AttachedComponents", NbtElement.COMPOUND_TYPE)) {
             NbtCompound componentsNbt = nbt.getCompound("AttachedComponents");
@@ -847,7 +752,6 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
 
         recalculateProperties();
     }
-
 
     @Nullable
     @Override

@@ -4,7 +4,7 @@ import com.nekotech.block.entity.CushionBlockEntity;
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.block.entity.api.ICatNeedMachine;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
-import com.nekotech.item.api.googles.IHaveGoogleHUD;
+import com.nekotech.block.entity.api.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.ContainerHUDData;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
 import com.nekotech.block.ModBlocks;
@@ -22,6 +22,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -34,7 +35,7 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity
 
     private RecipeEntry<AlloyRecipe> cachedRecipe = null;
 
-    //客户端渲染用
+    // 客户端渲染用
     private int bounceTick = 0;
     private boolean bouncing = false;
     private boolean isCrafting = false;
@@ -45,13 +46,12 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity
     public static final int OUTPUT_SLOT_1 = 2;
     public static final int OUTPUT_SLOT_2 = 3;
 
-
     private float temperature = 0;  // 当前温度
-
     public int alloyProgress = 0;      // 当前合金进度
     private int alloyTimeTotal = 0;     // 总所需时间
 
-    private BlockPos boundCushionPos = null;
+    // 修改：改为绑定控制器位置
+    private BlockPos boundControllerPos = null;
 
     public static void tick(World world, BlockPos pos, BlockState state, AlloyPotBlockEntity blockEntity) {
         if (world.isClient) {
@@ -74,7 +74,6 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity
 
     @Override
     public boolean canExtract(ItemStack stack, int slot) {
-
         if (slot == INPUT_SLOT_1 || slot == INPUT_SLOT_2) {
             return false;
         }
@@ -104,7 +103,6 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity
     }
 
     public void clientTick() {
-
         boolean shouldBounce = alloyProgress > 0;
 
         if (bouncing) {
@@ -139,7 +137,7 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity
             resetProgress();
         }
 
-        if (cachedRecipe == null){
+        if (cachedRecipe == null) {
             isCrafting = false;
             return;
         }
@@ -159,14 +157,21 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity
         if (alloyProgress >= alloyTimeTotal) {
             craft(recipe);
             cachedRecipe = null;
-            world.playSound(null, pos, net.minecraft.sound.SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, net.minecraft.sound.SoundCategory.BLOCKS, 0.6f, 1.2f);
+            world.playSound(null, pos, net.minecraft.sound.SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP,
+                    net.minecraft.sound.SoundCategory.BLOCKS, 0.6f, 1.2f);
             resetProgress();
         }
 
         markDirty();
+
+        // 定期清理无效绑定
+        if (world.getTime() % 200 == 0) {
+            cleanupInvalidBindings();
+        }
     }
 
     private boolean canWork(AlloyRecipe recipe) {
+        // 使用新的 ICatNeedMachine 接口方法
         if (!canMachineRun()) return false;
 
         if (!isHeater(getWorld().getBlockState(getPos().down()))) return false;
@@ -195,7 +200,6 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity
         return true;
     }
 
-
     private void updateTemperature() {
         float target = 0f;
 
@@ -208,7 +212,6 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity
         }
 
         float rate = 0.05f; // 调整升温/降温速度
-
         temperature += (target - temperature) * rate;
 
         // 防止无限接近
@@ -218,7 +221,6 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity
     }
 
     private void craft(AlloyRecipe recipe) {
-
         removeStack(INPUT_SLOT_1, 1);
         removeStack(INPUT_SLOT_2, 1);
 
@@ -252,8 +254,6 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity
         return heater != null ? heater.getMax_temperature() : 0f;
     }
 
-
-
     @Override
     public void setStack(int slot, ItemStack stack) {
         super.setStack(slot, stack);
@@ -277,7 +277,6 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity
         return alloyTimeTotal;
     }
 
-
     @Override
     public ItemStack removeStack(int slot, int amount) {
         ItemStack result = super.removeStack(slot, amount);
@@ -294,12 +293,28 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity
     protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         super.writeNbt(nbt, registryLookup);
         nbt.putInt("Progress", alloyProgress);
+
+        if (boundControllerPos != null) {
+            nbt.putInt("ControllerX", boundControllerPos.getX());
+            nbt.putInt("ControllerY", boundControllerPos.getY());
+            nbt.putInt("ControllerZ", boundControllerPos.getZ());
+        }
     }
 
     @Override
     protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         super.readNbt(nbt, registryLookup);
         alloyProgress = nbt.getInt("Progress");
+
+        if (nbt.contains("ControllerX")) {
+            boundControllerPos = new BlockPos(
+                    nbt.getInt("ControllerX"),
+                    nbt.getInt("ControllerY"),
+                    nbt.getInt("ControllerZ")
+            );
+        } else {
+            boundControllerPos = null;
+        }
     }
 
     @Override
@@ -308,7 +323,7 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity
             return null;
         }
 
-        java.util.List<GoogleAbstractHUD> huds = new java.util.ArrayList<>();
+        List<GoogleAbstractHUD> huds = new ArrayList<>();
 
         List<ItemStack> items = new ArrayList<>();
         if (this instanceof Inventory inventory) {
@@ -321,12 +336,15 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity
         ContainerHUDData containerHUD = new ContainerHUDData(pos, items, containerTitle, 2, 2);
         huds.add(containerHUD);
 
+        boolean hasActiveController = hasActiveController();
+
         Text title = Text.translatable("block.neko-technology.alloy_pot").formatted(Formatting.GOLD);
         Text content = Text.translatable("block.neko-technology.alloy_pot.description"
                 ,(int) getHeaterTemperature()
                 ,getHeaterMaxTemperature()
                 ,isCrafting ? Text.translatable("block.neko-technology.yes") : Text.translatable("block.neko-technology.no")
-                ,isHeater(getWorld().getBlockState(getPos().down())) && canMachineRun() ? Text.translatable("block.neko-technology.yes") : Text.translatable("block.neko-technology.no")
+                ,isHeater(getWorld().getBlockState(getPos().down())) && hasActiveController ?
+                        Text.translatable("block.neko-technology.yes") : Text.translatable("block.neko-technology.no")
         );
         huds.add(new InfoBoxHUDData(pos, title, content));
 
@@ -334,19 +352,14 @@ public class AlloyPotBlockEntity extends TakeFreelyMachineBlockEntity
     }
 
     @Override
-    public void setBoundCushion(BlockPos pos) {
-        this.boundCushionPos = pos;
-        markDirty();
+    public @Nullable BlockPos getBoundControllerPos() {
+        return boundControllerPos;
     }
 
     @Override
-    public CushionBlockEntity getBoundCushion() {
-        if (world == null || boundCushionPos == null) return null;
-        var be = world.getBlockEntity(boundCushionPos);
-        if (be instanceof CushionBlockEntity cushion && cushion.isRegistered(this)) {
-            return cushion;
-        }
-        boundCushionPos = null; // 自动清理无效绑定
-        return null;
+    public void setBoundControllerPos(@Nullable BlockPos pos) {
+        this.boundControllerPos = pos;
+        this.markDirty();
     }
+
 }

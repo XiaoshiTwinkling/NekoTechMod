@@ -6,7 +6,7 @@ import com.nekotech.block.entity.api.TakeFreelyInventory;
 import com.nekotech.block.entity.machines.coil.CoilBlockEntity;
 import com.nekotech.item.ModItems;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
-import com.nekotech.item.api.googles.IHaveGoogleHUD;
+import com.nekotech.block.entity.api.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.ContainerHUDData;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
 import com.nekotech.block.Heater;
