@@ -1,4 +1,4 @@
-package com.nekotech.block;
+package com.nekotech.block.custom;
 
 import com.mojang.serialization.MapCodec;
 import com.nekotech.block.entity.machines.BellowsBlockEntity;

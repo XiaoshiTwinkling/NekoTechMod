@@ -1,4 +1,4 @@
-package com.nekotech.block.elevator;
+package com.nekotech.block.custom.elevator;
 
 import net.minecraft.util.StringIdentifiable;
 

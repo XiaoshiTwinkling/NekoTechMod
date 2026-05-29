@@ -1,4 +1,4 @@
-package com.nekotech.block.crops;
+package com.nekotech.block.custom.crops;
 
 import com.nekotech.item.ModItems;
 import net.minecraft.block.Block;

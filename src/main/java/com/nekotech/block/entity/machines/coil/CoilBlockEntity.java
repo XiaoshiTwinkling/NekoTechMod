@@ -1,6 +1,5 @@
 package com.nekotech.block.entity.machines.coil;
 
-import com.nekotech.block.entity.CushionBlockEntity;
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.block.entity.api.ICatNeedMachine;
 import com.nekotech.block.entity.api.component.ComponentAdaptation;
@@ -13,7 +12,7 @@ import com.nekotech.item.ModItems;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.block.entity.api.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
-import com.nekotech.block.CoilBlock;
+import com.nekotech.block.custom.CoilBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -776,6 +775,8 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
                 dropAllContents(world, pos, null, false);
             }
         }
+
+        onMachineRemoved();
         super.markRemoved();
     }
 }

@@ -1,6 +1,7 @@
 package com.nekotech.block;
 
 import com.mojang.serialization.MapCodec;
+import com.nekotech.block.custom.DirectionalMachineBlock;
 import com.nekotech.block.entity.machines.WorkBenchBlockEntity;
 import com.nekotech.item.ModItems;
 import com.nekotech.item.custom.Hammer;
@@ -30,7 +31,7 @@ public class WorkBench extends DirectionalMachineBlock {
 
     public static final BooleanProperty HAS_GLASS_COVER = BooleanProperty.of("has_glass_cover");
 
-    protected WorkBench(Settings settings) {
+    public WorkBench(Settings settings) {
         super(settings);
         this.setDefaultState(this.getStateManager().getDefaultState()
                 .with(HAS_GLASS_COVER, false));

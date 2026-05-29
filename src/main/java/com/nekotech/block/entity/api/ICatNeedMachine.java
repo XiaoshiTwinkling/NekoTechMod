@@ -181,4 +181,15 @@ public interface ICatNeedMachine {
             setBoundControllerPos(null);
         }
     }
+
+    /**
+     * 当机器方块被破坏时调用，通知控制器注销此机器喵~
+     * 默认实现会查找并通知所有绑定的控制器喵~
+     */
+    default void onMachineRemoved() {
+        ICatControlBlock controller = getBoundController();
+        if (controller != null) {
+            controller.unregisterMachine(getMachinePos());
+        }
+    }
 }

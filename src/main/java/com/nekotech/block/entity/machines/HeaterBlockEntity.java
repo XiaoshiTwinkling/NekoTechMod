@@ -9,7 +9,7 @@ import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.block.entity.api.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.ContainerHUDData;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
-import com.nekotech.block.Heater;
+import com.nekotech.block.custom.Heater;
 import com.nekotech.item.custom.component.IcanItemIO;
 import com.nekotech.modTags.ModTags;
 import net.minecraft.block.BlockState;

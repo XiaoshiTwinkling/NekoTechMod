@@ -132,8 +132,11 @@ public class BellowsBlockEntity extends BlockEntity implements ICatNeedMachine {
         this.markDirty();
     }
 
-    // 可选：保留一个便捷方法用于调试
-    public boolean hasBoundController() {
-        return boundControllerPos != null;
+    @Override
+    public void markRemoved() {
+        // 通知绑定的控制器
+        onMachineRemoved();
+
+        super.markRemoved();
     }
 }

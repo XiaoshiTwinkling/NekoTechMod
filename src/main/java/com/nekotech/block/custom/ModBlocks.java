@@ -1,10 +1,11 @@
-package com.nekotech.block;
+package com.nekotech.block.custom;
 
 import com.nekotech.NekoTechnology;
-import com.nekotech.block.crops.CatnipCropBlock;
-import com.nekotech.block.crops.PetgrassCropBlock;
-import com.nekotech.block.elevator.ElevatorCoreBlock;
-import com.nekotech.block.elevator.ElevatorPartBlock;
+import com.nekotech.block.WorkBench;
+import com.nekotech.block.custom.crops.CatnipCropBlock;
+import com.nekotech.block.custom.crops.PetgrassCropBlock;
+import com.nekotech.block.custom.elevator.ElevatorCoreBlock;
+import com.nekotech.block.custom.elevator.ElevatorPartBlock;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -20,8 +21,14 @@ public class ModBlocks {
 
     public static final Block CUSHION_BLOCK = register("cushion_block", new Cushion(
             FabricBlockSettings.create()
-                    .strength(0.3f)  // 软垫子
+                    .strength(0.3f)
                     .sounds(BlockSoundGroup.WOOL)
+    ));
+
+    public static final Block CAT_HOUSE = register("cat_house", new CatHouseBlock(
+            FabricBlockSettings.create()
+                    .strength(0.3f)
+                    .sounds(BlockSoundGroup.WOOD)
     ));
 
     public static final Block HEATER = register("heater", new Heater(AbstractBlock.Settings.create()

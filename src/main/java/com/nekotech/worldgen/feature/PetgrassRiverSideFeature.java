@@ -1,8 +1,8 @@
 package com.nekotech.worldgen.feature;
 
 import com.mojang.serialization.Codec;
-import com.nekotech.block.ModBlocks;
-import com.nekotech.block.crops.PetgrassCropBlock;
+import com.nekotech.block.custom.ModBlocks;
+import com.nekotech.block.custom.crops.PetgrassCropBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;

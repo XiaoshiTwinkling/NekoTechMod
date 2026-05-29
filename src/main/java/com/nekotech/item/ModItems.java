@@ -2,7 +2,7 @@ package com.nekotech.item;
 
 import com.nekotech.NekoTechnology;
 import com.nekotech.block.entity.api.component.ComponentAdaptation;
-import com.nekotech.block.ModBlocks;
+import com.nekotech.block.custom.ModBlocks;
 import com.nekotech.item.custom.*;
 import com.nekotech.item.custom.NekoMark.NekoMarkItem;
 import com.nekotech.item.custom.NekoTag.NekoTagItem;

@@ -254,4 +254,12 @@ public class FluxStorageBlockEntity extends MachineBlockEntity
         this.writeNbt(nbt, registries);
         return nbt;
     }
+
+    @Override
+    public void markRemoved() {
+        // 通知绑定的控制器
+        onMachineRemoved();
+
+        super.markRemoved();
+    }
 }

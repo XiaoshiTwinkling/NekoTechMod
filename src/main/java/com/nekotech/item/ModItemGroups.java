@@ -1,7 +1,7 @@
 package com.nekotech.item;
 
 import com.nekotech.NekoTechnology;
-import com.nekotech.block.ModBlocks;
+import com.nekotech.block.custom.ModBlocks;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
@@ -108,6 +108,7 @@ public class ModItemGroups {
                         .icon(() -> new ItemStack(ModBlocks.HEATER))
                         .entries(((displayContext, entries) -> {
                             entries.add(ModBlocks.CUSHION_BLOCK);
+                            entries.add(ModBlocks.CAT_HOUSE);
                             entries.add(ModBlocks.BELLOWS);
                             entries.add(ModBlocks.HEATER);
                             entries.add(ModBlocks.ALLOY_POT);

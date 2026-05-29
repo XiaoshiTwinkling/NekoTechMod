@@ -2,12 +2,13 @@ package com.nekotech.block.entity;
 
 import com.mojang.datafixers.types.Type;
 import com.nekotech.NekoTechnology;
+import com.nekotech.block.custom.CatHouseBlock;
 import com.nekotech.block.entity.machines.*;
 import com.nekotech.block.entity.machines.coil.CoilBlockEntity;
 import com.nekotech.block.entity.machines.conductor.CircuitBreakerBlockEntity;
 import com.nekotech.block.entity.machines.conductor.FluxStorageBlockEntity;
 import com.nekotech.block.entity.machines.conductor.MachineCasingBlockEntity;
-import com.nekotech.block.ModBlocks;
+import com.nekotech.block.custom.ModBlocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.datafixer.TypeReferences;
@@ -57,6 +58,9 @@ public class ModBlockEntities {
 
     public static BlockEntityType<CircuitBreakerBlockEntity> CIRCUIT_BREAKER =
             create("circuit_breaker", BlockEntityType.Builder.create(CircuitBreakerBlockEntity::new, ModBlocks.CIRCUIT_BREAKER));
+
+    public static BlockEntityType<CatHouseBlockEntity> CAT_HOUSE =
+            create("cat_house", BlockEntityType.Builder.create(CatHouseBlockEntity::new, ModBlocks.CAT_HOUSE));
 
     private static <T extends BlockEntity> BlockEntityType<T> create(String id, BlockEntityType.Builder<T> builder){
         Type<?> type = Util.getChoiceType(TypeReferences.BLOCK_ENTITY, id);
