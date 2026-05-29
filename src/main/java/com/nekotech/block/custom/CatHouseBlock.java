@@ -11,6 +11,8 @@ import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -18,12 +20,20 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class CatHouseBlock extends BlockWithEntity {
-
-
+public class CatHouseBlock extends DirectionalMachineBlock {
 
     public CatHouseBlock(Settings settings) {
         super(settings);
+        this.setDefaultState(this.getStateManager().getDefaultState()
+                .with(OPEN, true));
+    }
+
+    public static final BooleanProperty OPEN = BooleanProperty.of("open");
+
+    @Override
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        super.appendProperties(builder);
+        builder.add(OPEN);
     }
 
     @Override
@@ -49,19 +59,17 @@ public class CatHouseBlock extends BlockWithEntity {
         }
 
         BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (!(blockEntity instanceof CatHouseBlockEntity catHouse)) {
-            return ActionResult.PASS;
+        if (blockEntity instanceof CatHouseBlockEntity catHouse) {
+            Hand hand = player.getActiveHand();
+            ItemStack stack = player.getStackInHand(hand);
+            boolean success = catHouse.interact(player, stack, hand);
+
+            if (success) {
+                boolean hasCat = catHouse.hasCatStored();
+                world.setBlockState(pos, state.with(OPEN, !hasCat), Block.NOTIFY_ALL);
+            }
         }
-        Hand hand= player.getActiveHand();
-
-        ItemStack stack = player.getStackInHand(hand);
-        boolean success = catHouse.interact(player, stack, hand);
-
-        if (success) {
-            return ActionResult.SUCCESS;
-        }
-
-        return super.onUse(state, world, pos, player, hit);
+        return ActionResult.SUCCESS;
     }
 
     @Override
