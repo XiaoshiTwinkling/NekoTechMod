@@ -1,11 +1,9 @@
 package com.nekotech.item.custom;
 
-import com.nekotech.NekoTechnology;
 import com.nekotech.item.ModItem;
-import com.nekotech.item.block.WorkBench;
+import com.nekotech.block.WorkBench;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;

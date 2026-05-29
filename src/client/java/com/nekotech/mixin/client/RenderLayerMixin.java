@@ -1,6 +1,5 @@
 package com.nekotech.mixin.client;
 
-import com.nekotech.item.block.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderLayers;

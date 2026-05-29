@@ -2,7 +2,7 @@ package com.nekotech.block.entity;
 
 import com.nekotech.block.entity.api.ImplementedInventory;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
-import com.nekotech.item.block.ModBlocks;
+import com.nekotech.block.ModBlocks;
 import com.nekotech.util.ElevatorMath;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;

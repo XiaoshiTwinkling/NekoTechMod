@@ -1,4 +1,4 @@
-package com.nekotech.item.block.elevator;
+package com.nekotech.block.elevator;
 
 import com.mojang.serialization.MapCodec;
 import com.nekotech.block.entity.ModBlockEntities;

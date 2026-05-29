@@ -8,7 +8,7 @@ import com.nekotech.events.ServerTick;
 import com.nekotech.handler.DriedFishTameHandler;
 import com.nekotech.item.ModItemGroups;
 import com.nekotech.item.ModItems;
-import com.nekotech.item.block.ModBlocks;
+import com.nekotech.block.ModBlocks;
 import com.nekotech.network.NetworkHandler;
 import com.nekotech.recipe.ModRecipes;
 import com.nekotech.screen.ModScreenHandlers;

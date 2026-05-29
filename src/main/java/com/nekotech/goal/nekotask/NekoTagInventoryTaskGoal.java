@@ -1,7 +1,7 @@
 package com.nekotech.goal.nekotask;
 
 import com.nekotech.data.worlddata.NekoTagWorldState;
-import com.nekotech.item.block.elevator.ElevatorPartBlock;
+import com.nekotech.block.elevator.ElevatorPartBlock;
 import com.nekotech.item.custom.NekoMark.NekoMarkAccess;
 import com.nekotech.item.custom.NekoTag.NekoPlacedTag;
 import net.minecraft.block.BlockState;

@@ -2,7 +2,7 @@ package com.nekotech.block.entity.machines;
 
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.block.entity.api.TakeFreelyInventory;
-import com.nekotech.item.block.WorkBench;
+import com.nekotech.block.WorkBench;
 import com.nekotech.recipe.ModRecipes;
 import com.nekotech.recipe.WorkBench.forging.ForgingRecipe;
 import net.minecraft.block.BlockState;

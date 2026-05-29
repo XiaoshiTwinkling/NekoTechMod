@@ -2,7 +2,7 @@ package com.nekotech;
 
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.item.ModItems;
-import com.nekotech.item.block.ModBlocks;
+import com.nekotech.block.ModBlocks;
 import com.nekotech.item.custom.NekoTag.NekoTagData;
 import com.nekotech.renderer.*;
 import com.nekotech.network.ClientHudNetworkHandler;
@@ -10,7 +10,6 @@ import com.nekotech.renderer.blockentities.*;
 import com.nekotech.renderer.components.ComponentAttachmentRenderer;
 import com.nekotech.screen.ModScreenHandlers;
 import com.nekotech.screens.NekoTagScreen;
-import com.nekotech.util.DelayManager;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;

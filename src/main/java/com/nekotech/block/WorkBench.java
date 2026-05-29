@@ -1,4 +1,4 @@
-package com.nekotech.item.block;
+package com.nekotech.block;
 
 import com.mojang.serialization.MapCodec;
 import com.nekotech.block.entity.machines.WorkBenchBlockEntity;

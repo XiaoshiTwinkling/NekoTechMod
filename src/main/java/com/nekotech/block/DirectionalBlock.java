@@ -1,4 +1,4 @@
-package com.nekotech.item.block;
+package com.nekotech.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;

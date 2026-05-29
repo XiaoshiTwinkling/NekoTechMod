@@ -1,7 +1,7 @@
 package com.nekotech.item;
 
 import com.nekotech.NekoTechnology;
-import com.nekotech.item.block.ModBlocks;
+import com.nekotech.block.ModBlocks;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
@@ -116,6 +116,7 @@ public class ModItemGroups {
                             entries.add(ModBlocks.WORK_BENCH);
                             entries.add(ModBlocks.COIL_BLOCK);
                             entries.add(ModItems.ELEVATOR_ITEM);
+                            entries.add(ModBlocks.CIRCUIT_BREAKER);
 
                         })).build());
 

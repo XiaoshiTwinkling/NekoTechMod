@@ -7,7 +7,7 @@ import com.nekotech.block.entity.machines.MachineBlockEntity;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
-import com.nekotech.item.block.CircuitBreakerBlock;
+import com.nekotech.block.CircuitBreakerBlock;
 import com.nekotech.util.DelayManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;

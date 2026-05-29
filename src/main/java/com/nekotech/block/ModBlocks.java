@@ -1,11 +1,10 @@
-package com.nekotech.item.block;
+package com.nekotech.block;
 
 import com.nekotech.NekoTechnology;
-import com.nekotech.block.entity.ModBlockEntities;
-import com.nekotech.item.block.crops.CatnipCropBlock;
-import com.nekotech.item.block.crops.PetgrassCropBlock;
-import com.nekotech.item.block.elevator.ElevatorCoreBlock;
-import com.nekotech.item.block.elevator.ElevatorPartBlock;
+import com.nekotech.block.crops.CatnipCropBlock;
+import com.nekotech.block.crops.PetgrassCropBlock;
+import com.nekotech.block.elevator.ElevatorCoreBlock;
+import com.nekotech.block.elevator.ElevatorPartBlock;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;

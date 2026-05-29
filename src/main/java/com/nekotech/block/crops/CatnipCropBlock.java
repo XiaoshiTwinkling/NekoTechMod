@@ -1,4 +1,4 @@
-package com.nekotech.item.block.crops;
+package com.nekotech.block.crops;
 
 import com.nekotech.item.ModItems;
 import net.minecraft.block.Block;
@@ -6,15 +6,14 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.CropBlock;
 import net.minecraft.item.ItemConvertible;
-import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 
-public class PetgrassCropBlock extends CropBlock {
-    public PetgrassCropBlock(Settings settings) {
+public class CatnipCropBlock extends CropBlock {
+    public CatnipCropBlock(Settings settings) {
         super(settings);
     }
 
@@ -41,19 +40,12 @@ public class PetgrassCropBlock extends CropBlock {
 
     @Override
     protected ItemConvertible getSeedsItem() {
-        return ModItems.PETGRASS_SEEDS;
+        return ModItems.CATNIP_SEEDS;
     }
 
     @Override
     protected boolean canPlantOnTop(BlockState floor, BlockView world, BlockPos pos) {
-        return floor.isIn(BlockTags.DIRT) || floor.isOf(Blocks.FARMLAND);
-    }
-    @Override
-    public boolean canPlaceAt(BlockState state, net.minecraft.world.WorldView world, BlockPos pos) {
-        BlockPos groundPos = pos.down();
-        BlockState groundState = world.getBlockState(groundPos);
-
-        return this.canPlantOnTop(groundState, world, groundPos);
+        return floor.isOf(Blocks.FARMLAND);
     }
 
 }

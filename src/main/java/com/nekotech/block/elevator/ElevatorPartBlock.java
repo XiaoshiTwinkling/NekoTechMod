@@ -1,7 +1,7 @@
-package com.nekotech.item.block.elevator;
+package com.nekotech.block.elevator;
 
 import com.nekotech.block.entity.ElevatorCoreBlockEntity;
-import com.nekotech.item.block.ModBlocks;
+import com.nekotech.block.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;

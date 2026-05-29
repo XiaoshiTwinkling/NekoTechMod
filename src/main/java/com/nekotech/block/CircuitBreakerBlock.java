@@ -1,4 +1,4 @@
-package com.nekotech.item.block;
+package com.nekotech.block;
 
 import com.mojang.serialization.MapCodec;
 import com.nekotech.block.entity.ModBlockEntities;
@@ -28,8 +28,6 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
-
-import static com.nekotech.item.block.DirectionalMachineBlock.FACING;
 
 
 public class CircuitBreakerBlock extends DirectionalMachineBlock {

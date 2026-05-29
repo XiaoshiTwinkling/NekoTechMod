@@ -1,7 +1,7 @@
 package com.nekotech.goal.nekotask;
 
 import com.nekotech.block.entity.ElevatorCoreBlockEntity;
-import com.nekotech.item.block.elevator.ElevatorPartBlock;
+import com.nekotech.block.elevator.ElevatorPartBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
