@@ -48,5 +48,12 @@ public class PetgrassCropBlock extends CropBlock {
     protected boolean canPlantOnTop(BlockState floor, BlockView world, BlockPos pos) {
         return floor.isIn(BlockTags.DIRT) || floor.isOf(Blocks.FARMLAND);
     }
+    @Override
+    public boolean canPlaceAt(BlockState state, net.minecraft.world.WorldView world, BlockPos pos) {
+        BlockPos groundPos = pos.down();
+        BlockState groundState = world.getBlockState(groundPos);
+
+        return this.canPlantOnTop(groundState, world, groundPos);
+    }
 
 }

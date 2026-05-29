@@ -13,6 +13,8 @@ import com.nekotech.network.NetworkHandler;
 import com.nekotech.recipe.ModRecipes;
 import com.nekotech.screen.ModScreenHandlers;
 import com.nekotech.util.DelayManager;
+import com.nekotech.worldgen.ModWorldGeneration;
+import com.nekotech.worldgen.feature.ModFeatures;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.world.ServerWorld;
@@ -50,6 +52,8 @@ public class NekoTechnology implements ModInitializer {
 		DelayManager.initialize();
         BlockBreakEvents.register();
 		new ConductorSystem().onInitialize();
+        ModWorldGeneration.register();
+        ModFeatures.register();
 
 		UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
 			// 调用自定义处理逻辑
