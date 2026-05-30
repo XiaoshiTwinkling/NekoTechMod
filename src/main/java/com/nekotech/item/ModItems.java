@@ -40,11 +40,13 @@ public class ModItems {
     public static final Item TIN_CAN = registerItems("tin_can", new Item(new Item.Settings()));
     public static final Item HAMMER = registerItems("hammer", new Hammer(new Item.Settings()));
     public static final Item PIG_IRON_INGOT = registerItems("pig_iron_ingot", new Item(new Item.Settings()));
+    public static final Item PIG_IRON_NUGGET = registerItems("pig_iron_nugget", new Item(new Item.Settings()));
     public static final Item PIG_IRON_PLATE = registerItems("pig_iron_plate", new Item(new Item.Settings()));
     public static final Item FISH_CAN = registerItems("fish_can", new ModItem(new Item.Settings().food(new FoodComponent.Builder().nutrition(12).saturationModifier(0.8F).usingConvertsTo(TIN_CAN).build()), "fish_can"));
     public static final Item NEKO_WEB = registerItems("neko_web", new Item(new Item.Settings()));
     public static final Item PINK_LEN = registerItems("pink_len", new Item(new Item.Settings()));
     public static final Item NEKO_COPPER_INGOT = registerItems("neko_copper_ingot", new ModItem(new Item.Settings(),"neko_copper_ingot"));
+    public static final Item NEKO_COPPER_NUGGET = registerItems("neko_copper_nugget", new Item(new Item.Settings()));
     public static final Item SLAG = registerItems("slag", new Item(new Item.Settings()));
     public static final Item SMALL_HANDFUL_OF_SLAG = registerItems("small_handful_of_slag", new Item(new Item.Settings()));
     public static final Item NEKO_COPPER_PLATE = registerItems("neko_copper_plate", new Item(new Item.Settings()));
@@ -57,6 +59,8 @@ public class ModItems {
     public static final Item TIN_INGOT = registerItems("tin_ingot", new Item(new Item.Settings()));
     public static final Item ALUMINUM_NUGGET = registerItems("aluminum_nugget", new Item(new Item.Settings()));
     public static final Item TIN_NUGGET = registerItems("tin_nugget", new Item(new Item.Settings()));
+    public static final Item BRASS_INGOT = registerItems("brass_ingot", new Item(new Item.Settings()));
+    public static final Item BRASS_NUGGET = registerItems("brass_nugget", new Item(new Item.Settings()));
 
     public static final Item NEKO_BOX = registerItems("neko_box", new CatBoxItem(new Item.Settings()));
     public static final Item THERMOMETER = registerItems("thermometer", new Thermometer(new Item.Settings(),"thermometer"));

@@ -41,6 +41,18 @@ public class ModItemGroups {
                             entries.add(ModBlocks.DEEPSLATE_TIN_ORE);
                             entries.add(ModItems.RAW_TIN);
                             entries.add(ModBlocks.RAW_TIN_BLOCK);
+                            entries.add(ModBlocks.PIG_IRON_BLOCK);
+                            entries.add(ModItems.PIG_IRON_INGOT);
+                            entries.add(ModItems.PIG_IRON_NUGGET);
+                            entries.add(ModItems.PIG_IRON_PLATE);
+                            entries.add(ModBlocks.NEKO_COPPER_BLOCK);
+                            entries.add(ModItems.NEKO_COPPER_INGOT);
+                            entries.add(ModItems.NEKO_COPPER_NUGGET);
+                            entries.add(ModItems.NEKO_COPPER_PLATE);
+                            entries.add(ModBlocks.BRASS_BLOCK);
+                            entries.add(ModItems.BRASS_INGOT);
+                            entries.add(ModItems.BRASS_NUGGET);
+
                             entries.add(ModItems.NEKO_SILK);
                             entries.add(ModItems.NEKO_HAIR);
                             entries.add(ModItems.ENHANCED_NEKO_HAIR);
@@ -49,14 +61,10 @@ public class ModItemGroups {
                             entries.add(ModItems.DRIED_FISH);
                             entries.add(ModItems.BURNT_FISH);
                             entries.add(ModItems.TIN_CAN);
-                            entries.add(ModItems.PIG_IRON_INGOT);
-                            entries.add(ModItems.PIG_IRON_PLATE);
                             entries.add(ModItems.FISH_CAN);
                             entries.add(ModItems.NEKO_WEB);
-                            entries.add(ModItems.NEKO_COPPER_INGOT);
                             entries.add(ModItems.SLAG);
                             entries.add(ModItems.SMALL_HANDFUL_OF_SLAG);
-                            entries.add(ModItems.NEKO_COPPER_PLATE);
                             entries.add(ModItems.PINK_LEN);
                             entries.add(ModItems.CATNIP);
                             entries.add(ModItems.CATNIP_SEEDS);

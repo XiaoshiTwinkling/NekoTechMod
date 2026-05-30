@@ -140,6 +140,21 @@ public class ModBlocks {
             new Block(AbstractBlock.Settings.create().mapColor(MapColor.WHITE).instrument(NoteBlockInstrument.BASEDRUM).requiresTool().strength(5.0F, 6.0F))
     );
 
+    public static final Block PIG_IRON_BLOCK = register(
+            "pig_iron_block",
+            new Block(AbstractBlock.Settings.create().mapColor(MapColor.WHITE).requiresTool().strength(5.0F, 6.0F))
+    );
+
+    public static final Block NEKO_COPPER_BLOCK = register(
+            "neko_copper_block",
+            new Block(AbstractBlock.Settings.create().mapColor(MapColor.WHITE).requiresTool().strength(5.0F, 6.0F))
+    );
+
+    public static final Block BRASS_BLOCK = register(
+            "brass_block",
+            new Block(AbstractBlock.Settings.create().mapColor(MapColor.WHITE).requiresTool().strength(5.0F, 6.0F))
+    );
+
     public static final Block ALUMINUM_BLOCK = register(
             "aluminum_block",
             new Block(AbstractBlock.Settings.create().mapColor(MapColor.LIGHT_GRAY).requiresTool().strength(5.0F, 6.0F))
