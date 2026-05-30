@@ -1,7 +1,7 @@
 package com.nekotech.item.custom;
 
 import com.nekotech.item.ModItem;
-import com.nekotech.block.WorkBench;
+import com.nekotech.block.custom.WorkBench;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemUsageContext;

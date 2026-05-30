@@ -2,7 +2,7 @@ package com.nekotech.item;
 
 import com.nekotech.NekoTechnology;
 import com.nekotech.block.entity.api.component.ComponentAdaptation;
-import com.nekotech.block.custom.ModBlocks;
+import com.nekotech.block.ModBlocks;
 import com.nekotech.item.custom.*;
 import com.nekotech.item.custom.NekoMark.NekoMarkItem;
 import com.nekotech.item.custom.NekoTag.NekoTagItem;
@@ -12,6 +12,7 @@ import com.nekotech.item.custom.component.FluxOutputerItem;
 import com.nekotech.item.custom.component.ItemInputerItem;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -50,7 +51,12 @@ public class ModItems {
     public static final Item PETGRASS = registerItems("petgrass", new Item(new Item.Settings()));
     public static final Item PETGRASS_SEEDS = registerItems("petgrass_seeds", new AliasedBlockItem(ModBlocks.PETGRASS_CROP, new Item.Settings()));public static final Item CATNIP = registerItems("catnip", new CatnipItem(new Item.Settings().food(new FoodComponent.Builder().saturationModifier(0.1f).build()), "catnip"));
     public static final Item CATNIP_SEEDS = registerItems("catnip_seeds", new AliasedBlockItem(ModBlocks.CATNIP_CROP, new Item.Settings()));
-
+    public static final Item RAW_ALUMINUM = registerItems("raw_aluminum", new Item(new Item.Settings()));
+    public static final Item RAW_TIN = registerItems("raw_tin", new Item(new Item.Settings()));
+    public static final Item ALUMINUM_INGOT = registerItems("aluminum_ingot", new Item(new Item.Settings()));
+    public static final Item TIN_INGOT = registerItems("tin_ingot", new Item(new Item.Settings()));
+    public static final Item ALUMINUM_NUGGET = registerItems("aluminum_nugget", new Item(new Item.Settings()));
+    public static final Item TIN_NUGGET = registerItems("tin_nugget", new Item(new Item.Settings()));
 
     public static final Item NEKO_BOX = registerItems("neko_box", new CatBoxItem(new Item.Settings()));
     public static final Item THERMOMETER = registerItems("thermometer", new Thermometer(new Item.Settings(),"thermometer"));
@@ -71,6 +77,7 @@ public class ModItems {
     public static final Item BLUE_NEKO_GOGGLES = registerItems("blue_neko_goggles", new GogglesItem(HatItem.Type.HAT, new Item.Settings().maxDamage(HatItem.Type.HAT.getMaxDamage(5)), "neko_goggles"));
     public static final Item YELLOW_NEKO_GOGGLES = registerItems("yellow_neko_goggles", new GogglesItem(HatItem.Type.HAT, new Item.Settings().maxDamage(HatItem.Type.HAT.getMaxDamage(5)), "neko_goggles"));
     public static final Item GREEN_NEKO_GOGGLES = registerItems("green_neko_goggles", new GogglesItem(HatItem.Type.HAT, new Item.Settings().maxDamage(HatItem.Type.HAT.getMaxDamage(5)), "neko_goggles"));
+
 
     private static final Set<Item> allComponents = Collections.synchronizedSet(new LinkedHashSet<>()); //所有零件
     public static final Item COMPONENT_CASING = registerComponent("component_casing", new AbstractComponentItem(new Item.Settings().maxCount(16), "component_casing") {

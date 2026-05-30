@@ -2,7 +2,7 @@ package com.nekotech.block.entity;
 
 import com.nekotech.block.entity.api.ImplementedInventory;
 import com.nekotech.block.entity.api.IHaveGoogleHUD;
-import com.nekotech.block.custom.ModBlocks;
+import com.nekotech.block.ModBlocks;
 import com.nekotech.util.ElevatorMath;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -41,7 +41,7 @@ public class ElevatorCoreBlockEntity extends BlockEntity implements ImplementedI
     private int currentFloor = 0;
     private int startFloor = 0;
     private int targetFloor = 0;
-
+    
     private long moveStartTick = 0L;
     private int moveDurationTicks = 0;
     private boolean moving = false;

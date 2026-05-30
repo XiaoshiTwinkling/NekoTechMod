@@ -1,7 +1,6 @@
-package com.nekotech.block;
+package com.nekotech.block.custom;
 
 import com.mojang.serialization.MapCodec;
-import com.nekotech.block.custom.DirectionalMachineBlock;
 import com.nekotech.block.entity.machines.WorkBenchBlockEntity;
 import com.nekotech.item.ModItems;
 import com.nekotech.item.custom.Hammer;

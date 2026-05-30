@@ -2,7 +2,7 @@ package com.nekotech;
 
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.item.ModItems;
-import com.nekotech.block.custom.ModBlocks;
+import com.nekotech.block.ModBlocks;
 import com.nekotech.item.custom.NekoTag.NekoTagData;
 import com.nekotech.renderer.*;
 import com.nekotech.network.ClientHudNetworkHandler;

@@ -1,7 +1,7 @@
 package com.nekotech.renderer.blockentities;
 
 import com.nekotech.block.entity.ElevatorCoreBlockEntity;
-import com.nekotech.block.custom.ModBlocks;
+import com.nekotech.block.ModBlocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumerProvider;

@@ -6,7 +6,7 @@ import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.block.entity.api.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.ContainerHUDData;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
-import com.nekotech.block.custom.ModBlocks;
+import com.nekotech.block.ModBlocks;
 import com.nekotech.recipe.AlloyPot.AlloyPotRecipeInput;
 import com.nekotech.recipe.AlloyPot.AlloyRecipe;
 import com.nekotech.recipe.ModRecipes;

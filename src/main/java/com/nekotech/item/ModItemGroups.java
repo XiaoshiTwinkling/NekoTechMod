@@ -1,7 +1,7 @@
 package com.nekotech.item;
 
 import com.nekotech.NekoTechnology;
-import com.nekotech.block.custom.ModBlocks;
+import com.nekotech.block.ModBlocks;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
@@ -27,6 +27,20 @@ public class ModItemGroups {
                         .displayName(Text.translatable("itemGroup.nekotech_ingredients"))
                         .icon(() -> new ItemStack(ModItems.NEKO_SILK))
                         .entries(((displayContext, entries) -> {
+                            entries.add(ModBlocks.ALUMINUM_BLOCK);
+                            entries.add(ModItems.ALUMINUM_INGOT);
+                            entries.add(ModItems.ALUMINUM_NUGGET);
+                            entries.add(ModBlocks.ALUMINUM_ORE);
+                            entries.add(ModBlocks.DEEPSLATE_ALUMINUM_ORE);
+                            entries.add(ModItems.RAW_ALUMINUM);
+                            entries.add(ModBlocks.RAW_ALUMINUM_BLOCK);
+                            entries.add(ModBlocks.TIN_BLOCK);
+                            entries.add(ModItems.TIN_INGOT);
+                            entries.add(ModItems.TIN_NUGGET);
+                            entries.add(ModBlocks.TIN_ORE);
+                            entries.add(ModBlocks.DEEPSLATE_TIN_ORE);
+                            entries.add(ModItems.RAW_TIN);
+                            entries.add(ModBlocks.RAW_TIN_BLOCK);
                             entries.add(ModItems.NEKO_SILK);
                             entries.add(ModItems.NEKO_HAIR);
                             entries.add(ModItems.ENHANCED_NEKO_HAIR);

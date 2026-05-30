@@ -8,6 +8,7 @@ import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
 import com.nekotech.item.custom.CatBoxItem;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -40,6 +41,7 @@ public class CatHouseBlockEntity extends BlockEntity implements ICatControlBlock
         super(ModBlockEntities.CAT_HOUSE, pos, state);
         this.controllerId = "cat_house_" + UUID.randomUUID().toString().substring(0, 8);
     }
+
 
     @Override
     public String getControllerId() {

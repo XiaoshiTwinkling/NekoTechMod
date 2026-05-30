@@ -2,13 +2,13 @@ package com.nekotech.block.entity;
 
 import com.mojang.datafixers.types.Type;
 import com.nekotech.NekoTechnology;
-import com.nekotech.block.custom.CatHouseBlock;
 import com.nekotech.block.entity.machines.*;
 import com.nekotech.block.entity.machines.coil.CoilBlockEntity;
 import com.nekotech.block.entity.machines.conductor.CircuitBreakerBlockEntity;
 import com.nekotech.block.entity.machines.conductor.FluxStorageBlockEntity;
 import com.nekotech.block.entity.machines.conductor.MachineCasingBlockEntity;
-import com.nekotech.block.custom.ModBlocks;
+import com.nekotech.block.ModBlocks;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.datafixer.TypeReferences;

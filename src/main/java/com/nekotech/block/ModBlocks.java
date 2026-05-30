@@ -1,21 +1,21 @@
-package com.nekotech.block.custom;
+package com.nekotech.block;
 
 import com.nekotech.NekoTechnology;
-import com.nekotech.block.WorkBench;
+import com.nekotech.block.custom.*;
 import com.nekotech.block.custom.crops.CatnipCropBlock;
 import com.nekotech.block.custom.crops.PetgrassCropBlock;
 import com.nekotech.block.custom.elevator.ElevatorCoreBlock;
 import com.nekotech.block.custom.elevator.ElevatorPartBlock;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
+import net.minecraft.block.*;
+import net.minecraft.block.enums.NoteBlockInstrument;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.intprovider.ConstantIntProvider;
 
 public class ModBlocks {
 
@@ -96,6 +96,58 @@ public class ModBlocks {
             new Block(AbstractBlock.Settings.create()
                     .strength(3.0F, 6.0F)
                     .nonOpaque())
+    );
+
+    public static final Block ALUMINUM_ORE = register(
+            "aluminum_ore",
+            new ExperienceDroppingBlock(
+                    ConstantIntProvider.create(0),
+                    AbstractBlock.Settings.create().mapColor(MapColor.STONE_GRAY).instrument(NoteBlockInstrument.BASEDRUM).requiresTool().strength(3.0F, 3.0F)
+            )
+    );
+
+    public static final Block DEEPSLATE_ALUMINUM_ORE = register(
+            "deepslate_aluminum_ore",
+            new ExperienceDroppingBlock(
+                    ConstantIntProvider.create(0),
+                    AbstractBlock.Settings.copyShallow(ALUMINUM_ORE).mapColor(MapColor.DEEPSLATE_GRAY).strength(4.5F, 3.0F).sounds(BlockSoundGroup.DEEPSLATE)
+            )
+    );
+
+    public static final Block TIN_ORE = register(
+            "tin_ore",
+            new ExperienceDroppingBlock(
+                    ConstantIntProvider.create(0),
+                    AbstractBlock.Settings.create().mapColor(MapColor.STONE_GRAY).instrument(NoteBlockInstrument.BASEDRUM).requiresTool().strength(3.0F, 3.0F)
+            )
+    );
+
+    public static final Block DEEPSLATE_TIN_ORE = register(
+            "deepslate_tin_ore",
+            new ExperienceDroppingBlock(
+                    ConstantIntProvider.create(0),
+                    AbstractBlock.Settings.copyShallow(TIN_ORE).mapColor(MapColor.DEEPSLATE_GRAY).strength(4.5F, 3.0F).sounds(BlockSoundGroup.DEEPSLATE)
+            )
+    );
+
+    public static final Block RAW_ALUMINUM_BLOCK = register(
+            "raw_aluminum_block",
+            new Block(AbstractBlock.Settings.create().mapColor(MapColor.STONE_GRAY).instrument(NoteBlockInstrument.BASEDRUM).requiresTool().strength(5.0F, 6.0F))
+    );
+
+    public static final Block RAW_TIN_BLOCK = register(
+            "raw_tin_block",
+            new Block(AbstractBlock.Settings.create().mapColor(MapColor.WHITE).instrument(NoteBlockInstrument.BASEDRUM).requiresTool().strength(5.0F, 6.0F))
+    );
+
+    public static final Block ALUMINUM_BLOCK = register(
+            "aluminum_block",
+            new Block(AbstractBlock.Settings.create().mapColor(MapColor.LIGHT_GRAY).requiresTool().strength(5.0F, 6.0F))
+    );
+
+    public static final Block TIN_BLOCK = register(
+            "tin_block",
+            new Block(AbstractBlock.Settings.create().mapColor(MapColor.WHITE).requiresTool().strength(5.0F, 6.0F))
     );
 
     public static final Block CIRCUIT_BREAKER = register("circuit_breaker",

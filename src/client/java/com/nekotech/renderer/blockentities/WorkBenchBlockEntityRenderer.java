@@ -1,7 +1,7 @@
 package com.nekotech.renderer.blockentities;
 
 import com.nekotech.block.entity.machines.WorkBenchBlockEntity;
-import com.nekotech.block.WorkBench;
+import com.nekotech.block.custom.WorkBench;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumerProvider;
