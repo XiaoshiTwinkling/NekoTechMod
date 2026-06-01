@@ -2,11 +2,14 @@ package com.nekotech.mixin;
 
 import com.nekotech.NekoTechnology;
 import com.nekotech.goal.MoveToLaserGoal;
+import com.nekotech.goal.nekotask.NekoCatTaskData;
 import com.nekotech.goal.nekotask.NekoTagInventoryTaskGoal;
 import com.nekotech.item.ModItems;
 import com.nekotech.item.custom.NekoMark.NekoMarkAccess;
 import com.nekotech.mixin.Accessor.MobEntityAccessor;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.ai.goal.GoalSelector;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.passive.CatEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -22,6 +25,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.List;
 
 @Mixin(CatEntity.class)
 public class CatEntityMixin implements NekoMarkAccess {
@@ -157,6 +162,54 @@ public class CatEntityMixin implements NekoMarkAccess {
         } else {
             this.nekoTaskData = new NbtCompound();
         }
+    }
+
+    @Inject(method = "onDeath", at = @At("HEAD"))
+    private void dropCarriedItemsOnDeath(DamageSource damageSource, CallbackInfo ci) {
+        CatEntity cat = (CatEntity)(Object)this;
+
+        if (cat.getWorld().isClient()) {
+            return;
+        }
+
+        List<ItemStack> carriedStacks = NekoCatTaskData.readCarriedStacks(
+                this.nekoTaskData,
+                cat.getWorld().getRegistryManager()
+        );
+
+        if (carriedStacks.isEmpty()) {
+            return;
+        }
+
+        for (ItemStack stack : carriedStacks) {
+            if (!stack.isEmpty()) {
+                dropStackWithBurst(cat, stack);
+            }
+        }
+
+        NekoCatTaskData.writeCarriedStacks(
+                this.nekoTaskData,
+                cat.getWorld().getRegistryManager(),
+                List.of()
+        );
+    }
+
+    @Unique
+    private void dropStackWithBurst(CatEntity cat, ItemStack stack) {
+        ItemEntity itemEntity = new ItemEntity(
+                cat.getWorld(),
+                cat.getX(),
+                cat.getY() + 0.25D,
+                cat.getZ(),
+                stack.copy()
+        );
+
+        double velocityX = (cat.getRandom().nextDouble() - 0.5D) * 0.4D;
+        double velocityY = 0.2D + cat.getRandom().nextDouble() * 0.2D;
+        double velocityZ = (cat.getRandom().nextDouble() - 0.5D) * 0.4D;
+
+        itemEntity.setVelocity(velocityX, velocityY, velocityZ);
+        cat.getWorld().spawnEntity(itemEntity);
     }
 
     @Inject(method = "interactMob", at = @At("HEAD"), cancellable = true)
