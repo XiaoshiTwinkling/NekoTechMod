@@ -1,6 +1,7 @@
 package com.nekotech.item.custom;
 
-import com.nekotech.network.NetworkPayloads;
+import com.nekotech.network.payload.s2c.RemoveRayPosPayload;
+import com.nekotech.network.payload.s2c.SendRayPosPayload;
 import com.nekotech.util.LaserTargetCache;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.Item;
@@ -69,7 +70,7 @@ public class RayItem extends Item {
 
             for (ServerPlayerEntity target : player.getServerWorld().getPlayers()) {
                 ServerPlayNetworking.send(target,
-                        new NetworkPayloads.SendRayPosPayload(
+                        new SendRayPosPayload(
                                 player.getUuid(),
                                 hitPos.x,
                                 hitPos.y,
@@ -85,7 +86,7 @@ public class RayItem extends Item {
             LaserTargetCache.remove(player);
             for (ServerPlayerEntity target : player.getServerWorld().getPlayers()) {
                 ServerPlayNetworking.send(target,
-                        new NetworkPayloads.RemoveRayPosPayload(player.getUuid()));
+                        new RemoveRayPosPayload(player.getUuid()));
             }
         }
     }

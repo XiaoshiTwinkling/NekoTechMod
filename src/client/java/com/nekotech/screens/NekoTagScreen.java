@@ -2,7 +2,7 @@ package com.nekotech.screens;
 
 import com.nekotech.item.ModItems;
 import com.nekotech.item.custom.NekoTag.NekoTagData;
-import com.nekotech.network.NetworkPayloads;
+import com.nekotech.network.payload.c2s.NekoTagUpdatePayload;
 import com.nekotech.screen.NekoTag.NekoTagScreenHandler;
 import com.nekotech.item.custom.NekoTag.NekoTask;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -413,7 +413,7 @@ public class NekoTagScreen extends HandledScreen<NekoTagScreenHandler> {
             displayItemId = Registries.ITEM.getId(displayStack.getItem()).toString();
         }
 
-        ClientPlayNetworking.send(new NetworkPayloads.NekoTagUpdatePayload(
+        ClientPlayNetworking.send(new NekoTagUpdatePayload(
                 selectedColor.getName(),
                 priority,
                 selectedTask.id(),
