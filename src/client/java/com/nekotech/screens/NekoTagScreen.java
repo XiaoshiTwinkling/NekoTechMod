@@ -135,7 +135,7 @@ public class NekoTagScreen extends HandledScreen<NekoTagScreenHandler> {
         drawSectionBackground(context, x + 31, y + 137, 169, 81);
 
         drawColorArea(context, x + COLOR_X, y + COLOR_Y, mouseX, mouseY);
-        drawFakeSlot(context, x + FAKE_SLOT_X, y + FAKE_SLOT_Y);
+        drawFakeSlot(context, x + FAKE_SLOT_X, y + FAKE_SLOT_Y, mouseX, mouseY);
         drawTaskList(context, x + TASK_X, y + TASK_Y, mouseX, mouseY);
 
         drawPlayerSlotBackgrounds(context);
@@ -175,8 +175,13 @@ public class NekoTagScreen extends HandledScreen<NekoTagScreenHandler> {
         }
     }
 
-    private void drawFakeSlot(DrawContext context, int slotX, int slotY) {
+    private void drawFakeSlot(DrawContext context, int slotX, int slotY, int mouseX, int mouseY) {
         drawSlotBackground(context, slotX, slotY);
+
+        if (isInsideFakeSlot(mouseX, mouseY, slotX, slotY)) {
+            context.fill(slotX, slotY, slotX + 16, slotY + 16, 0x44FFFFFF);
+            context.drawBorder(slotX - 1, slotY - 1, 18, 18, 0xFFFFFFFF);
+        }
 
         if (!displayStack.isEmpty()) {
             context.drawItem(displayStack, slotX, slotY);
@@ -326,7 +331,7 @@ public class NekoTagScreen extends HandledScreen<NekoTagScreenHandler> {
     }
 
     private boolean clickFakeSlot(double mouseX, double mouseY, int slotX, int slotY) {
-        if (mouseX < slotX || mouseX >= slotX + 18 || mouseY < slotY || mouseY >= slotY + 18) {
+        if (!isInsideFakeSlot(mouseX, mouseY, slotX, slotY)) {
             return false;
         }
 
@@ -341,6 +346,13 @@ public class NekoTagScreen extends HandledScreen<NekoTagScreenHandler> {
         sendSavePacket();
 
         return true;
+    }
+
+    private boolean isInsideFakeSlot(double mouseX, double mouseY, int slotX, int slotY) {
+        return mouseX >= slotX
+                && mouseX < slotX + 18
+                && mouseY >= slotY
+                && mouseY < slotY + 18;
     }
 
     private boolean clickTask(double mouseX, double mouseY, int startX, int startY) {
