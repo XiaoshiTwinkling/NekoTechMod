@@ -1,6 +1,11 @@
 package com.nekotech.network;
 
 import com.nekotech.NekoTechnology;
+import com.nekotech.network.payload.c2s.NekoTagUpdatePayload;
+import com.nekotech.network.payload.c2s.RequestHudDataPayload;
+import com.nekotech.network.payload.s2c.RemoveRayPosPayload;
+import com.nekotech.network.payload.s2c.SendHudDataPayload;
+import com.nekotech.network.payload.s2c.SendRayPosPayload;
 import com.nekotech.item.ModItems;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.block.entity.api.IHaveGoogleHUD;
@@ -37,31 +42,31 @@ public class NetworkHandler {
     public static void initialize() {
         // 注册网络包类型
         PayloadTypeRegistry.playC2S().register(
-                NetworkPayloads.REQUEST_HUD_DATA,
-                NetworkPayloads.RequestHudDataPayload.CODEC
+                RequestHudDataPayload.ID,
+                RequestHudDataPayload.CODEC
         );
 
         PayloadTypeRegistry.playS2C().register(
-                NetworkPayloads.SEND_HUD_DATA,
-                NetworkPayloads.SendHudDataPayload.CODEC
+                SendHudDataPayload.ID,
+                SendHudDataPayload.CODEC
         );
 
         PayloadTypeRegistry.playS2C().register(
-                NetworkPayloads.SEND_RAY_POS,
-                NetworkPayloads.SendRayPosPayload.CODEC
+                SendRayPosPayload.ID,
+                SendRayPosPayload.CODEC
         );
         PayloadTypeRegistry.playS2C().register(
-                NetworkPayloads.REMOVE_RAY_POS,
-                NetworkPayloads.RemoveRayPosPayload.CODEC
+                RemoveRayPosPayload.ID,
+                RemoveRayPosPayload.CODEC
         );
 
         PayloadTypeRegistry.playC2S().register(
-                NetworkPayloads.NekoTagUpdatePayload.ID,
-                NetworkPayloads.NekoTagUpdatePayload.CODEC
+                NekoTagUpdatePayload.ID,
+                NekoTagUpdatePayload.CODEC
         );
 
         ServerPlayNetworking.registerGlobalReceiver(
-                NetworkPayloads.NekoTagUpdatePayload.ID,
+                NekoTagUpdatePayload.ID,
                 (payload, context) -> {
                     context.server().execute(() -> handleNekoTagUpdate(context.player(), payload));
                 }
@@ -70,12 +75,12 @@ public class NetworkHandler {
 
         // 注册请求处理器
         ServerPlayNetworking.registerGlobalReceiver(
-                NetworkPayloads.REQUEST_HUD_DATA,
+                RequestHudDataPayload.ID,
                 NetworkHandler::handleHudDataRequest
         );
     }
 
-    private static void handleNekoTagUpdate(ServerPlayerEntity player, NetworkPayloads.NekoTagUpdatePayload payload) {
+    private static void handleNekoTagUpdate(ServerPlayerEntity player, NekoTagUpdatePayload payload) {
 
         Hand hand = Hand.valueOf(payload.hand());
         ItemStack tagStack = player.getStackInHand(hand);
@@ -116,7 +121,7 @@ public class NetworkHandler {
     }
 
     private static void handleHudDataRequest(
-            NetworkPayloads.RequestHudDataPayload payload,
+            RequestHudDataPayload payload,
             ServerPlayNetworking.Context context
     ) {
         BlockPos pos = payload.pos();
@@ -147,7 +152,7 @@ public class NetworkHandler {
                 // 发送回客户端
                 ServerPlayNetworking.send(
                         player,
-                        new NetworkPayloads.SendHudDataPayload(pos, nbt)
+                        new SendHudDataPayload(pos, nbt)
                 );
             }
         });
