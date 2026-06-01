@@ -115,6 +115,7 @@ public class ModItems {
     public static final Item RED_NEKO_MARK = registerItems("red_neko_mark", new NekoMarkItem(new Item.Settings(), "red_neko_mark", DyeColor.RED));
     public static final Item BLACK_NEKO_MARK = registerItems("black_neko_mark", new NekoMarkItem(new Item.Settings(), "black_neko_mark", DyeColor.BLACK));
 
+    public static final Item NEKO_TAG_READER = registerItems("neko_tag_reader", new NekoTagReaderItem(new Item.Settings().maxCount(1)));
 
 
     private static Item registerItems(String id, Item item){

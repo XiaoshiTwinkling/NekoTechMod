@@ -2,10 +2,12 @@ package com.nekotech.network;
 
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.network.payload.c2s.RequestHudDataPayload;
+import com.nekotech.network.payload.s2c.OpenTagListPayload;
 import com.nekotech.network.payload.s2c.RemoveRayPosPayload;
 import com.nekotech.network.payload.s2c.SendHudDataPayload;
 import com.nekotech.network.payload.s2c.SendRayPosPayload;
 import com.nekotech.renderer.ClientLaserTargetCache;
+import com.nekotech.screens.NekoTagListScreen;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.nbt.NbtCompound;
@@ -31,6 +33,22 @@ public class ClientHudNetworkHandler {
                 RemoveRayPosPayload.ID,
                 ClientHudNetworkHandler::handleRemoveRayPos
         );
+
+        ClientPlayNetworking.registerGlobalReceiver(
+                OpenTagListPayload.ID,
+                ClientHudNetworkHandler::handleOpenTagList
+        );
+    }
+
+    private static void handleOpenTagList(
+            OpenTagListPayload payload,
+            ClientPlayNetworking.Context context
+    ) {
+        context.client().execute(() -> {
+            context.client().setScreen(
+                    new NekoTagListScreen(payload.pos(), payload.tags())
+            );
+        });
     }
 
     private static void handleHudData(

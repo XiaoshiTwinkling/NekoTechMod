@@ -3,6 +3,7 @@ package com.nekotech.network;
 import com.nekotech.NekoTechnology;
 import com.nekotech.network.payload.c2s.NekoTagUpdatePayload;
 import com.nekotech.network.payload.c2s.RequestHudDataPayload;
+import com.nekotech.network.payload.s2c.OpenTagListPayload;
 import com.nekotech.network.payload.s2c.RemoveRayPosPayload;
 import com.nekotech.network.payload.s2c.SendHudDataPayload;
 import com.nekotech.network.payload.s2c.SendRayPosPayload;
@@ -72,11 +73,15 @@ public class NetworkHandler {
                 }
         );
 
-
         // 注册请求处理器
         ServerPlayNetworking.registerGlobalReceiver(
                 RequestHudDataPayload.ID,
                 NetworkHandler::handleHudDataRequest
+        );
+
+        PayloadTypeRegistry.playS2C().register(
+                OpenTagListPayload.ID,
+                OpenTagListPayload.CODEC
         );
     }
 

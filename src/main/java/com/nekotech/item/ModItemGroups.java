@@ -120,6 +120,7 @@ public class ModItemGroups {
                             entries.add(ModItems.GREEN_NEKO_MARK);
                             entries.add(ModItems.RED_NEKO_MARK);
                             entries.add(ModItems.BLACK_NEKO_MARK);
+                            entries.add(ModItems.NEKO_TAG_READER);
 
 
                         })).build());

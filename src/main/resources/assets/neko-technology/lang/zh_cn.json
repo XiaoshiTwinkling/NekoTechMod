@@ -205,5 +205,8 @@
   "message.neko-technology.not_vertical": "两个位置必须上下垂直对齐。",
   "message.neko-technology.too_far": "两个位置的垂直距离必须在 20 格以内。",
   "message.neko-technology.blocked": "升降机井内存在不可替换方块。",
-  "message.neko-technology.placed": "升降机已生成。"
+  "message.neko-technology.placed": "升降机已生成。",
+  "gui.neko-technology.tag_list": "猫咪标签",
+  "gui.neko-technology.no_tags": "没有标签",
+  "item.neko-technology.neko_tag_reader": "Neko 标签读取器"
 }
