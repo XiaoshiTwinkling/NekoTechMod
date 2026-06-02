@@ -23,6 +23,7 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
+import net.minecraft.client.render.entity.CatEntityRenderer;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.util.Identifier;
 
@@ -73,6 +74,10 @@ public class NekoTechnologyClient implements ClientModInitializer {
                 (entityType, renderer, helper, context) -> {
                     if (renderer instanceof PlayerEntityRenderer playerRenderer) {
                         helper.register(new CatTailFeatureRenderer(playerRenderer));
+                    }
+
+                    if (renderer instanceof CatEntityRenderer catRenderer) {
+                        helper.register(new NekoMarkFeatureRenderer(catRenderer));
                     }
                 }
         );

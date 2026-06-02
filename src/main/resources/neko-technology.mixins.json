@@ -3,6 +3,7 @@
 	"package": "com.nekotech.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
+    	"Accessor.CatEntityAccessor",
     	"Accessor.MobEntityAccessor",
     	"CatEntityMixin",
     	"AbstractFurnaceBlockEntityMixin",
