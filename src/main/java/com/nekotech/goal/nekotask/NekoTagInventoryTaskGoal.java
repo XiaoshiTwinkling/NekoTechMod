@@ -2,9 +2,12 @@ package com.nekotech.goal.nekotask;
 
 import com.nekotech.data.worlddata.NekoTagWorldState;
 import com.nekotech.block.custom.elevator.ElevatorPartBlock;
+import com.nekotech.block.entity.api.ICatTaskBlockEntity;
 import com.nekotech.item.custom.NekoMark.NekoMarkAccess;
 import com.nekotech.item.custom.NekoTag.NekoPlacedTag;
+import com.nekotech.item.custom.NekoTag.NekoTask;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.passive.CatEntity;
@@ -24,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 
 public class NekoTagInventoryTaskGoal extends Goal {
 
@@ -262,26 +266,24 @@ public class NekoTagInventoryTaskGoal extends Goal {
         }
 
         BlockPos pos = this.target.pos();
-        BlockState state = world.getBlockState(pos);
-
-        Inventory inventory;
-
-        if (state.getBlock() instanceof ElevatorPartBlock) {
-            inventory = NekoInventoryOps.getElevatorInventory(world, pos);
-        } else {
-            inventory = NekoInventoryOps.getInventoryAt(world, pos);
-        }
 
         NekoPlacedTag tag = this.target.tag();
         String task = tag.task();
 
+        if (executeBlockEntityTask(world, pos, tag, task)) {
+            completeCurrentTask(world);
+            return;
+        }
+
         if (TASK_INPUT.equals(task)) {
+            Inventory inventory = getTaskInventory(world, pos);
             executeInput(world, inventory, tag);
             completeCurrentTask(world);
             return;
         }
 
         if (TASK_OUTPUT.equals(task)) {
+            Inventory inventory = getTaskInventory(world, pos);
             executeOutput(world, inventory, tag);
             completeCurrentTask(world);
             return;
@@ -289,6 +291,51 @@ public class NekoTagInventoryTaskGoal extends Goal {
 
         // 未知任务类型也不阻塞。
         completeCurrentTask(world);
+    }
+
+    private Inventory getTaskInventory(ServerWorld world, BlockPos pos) {
+        BlockState state = world.getBlockState(pos);
+
+        if (state.getBlock() instanceof ElevatorPartBlock) {
+            return NekoInventoryOps.getElevatorInventory(world, pos);
+        }
+
+        return NekoInventoryOps.getInventoryAt(world, pos);
+    }
+
+    private boolean executeBlockEntityTask(
+            ServerWorld world,
+            BlockPos pos,
+            NekoPlacedTag tag,
+            String task
+    ) {
+        NekoTask taskType = NekoTask.byId(task);
+
+        if (!taskType.id().equals(task)) {
+            return false;
+        }
+
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+
+        if (!(blockEntity instanceof ICatTaskBlockEntity taskBlockEntity)) {
+            return false;
+        }
+
+        Map<NekoTask, ICatTaskBlockEntity.NekoTaskHandler> handlers =
+                taskBlockEntity.getNekoTaskHandlers();
+
+        if (handlers == null) {
+            return false;
+        }
+
+        ICatTaskBlockEntity.NekoTaskHandler handler = handlers.get(taskType);
+
+        if (handler == null) {
+            return false;
+        }
+
+        handler.execute(this.cat, tag);
+        return true;
     }
 
     /**
