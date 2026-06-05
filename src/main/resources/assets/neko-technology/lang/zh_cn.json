@@ -82,6 +82,8 @@
   "item.neko-technology.neko_copper_flux_inputer.tooltip": "猫猫能量输入效率: 0.4 NF/tick",
   "item.neko-technology.brass_item_inputer": "黄铜物品输入零件",
   "item.neko-technology.brass_item_inputer.tooltip": "物品输入效率: 0.05 个/tick",
+  "item.neko-technology.brass_item_inputer": "黄铜物品输出零件",
+  "item.neko-technology.brass_item_inputer.tooltip": "物品输出效率: 0.05 个/tick",
   "item.neko-technology.glass_cover": "玻璃罩",
   "item.neko-technology.copper_coil": "铜丝线圈",
   "item.neko-technology.copper_coil.tooltip": "用于提升线圈方块性能的铜线圈",

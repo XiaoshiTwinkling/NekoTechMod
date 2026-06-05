@@ -6,10 +6,7 @@ import com.nekotech.block.ModBlocks;
 import com.nekotech.item.custom.*;
 import com.nekotech.item.custom.NekoMark.NekoMarkItem;
 import com.nekotech.item.custom.NekoTag.NekoTagItem;
-import com.nekotech.item.custom.component.AbstractComponentItem;
-import com.nekotech.item.custom.component.FluxInputerItem;
-import com.nekotech.item.custom.component.FluxOutputerItem;
-import com.nekotech.item.custom.component.ItemInputerItem;
+import com.nekotech.item.custom.component.*;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.block.Blocks;
@@ -88,6 +85,7 @@ public class ModItems {
         @Override public void useComponent(World world, ComponentAdaptation self, Direction side) {}
     });
     public static final Item BRASS_ITEM_INPUTER = registerComponent("brass_item_inputer", new ItemInputerItem(1f, "brass_item_inputer"));
+    public static final Item BRASS_ITEM_OUTPUTER = registerComponent("brass_item_outputer", new ItemOutputerItem(1f, "brass_item_outputer"));
     public static final Item BRASS_FLUX_OUTPUTER = registerComponent("brass_flux_outputer", new FluxOutputerItem(0.1f, "brass_flux_outputer"));
     public static final Item BRASS_FLUX_INPUTER = registerComponent("brass_flux_inputer", new FluxInputerItem(0.1f, "brass_flux_inputer"));
     public static final Item NEKO_COPPER_FLUX_OUTPUTER = registerComponent("neko_copper_flux_outputer", new FluxOutputerItem(0.4f, "neko_copper_flux_outputer"));

@@ -94,6 +94,7 @@ public class ModItemGroups {
                             entries.add(ModItems.NEKO_TAG);
                             entries.add(ModItems.COMPONENT_CASING);
                             entries.add(ModItems.BRASS_ITEM_INPUTER);
+                            entries.add(ModItems.BRASS_ITEM_OUTPUTER);
                             entries.add(ModItems.BRASS_FLUX_OUTPUTER);
                             entries.add(ModItems.BRASS_FLUX_INPUTER);
                             entries.add(ModItems.NEKO_COPPER_FLUX_OUTPUTER);
