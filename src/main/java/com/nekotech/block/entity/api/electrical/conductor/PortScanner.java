@@ -57,14 +57,9 @@ public class PortScanner {
             Item item = entry.getValue();
 
             if (item instanceof WirePoleItem) {
-                // 获取配对信息
                 WirePoleItem.PairInfo pair = WirePoleItem.getPairInfo(world, node.pos, entry.getKey());
                 if (pair != null) {
-                    // 添加虚拟连接
                     node.addVirtualConnection(pair.targetPos);
-
-                    NekoTechnology.LOGGER.debug("[PortScanner] 找到接线柱配对: {} -> {}",
-                            node.pos, pair.targetPos);
                 }
             }
         }

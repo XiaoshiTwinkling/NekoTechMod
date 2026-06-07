@@ -3,6 +3,7 @@ package com.nekotech.block.entity.api.electrical.conductor;
 import com.nekotech.NekoTechnology;
 import com.nekotech.block.entity.api.electrical.ITransferElectrical;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.item.Item;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -98,34 +99,28 @@ public class ConductorGroup {
 
             // 创建节点
             ConductorNode node = new ConductorNode(current);
+
             portScanner.scanPorts(world, node);
+
+            for (BlockPos virtualPos : new HashSet<>(node.virtualConnections)) {
+                if (!visited.contains(virtualPos) && isValidConductor(world, virtualPos)) {
+                    // 将虚拟连接的目标加入BFS队列
+                    queue.offer(virtualPos);
+                    visited.add(virtualPos);
+                }
+            }
+
             this.addNode(node);
 
             // 检查六个物理方向
             for (Direction dir : Direction.values()) {
                 BlockPos neighborPos = current.offset(dir);
-
                 if (visited.contains(neighborPos)) continue;
 
-                // 检查是否是导体方块
                 if (isValidConductor(world, neighborPos)) {
-                    // 添加连接
                     node.addConnection(dir);
                     queue.offer(neighborPos);
                     visited.add(neighborPos);
-                }
-            }
-
-            // 检查虚拟连接（接线柱配对）
-            for (BlockPos virtualPos : node.virtualConnections) {
-                if (visited.contains(virtualPos)) continue;
-
-                if (isValidConductor(world, virtualPos)) {
-                    // 不添加物理方向连接，但加入队列继续BFS
-                    queue.offer(virtualPos);
-                    visited.add(virtualPos);
-
-                    NekoTechnology.LOGGER.debug("[导体组] 通过接线柱连接: {} -> {}", current, virtualPos);
                 }
             }
         }

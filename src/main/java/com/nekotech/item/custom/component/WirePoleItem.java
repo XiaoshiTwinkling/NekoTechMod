@@ -120,8 +120,22 @@ public class WirePoleItem extends AbstractComponentItem {
         NbtCompound nbt = be.createNbtWithId(world.getRegistryManager());
         String key = String.format("WirePair_%s", side.getName());
 
-        return nbt.contains(key, NbtElement.COMPOUND_TYPE);
+        if (!nbt.contains(key, NbtElement.COMPOUND_TYPE)) {
+            return false;
+        }
+
+        NbtCompound pairNbt = nbt.getCompound(key);
+        if (!pairNbt.contains("TargetX") || !pairNbt.contains("TargetY") ||
+                !pairNbt.contains("TargetZ") || !pairNbt.contains("TargetSide") ||
+                !pairNbt.contains("WireType")) {
+            nbt.remove(key);
+            be.markDirty();
+            return false;
+        }
+
+        return true;
     }
+
 
     /**
      * 获取配对信息

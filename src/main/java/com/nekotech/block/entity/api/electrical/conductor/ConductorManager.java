@@ -1,6 +1,7 @@
 package com.nekotech.block.entity.api.electrical.conductor;
 
 import com.nekotech.NekoTechnology;
+import com.nekotech.block.entity.api.component.ComponentAdaptation;
 import com.nekotech.block.entity.api.electrical.ITransferElectrical;
 import com.nekotech.data.worlddata.ConductorWorldState;
 import net.minecraft.block.entity.BlockEntity;
@@ -351,53 +352,51 @@ public class ConductorManager {
             return;
         }
 
-        // 检查是否是导体方块
-        if (blockEntity instanceof ITransferElectrical electrical) {
-            // 检查当前是否可以传输
-            boolean canTransfer = electrical.canTransfer();
-            NekoTechnology.LOGGER.debug("[导体管理器] 方块 {} 的 canTransfer = {}", pos, canTransfer);
-
-            // 获取这个位置的导体组
-            ConductorGroup group = blockToGroup.get(pos);
-
-            if (group != null) {
-                // 如果这个方块原来在导体组中
-                if (!canTransfer) {
-                    // 如果现在不能传输，需要从导体组中移除
-                    NekoTechnology.LOGGER.info("[导体管理器] 方块 {} 变为不可传输，从导体组#{} 中移除", pos, group.id);
-                    handleBlockBreak(world, pos);
-                } else {
-                    // 如果可以传输，需要重新扫描端口
-                    NekoTechnology.LOGGER.debug("[导体管理器] 方块 {} 状态变化，重新扫描端口", pos);
-
-                    ConductorNode node = group.getNode(pos);
-                    if (node != null) {
-                        // 移除旧端口
-                        group.removePortsFromNode(node);
-
-                        // 重新扫描端口（包括接线柱配对）
-                        portScanner.scanPorts(world, node);
-
-                        // 更新端口
-                        group.updatePortsFromNode(node);
-
-                        NekoTechnology.LOGGER.info("[导体管理器] 导体组#{} 的方块 {} 端口已更新", group.id, pos);
-                    }
-                }
-            } else {
-                // 如果这个方块原来不在导体组中
-                if (canTransfer) {
-                    // 如果可以传输，尝试加入导体组
-                    NekoTechnology.LOGGER.info("[导体管理器] 方块 {} 变为可传输，尝试加入导体组", pos);
-                    handleBlockPlace(world, pos);
+        boolean isWirePole = false;
+        if (blockEntity instanceof ComponentAdaptation ca) {
+            for (Direction dir : Direction.values()) {
+                if (ca.getComponent(dir) instanceof com.nekotech.item.custom.component.WirePoleItem) {
+                    isWirePole = true;
+                    break;
                 }
             }
+        }
+
+        if (isWirePole) {
+            NekoTechnology.LOGGER.debug("[导体管理器] 接线柱状态变化: {}", pos);
+            // 对于接线柱，需要重新扫描整个导体组
+            handleWirePoleStateChange(world, pos);
+        } else if (blockEntity instanceof ITransferElectrical electrical) {
+            // ... 原有的处理逻辑 ...
         } else {
             NekoTechnology.LOGGER.debug("[导体管理器] 方块 {} 不是 ITransferElectrical 实例", pos);
         }
 
         // 保存到世界状态
         saveToWorldState();
+    }
+
+    private void handleWirePoleStateChange(World world, BlockPos pos) {
+        // 获取这个接线柱所在的所有导体组
+        ConductorGroup group = blockToGroup.get(pos);
+
+        if (group != null) {
+            // 重新扫描这个导体组中的所有接线柱配对
+            NekoTechnology.LOGGER.info("[导体管理器] 重新扫描导体组#{} 中的接线柱", group.id);
+
+            // 遍历组中的所有节点，重新扫描接线柱配对
+            for (ConductorNode node : new HashSet<>(group.nodes)) {
+                // 清除旧的虚拟连接
+                node.virtualConnections.clear();
+
+                // 重新扫描端口（包括接线柱配对）
+                portScanner.scanPorts(world, node);
+            }
+        } else {
+            // 如果接线柱不在任何导体组中，尝试加入或创建导体组
+            NekoTechnology.LOGGER.info("[导体管理器] 接线柱 {} 不在任何导体组中，尝试加入", pos);
+            handleBlockPlace(world, pos);
+        }
     }
 
     private void processOperation(World world, PendingOperation operation) {

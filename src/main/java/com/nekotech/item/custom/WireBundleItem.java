@@ -127,9 +127,7 @@ public class WireBundleItem extends ModItem {
             return ActionResult.FAIL;
         }
 
-        // 检查接线柱是否已经配对
-        if (WirePoleItem.hasPair(world, firstClick.pos, firstClick.side) ||
-                WirePoleItem.hasPair(world, pos, side)) {
+        if (!canPair(world, firstClick.pos, firstClick.side, pos, side)) {
             player.sendMessage(net.minecraft.text.Text.translatable("wire.pair.already_paired"), false);
             firstClicks.remove(playerId);
             return ActionResult.FAIL;
@@ -147,6 +145,31 @@ public class WireBundleItem extends ModItem {
         }
 
         return ActionResult.SUCCESS;
+    }
+
+    private boolean canPair(World world, BlockPos pos1, Direction side1, BlockPos pos2, Direction side2) {
+        // 使用静态方法检查配对状态
+        if (WirePoleItem.hasPair(world, pos1, side1)) {
+            return false;
+        }
+
+        if (WirePoleItem.hasPair(world, pos2, side2)) {
+            return false;
+        }
+
+        // 检查是否已经是双向配对
+        WirePoleItem.PairInfo existingPair1 = WirePoleItem.getPairInfo(world, pos1, side1);
+        WirePoleItem.PairInfo existingPair2 = WirePoleItem.getPairInfo(world, pos2, side2);
+
+        if (existingPair1 != null && existingPair1.targetPos.equals(pos2)) {
+            return false;
+        }
+
+        if (existingPair2 != null && existingPair2.targetPos.equals(pos1)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
