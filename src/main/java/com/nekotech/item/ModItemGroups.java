@@ -99,7 +99,11 @@ public class ModItemGroups {
                             entries.add(ModItems.BRASS_FLUX_INPUTER);
                             entries.add(ModItems.NEKO_COPPER_FLUX_OUTPUTER);
                             entries.add(ModItems.NEKO_COPPER_FLUX_INPUTER);
+                            entries.add(ModItems.WIRE_POLE);
                             entries.add(ModItems.GLASS_COVER);
+                            entries.add(ModItems.COPPER_WIRE_BUNDLE);
+                            entries.add(ModItems.BRASS_WIRE_BUNDLE);
+                            entries.add(ModItems.NEKO_COPPER_WIRE_BUNDLE);
                             entries.add(ModItems.COPPER_COIL);
                             entries.add(ModItems.PIG_IRON_COIL);
                             entries.add(ModItems.NEKO_COPPER_COIL);

@@ -2,6 +2,7 @@ package com.nekotech.block.entity.api.electrical.conductor;
 
 import com.nekotech.NekoTechnology;
 import com.nekotech.block.entity.api.electrical.ITransferElectrical;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -100,24 +101,48 @@ public class ConductorGroup {
             portScanner.scanPorts(world, node);
             this.addNode(node);
 
-            // 检查六个方向
+            // 检查六个物理方向
             for (Direction dir : Direction.values()) {
                 BlockPos neighborPos = current.offset(dir);
 
                 if (visited.contains(neighborPos)) continue;
 
                 // 检查是否是导体方块
-                if (world.getBlockEntity(neighborPos) instanceof ITransferElectrical) {
+                if (isValidConductor(world, neighborPos)) {
                     // 添加连接
                     node.addConnection(dir);
                     queue.offer(neighborPos);
                     visited.add(neighborPos);
                 }
             }
+
+            // 检查虚拟连接（接线柱配对）
+            for (BlockPos virtualPos : node.virtualConnections) {
+                if (visited.contains(virtualPos)) continue;
+
+                if (isValidConductor(world, virtualPos)) {
+                    // 不添加物理方向连接，但加入队列继续BFS
+                    queue.offer(virtualPos);
+                    visited.add(virtualPos);
+
+                    NekoTechnology.LOGGER.debug("[导体组] 通过接线柱连接: {} -> {}", current, virtualPos);
+                }
+            }
         }
 
         NekoTechnology.LOGGER.info("[导体组#{}] 发现完成，包含 {} 个节点，输入口={}, 输出口={}",
                 id, nodes.size(), inputPorts.size(), outputPorts.size());
+    }
+
+    /**
+     * 检查是否是有效导体
+     */
+    private boolean isValidConductor(World world, BlockPos pos) {
+        BlockEntity be = world.getBlockEntity(pos);
+        if (be instanceof ITransferElectrical electrical) {
+            return electrical.canTransfer();
+        }
+        return false;
     }
 
     /**
@@ -178,10 +203,17 @@ public class ConductorGroup {
                     // 创建节点副本，避免修改原节点
                     ConductorNode newNode = new ConductorNode(pos);
 
-                    // 复制连接信息
+                    // 复制物理连接信息
                     for (Direction dir : originalNode.connections) {
                         if (component.contains(pos.offset(dir))) {
                             newNode.addConnection(dir);
+                        }
+                    }
+
+                    // 复制虚拟连接信息
+                    for (BlockPos virtualPos : originalNode.virtualConnections) {
+                        if (component.contains(virtualPos)) {
+                            newNode.addVirtualConnection(virtualPos);
                         }
                     }
 
@@ -213,7 +245,7 @@ public class ConductorGroup {
         Set<BlockPos> visited = new HashSet<>();
 
         for (ConductorNode node : nodes) {
-            if (visited.contains(node.pos)) {
+            if (visited.contains(node.pos) || node.pos.equals(removedPos)) {
                 continue;
             }
 
@@ -232,16 +264,29 @@ public class ConductorGroup {
                     continue;
                 }
 
+                // 检查物理连接
                 for (Direction dir : currentNode.connections) {
                     BlockPos neighborPos = current.offset(dir);
 
-                    if (neighborPos.equals(removedPos)) {
+                    if (neighborPos.equals(removedPos) || visited.contains(neighborPos)) {
                         continue;
                     }
 
-                    if (!visited.contains(neighborPos) && getNode(neighborPos) != null) {
+                    if (getNode(neighborPos) != null) {
                         visited.add(neighborPos);
                         queue.add(neighborPos);
+                    }
+                }
+
+                // 检查虚拟连接
+                for (BlockPos virtualPos : currentNode.virtualConnections) {
+                    if (virtualPos.equals(removedPos) || visited.contains(virtualPos)) {
+                        continue;
+                    }
+
+                    if (getNode(virtualPos) != null) {
+                        visited.add(virtualPos);
+                        queue.add(virtualPos);
                     }
                 }
             }

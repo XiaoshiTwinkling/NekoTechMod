@@ -1,8 +1,10 @@
 package com.nekotech.block.entity.api.electrical.conductor;
 
+import com.nekotech.NekoTechnology;
 import com.nekotech.block.entity.api.component.ComponentAdaptation;
 import com.nekotech.item.custom.component.FluxInputerItem;
 import com.nekotech.item.custom.component.FluxOutputerItem;
+import com.nekotech.item.custom.component.WirePoleItem;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.Item;
 import net.minecraft.util.math.BlockPos;
@@ -22,6 +24,9 @@ public class PortScanner {
         if (be instanceof ComponentAdaptation ca) {
             // 检查自身安装的零件
             scanSelfPorts(world, node, ca);
+
+            // 扫描接线柱配对
+            scanWirePoles(world, node, ca);
         }
 
         // 检查邻居对准的零件
@@ -40,6 +45,27 @@ public class PortScanner {
                 Port port = new Port(Port.Type.INPUT, outputer.getOutputSpeed(), // 改为 INPUT
                         node.pos, true, node.pos, "flux_outputer");
                 node.inputPort = port;
+            }
+        }
+    }
+
+    /**
+     * 扫描接线柱配对
+     */
+    private void scanWirePoles(World world, ConductorNode node, ComponentAdaptation ca) {
+        for (Map.Entry<Direction, Item> entry : ca.getAttachedComponents().entrySet()) {
+            Item item = entry.getValue();
+
+            if (item instanceof WirePoleItem) {
+                // 获取配对信息
+                WirePoleItem.PairInfo pair = WirePoleItem.getPairInfo(world, node.pos, entry.getKey());
+                if (pair != null) {
+                    // 添加虚拟连接
+                    node.addVirtualConnection(pair.targetPos);
+
+                    NekoTechnology.LOGGER.debug("[PortScanner] 找到接线柱配对: {} -> {}",
+                            node.pos, pair.targetPos);
+                }
             }
         }
     }

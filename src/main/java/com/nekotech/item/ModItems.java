@@ -90,7 +90,11 @@ public class ModItems {
     public static final Item BRASS_FLUX_INPUTER = registerComponent("brass_flux_inputer", new FluxInputerItem(0.1f, "brass_flux_inputer"));
     public static final Item NEKO_COPPER_FLUX_OUTPUTER = registerComponent("neko_copper_flux_outputer", new FluxOutputerItem(0.4f, "neko_copper_flux_outputer"));
     public static final Item NEKO_COPPER_FLUX_INPUTER = registerComponent("neko_copper_flux_inputer", new FluxInputerItem(0.4f, "neko_copper_flux_inputer"));
+    public static final Item WIRE_POLE = registerComponent("wire_pole", new WirePoleItem());
 
+    public static final Item COPPER_WIRE_BUNDLE = registerItems("copper_wire_bundle", new WireBundleItem(8.0f, "copper"));
+    public static final Item BRASS_WIRE_BUNDLE = registerItems("brass_wire_bundle", new WireBundleItem(16.0f, "brass"));
+    public static final Item NEKO_COPPER_WIRE_BUNDLE = registerItems("neko_copper_wire_bundle", new WireBundleItem(32.0f, "neko_copper"));
     public static final Item COPPER_COIL = registerItems("copper_coil", new ModItem(new Item.Settings(), "copper_coil"));
     public static final Item PIG_IRON_COIL = registerItems("pig_iron_coil", new ModItem(new Item.Settings(), "pig_iron_coil"));
     public static final Item NEKO_COPPER_COIL = registerItems("neko_copper_coil", new ModItem(new Item.Settings(), "neko_copper_coil"));

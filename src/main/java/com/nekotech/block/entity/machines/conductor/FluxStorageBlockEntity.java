@@ -55,6 +55,7 @@ public class FluxStorageBlockEntity extends MachineBlockEntity
         validComponents.add(ModItems.BRASS_FLUX_INPUTER);
         validComponents.add(ModItems.NEKO_COPPER_FLUX_INPUTER);
         validComponents.add(ModItems.NEKO_COPPER_FLUX_OUTPUTER);
+        validComponents.add(ModItems.WIRE_POLE);
     }
 
     public static void tick(World world, BlockPos pos, BlockState state, FluxStorageBlockEntity blockEntity) {

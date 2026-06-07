@@ -375,7 +375,7 @@ public class ConductorManager {
                         // 移除旧端口
                         group.removePortsFromNode(node);
 
-                        // 重新扫描端口
+                        // 重新扫描端口（包括接线柱配对）
                         portScanner.scanPorts(world, node);
 
                         // 更新端口
@@ -701,4 +701,6 @@ public class ConductorManager {
         // 保存到世界状态
         saveToWorldState();
     }
+
+
 }
