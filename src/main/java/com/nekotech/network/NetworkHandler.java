@@ -3,10 +3,7 @@ package com.nekotech.network;
 import com.nekotech.NekoTechnology;
 import com.nekotech.network.payload.c2s.NekoTagUpdatePayload;
 import com.nekotech.network.payload.c2s.RequestHudDataPayload;
-import com.nekotech.network.payload.s2c.OpenTagListPayload;
-import com.nekotech.network.payload.s2c.RemoveRayPosPayload;
-import com.nekotech.network.payload.s2c.SendHudDataPayload;
-import com.nekotech.network.payload.s2c.SendRayPosPayload;
+import com.nekotech.network.payload.s2c.*;
 import com.nekotech.item.ModItems;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.block.entity.api.IHaveGoogleHUD;
@@ -64,6 +61,11 @@ public class NetworkHandler {
         PayloadTypeRegistry.playC2S().register(
                 NekoTagUpdatePayload.ID,
                 NekoTagUpdatePayload.CODEC
+        );
+
+        PayloadTypeRegistry.playS2C().register(
+                SyncWirePairsPayload.ID,
+                SyncWirePairsPayload.CODEC
         );
 
         ServerPlayNetworking.registerGlobalReceiver(

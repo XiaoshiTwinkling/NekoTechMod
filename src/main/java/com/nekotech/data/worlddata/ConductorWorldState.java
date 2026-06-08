@@ -270,4 +270,46 @@ public class ConductorWorldState extends PersistentState {
             this.sourceItemId = sourceItemId;
         }
     }
+
+    /**
+     * 以下与接线柱相关
+     */
+    public static class WirePairData {
+        public BlockPos pos1;
+        public Direction side1;
+        public BlockPos pos2;
+        public Direction side2;
+        public String wireType;
+
+        public WirePairData(BlockPos pos1, Direction side1, BlockPos pos2, Direction side2, String wireType) {
+            this.pos1 = pos1;
+            this.side1 = side1;
+            this.pos2 = pos2;
+            this.side2 = side2;
+            this.wireType = wireType;
+        }
+    }
+
+    private final Map<String, WirePairData> wirePairs = new HashMap<>();
+
+    public Map<String, WirePairData> getWirePairs() {
+        return wirePairs;
+    }
+
+    // 添加或更新配对
+    public void addWirePair(String key, WirePairData data) {
+        wirePairs.put(key, data);
+        markDirty();
+    }
+
+    // 移除配对
+    public void removeWirePair(String key) {
+        wirePairs.remove(key);
+        markDirty();
+    }
+
+    // 生成唯一键
+    public static String generateWirePairKey(BlockPos pos, Direction side) {
+        return pos.getX() + "," + pos.getY() + "," + pos.getZ() + "_" + side.getName();
+    }
 }

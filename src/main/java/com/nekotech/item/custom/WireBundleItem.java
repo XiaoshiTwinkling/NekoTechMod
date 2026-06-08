@@ -2,13 +2,17 @@ package com.nekotech.item.custom;
 
 import com.nekotech.NekoTechnology;
 import com.nekotech.block.entity.api.component.ComponentAdaptation;
+import com.nekotech.block.entity.api.electrical.conductor.ConductorManager;
+import com.nekotech.data.worlddata.ConductorWorldState;
 import com.nekotech.item.ModItem;
 import com.nekotech.item.custom.component.WirePoleItem;
+import com.nekotech.network.payload.s2c.SyncWirePairsPayload;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -177,11 +181,42 @@ public class WireBundleItem extends ModItem {
      */
     private void createPair(World world, BlockPos pos1, Direction side1,
                             BlockPos pos2, Direction side2, String wireType) {
-        savePairData(world, pos1, side1, pos2, side2, wireType);
-        savePairData(world, pos2, side2, pos1, side1, wireType);
+        if (world.isClient) return;
 
-        NekoTechnology.LOGGER.info("[接线柱] 创建配对: {}:{} -> {}:{} 类型:{}",
+        ConductorWorldState state = getWorldState(world);
+        if (state == null) {
+            NekoTechnology.LOGGER.error("[WireBundleItem] 无法获取世界状态");
+            return;
+        }
+
+        String key1 = ConductorWorldState.generateWirePairKey(pos1, side1);
+        String key2 = ConductorWorldState.generateWirePairKey(pos2, side2);
+
+        ConductorWorldState.WirePairData data1 = new ConductorWorldState.WirePairData(pos1, side1, pos2, side2, wireType);
+        ConductorWorldState.WirePairData data2 = new ConductorWorldState.WirePairData(pos2, side2, pos1, side1, wireType);
+        state.addWirePair(key1, data1);
+        state.addWirePair(key2, data2);
+
+        NekoTechnology.LOGGER.info("[接线柱] 创建配对: {}:{} <-> {}:{} 类型:{}",
                 pos1, side1, pos2, side2, wireType);
+
+        // 立即触发导体组重新发现
+        ConductorManager manager = ConductorManager.get(world);
+        if (manager != null) {
+            manager.onComponentChanged(world, pos1, side1);
+            manager.onComponentChanged(world, pos2, side2);
+        }
+
+        if (world instanceof ServerWorld serverWorld) {
+            SyncWirePairsPayload.WirePairSyncHelper.syncAllPairsToPlayers(serverWorld.getServer());
+        }
+    }
+
+    private ConductorWorldState getWorldState(World world) {
+        if (world instanceof ServerWorld serverWorld) {
+            return ConductorWorldState.get(serverWorld.getServer());
+        }
+        return null;
     }
 
     /**

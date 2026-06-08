@@ -6,7 +6,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
 

@@ -2,12 +2,14 @@ package com.nekotech.item.custom.component;
 
 import com.nekotech.block.entity.api.component.ComponentAdaptation;
 import com.nekotech.block.entity.api.electrical.ITransferElectrical;
+import com.nekotech.data.worlddata.ConductorWorldState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -114,26 +116,11 @@ public class WirePoleItem extends AbstractComponentItem {
      * 检查是否有配对
      */
     public static boolean hasPair(World world, BlockPos pos, Direction side) {
-        BlockEntity be = world.getBlockEntity(pos);
-        if (be == null) return false;
-
-        NbtCompound nbt = be.createNbtWithId(world.getRegistryManager());
-        String key = String.format("WirePair_%s", side.getName());
-
-        if (!nbt.contains(key, NbtElement.COMPOUND_TYPE)) {
-            return false;
-        }
-
-        NbtCompound pairNbt = nbt.getCompound(key);
-        if (!pairNbt.contains("TargetX") || !pairNbt.contains("TargetY") ||
-                !pairNbt.contains("TargetZ") || !pairNbt.contains("TargetSide") ||
-                !pairNbt.contains("WireType")) {
-            nbt.remove(key);
-            be.markDirty();
-            return false;
-        }
-
-        return true;
+        if (world.isClient) return false;
+        ConductorWorldState state = getWorldState(world);
+        if (state == null) return false;
+        String key = ConductorWorldState.generateWirePairKey(pos, side);
+        return state.getWirePairs().containsKey(key);
     }
 
 
@@ -141,27 +128,20 @@ public class WirePoleItem extends AbstractComponentItem {
      * 获取配对信息
      */
     public static PairInfo getPairInfo(World world, BlockPos pos, Direction side) {
-        BlockEntity be = world.getBlockEntity(pos);
-        if (be == null) return null;
+        if (world.isClient) return null;
+        ConductorWorldState state = getWorldState(world);
+        if (state == null) return null;
+        String key = ConductorWorldState.generateWirePairKey(pos, side);
+        ConductorWorldState.WirePairData data = state.getWirePairs().get(key);
+        if (data == null) return null;
+        return new PairInfo(data.pos2, data.side2, data.wireType);
+    }
 
-        NbtCompound nbt = be.createNbtWithId(world.getRegistryManager());
-        String key = String.format("WirePair_%s", side.getName());
-
-        if (!nbt.contains(key, NbtElement.COMPOUND_TYPE)) {
-            return null;
+    private static ConductorWorldState getWorldState(World world) {
+        if (world instanceof ServerWorld serverWorld) {
+            return ConductorWorldState.get(serverWorld.getServer());
         }
-
-        NbtCompound pairNbt = nbt.getCompound(key);
-        BlockPos targetPos = new BlockPos(
-                pairNbt.getInt("TargetX"),
-                pairNbt.getInt("TargetY"),
-                pairNbt.getInt("TargetZ")
-        );
-
-        Direction targetSide = Direction.byName(pairNbt.getString("TargetSide"));
-        String wireType = pairNbt.getString("WireType");
-
-        return new PairInfo(targetPos, targetSide, wireType);
+        return null;
     }
 
     /**

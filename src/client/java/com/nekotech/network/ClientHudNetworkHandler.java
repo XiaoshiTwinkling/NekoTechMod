@@ -2,11 +2,9 @@ package com.nekotech.network;
 
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.network.payload.c2s.RequestHudDataPayload;
-import com.nekotech.network.payload.s2c.OpenTagListPayload;
-import com.nekotech.network.payload.s2c.RemoveRayPosPayload;
-import com.nekotech.network.payload.s2c.SendHudDataPayload;
-import com.nekotech.network.payload.s2c.SendRayPosPayload;
+import com.nekotech.network.payload.s2c.*;
 import com.nekotech.renderer.ClientLaserTargetCache;
+import com.nekotech.renderer.components.WirePoleRenderer;
 import com.nekotech.screens.NekoTagListScreen;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
@@ -38,6 +36,12 @@ public class ClientHudNetworkHandler {
                 OpenTagListPayload.ID,
                 ClientHudNetworkHandler::handleOpenTagList
         );
+
+        ClientPlayNetworking.registerGlobalReceiver(SyncWirePairsPayload.ID, (payload, context) -> {
+            context.client().execute(() -> {
+                WirePoleRenderer.updatePairs(payload.pairs());
+            });
+        });
     }
 
     private static void handleOpenTagList(

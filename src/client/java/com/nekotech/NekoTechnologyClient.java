@@ -8,6 +8,7 @@ import com.nekotech.renderer.*;
 import com.nekotech.network.ClientHudNetworkHandler;
 import com.nekotech.renderer.blockentities.*;
 import com.nekotech.renderer.components.ComponentAttachmentRenderer;
+import com.nekotech.renderer.components.WirePoleRenderer;
 import com.nekotech.screen.ModScreenHandlers;
 import com.nekotech.screens.NekoTagScreen;
 import net.fabricmc.api.ClientModInitializer;
@@ -95,6 +96,8 @@ public class NekoTechnologyClient implements ClientModInitializer {
     }
 
     private void registerComponentAttachmentRenderer(){
+        WirePoleRenderer.initialize();
+
         BlockEntityRendererFactories.register(ModBlockEntities.FLUX_STORAGE, new BlockEntityRendererFactory<BlockEntity>() {
             @Override
             public BlockEntityRenderer<BlockEntity> create(Context ctx) {
