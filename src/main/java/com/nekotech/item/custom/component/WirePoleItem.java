@@ -137,7 +137,7 @@ public class WirePoleItem extends AbstractComponentItem {
         return new PairInfo(data.pos2, data.side2, data.wireType);
     }
 
-    private static ConductorWorldState getWorldState(World world) {
+    public static ConductorWorldState getWorldState(World world) {
         if (world instanceof ServerWorld serverWorld) {
             return ConductorWorldState.get(serverWorld.getServer());
         }

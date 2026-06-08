@@ -69,6 +69,23 @@ public class ConductorWorldState extends PersistentState {
         }
         rootNbt.put(GROUPS, groupsList);
 
+        NbtList pairsList = new NbtList();
+        for (Map.Entry<String, WirePairData> entry : wirePairs.entrySet()) {
+            NbtCompound p = new NbtCompound();
+            p.putString("key", entry.getKey());
+            p.putInt("x1", entry.getValue().pos1.getX());
+            p.putInt("y1", entry.getValue().pos1.getY());
+            p.putInt("z1", entry.getValue().pos1.getZ());
+            p.putString("s1", entry.getValue().side1.getName());
+            p.putInt("x2", entry.getValue().pos2.getX());
+            p.putInt("y2", entry.getValue().pos2.getY());
+            p.putInt("z2", entry.getValue().pos2.getZ());
+            p.putString("s2", entry.getValue().side2.getName());
+            p.putString("type", entry.getValue().wireType);
+            pairsList.add(p);
+        }
+        rootNbt.put("wire_pairs", pairsList);
+
         return rootNbt;
     }
 
@@ -135,12 +152,11 @@ public class ConductorWorldState extends PersistentState {
         // 清空现有数据
         groups.clear();
 
-        // 1. 加载下一个可用的组ID
+
         if (rootNbt.contains(NEXT_GROUP_ID, NbtElement.INT_TYPE)) {
             nextGroupId = rootNbt.getInt(NEXT_GROUP_ID);
         }
 
-        // 2. 加载所有导体组
         if (rootNbt.contains(GROUPS, NbtElement.LIST_TYPE)) {
             NbtList groupsList = rootNbt.getList(GROUPS, NbtElement.COMPOUND_TYPE);
             for (int i = 0; i < groupsList.size(); i++) {
@@ -152,6 +168,21 @@ public class ConductorWorldState extends PersistentState {
             }
         }
 
+        if (rootNbt.contains("wire_pairs", NbtElement.LIST_TYPE)) {
+            NbtList pl = rootNbt.getList("wire_pairs", NbtElement.COMPOUND_TYPE);
+            for (int i = 0; i < pl.size(); i++) {
+                NbtCompound p = pl.getCompound(i);
+                String key  = p.getString("key");
+                BlockPos pos1 = new BlockPos(p.getInt("x1"), p.getInt("y1"), p.getInt("z1"));
+                Direction s1 = Direction.byName(p.getString("s1"));
+                BlockPos pos2 = new BlockPos(p.getInt("x2"), p.getInt("y2"), p.getInt("z2"));
+                Direction s2 = Direction.byName(p.getString("s2"));
+                String type = p.getString("type");
+                if (s1 != null && s2 != null) {
+                    wirePairs.put(key, new WirePairData(pos1, s1, pos2, s2, type));
+                }
+            }
+        }
     }
 
     private ConductorGroupData readGroupFromNbt(NbtCompound groupNbt, RegistryWrapper.WrapperLookup registryLookup) {
@@ -311,5 +342,25 @@ public class ConductorWorldState extends PersistentState {
     // 生成唯一键
     public static String generateWirePairKey(BlockPos pos, Direction side) {
         return pos.getX() + "," + pos.getY() + "," + pos.getZ() + "_" + side.getName();
+    }
+
+    public void removeWirePairsInvolving(BlockPos pos) {
+        var toRemove = new ArrayList<String>();
+        for (var e : wirePairs.entrySet()) {
+            if (e.getValue().pos1.equals(pos) || e.getValue().pos2.equals(pos)) {
+                toRemove.add(e.getKey());
+                String otherKey = generateWirePairKey(e.getValue().pos2, e.getValue().side2);
+                String otherKey2 = generateWirePairKey(e.getValue().pos1, e.getValue().side1);
+            }
+        }
+        toRemove.clear();
+        for (Direction d : Direction.values()) {
+            toRemove.add(generateWirePairKey(pos, d));
+        }
+        for (String k : toRemove) {
+            if (wirePairs.remove(k) != null) {
+                markDirty();
+            }
+        }
     }
 }

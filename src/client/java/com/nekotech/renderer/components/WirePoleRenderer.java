@@ -17,9 +17,9 @@ public class WirePoleRenderer {
 
     private static final float LINE_WIDTH = 0.0625f;    // 线条宽度（方块单位，1像素=0.0625）
     private static final float LINE_HEIGHT = 0.0625f;   // 线条厚度（方块单位，1像素）
-    private static final float SAG_AMOUNT = 0.2f;      // 下垂程度
+    private static final float SAG_AMOUNT = 1f;      // 下垂程度
     private static final int SEGMENTS = 20;             // 平滑度
-    private static final float HEAD_OFFSET = 0.125f;    // 接线柱头部突出距离
+    private static final float HEAD_OFFSET = 0.25f;    // 接线柱头部突出距离
 
     private static final List<WirePairData> pairs = new ArrayList<>();
 

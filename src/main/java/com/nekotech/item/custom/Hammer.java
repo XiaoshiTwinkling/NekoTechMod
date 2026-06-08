@@ -2,9 +2,11 @@ package com.nekotech.item.custom;
 
 import com.nekotech.block.entity.api.component.ComponentAdaptation;
 import com.nekotech.block.entity.api.electrical.conductor.ConductorSystem;
+import com.nekotech.data.worlddata.ConductorWorldState;
 import com.nekotech.item.AbstractDurabilityItem;
 import com.nekotech.item.ModItems;
 import com.nekotech.item.custom.component.WirePoleItem;
+import com.nekotech.network.payload.s2c.SyncWirePairsPayload;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
@@ -19,6 +21,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+
+import java.util.Objects;
 
 public class Hammer extends Item implements AbstractDurabilityItem {
     public Hammer(Item.Settings settings) {
@@ -58,6 +62,11 @@ public class Hammer extends Item implements AbstractDurabilityItem {
                 if (pair != null) {
                     // 有配对，先取消配对
                     removeWirePolePair(world, pos, side, pair);
+
+                    ConductorWorldState state = ConductorWorldState.get(Objects.requireNonNull(world.getServer()));
+                    state.removeWirePairsInvolving(pos);
+
+                    SyncWirePairsPayload.WirePairSyncHelper.syncAllPairsToPlayers(Objects.requireNonNull(world.getServer()));
 
                     // 返还对应的金属丝捆
                     ItemStack bundleStack = getWireBundleByType(pair.wireType);

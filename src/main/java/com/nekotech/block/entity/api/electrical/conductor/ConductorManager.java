@@ -4,6 +4,7 @@ import com.nekotech.NekoTechnology;
 import com.nekotech.block.entity.api.component.ComponentAdaptation;
 import com.nekotech.block.entity.api.electrical.ITransferElectrical;
 import com.nekotech.data.worlddata.ConductorWorldState;
+import com.nekotech.network.payload.s2c.SyncWirePairsPayload;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
@@ -13,6 +14,8 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+
+import static com.nekotech.item.custom.component.WirePoleItem.getWorldState;
 
 /**
  * 管理一个世界中的所有导体网络喵~
@@ -476,6 +479,15 @@ public class ConductorManager {
                             newGroup.inputPorts.size(), newGroup.outputPorts.size());
                 }
             }
+        }
+
+        ConductorWorldState state = getWorldState(world);
+        if (state != null) {
+            state.removeWirePairsInvolving(pos);
+        }
+
+        if (world instanceof ServerWorld sw) {
+            SyncWirePairsPayload.WirePairSyncHelper.syncAllPairsToPlayers(sw.getServer());
         }
 
         // 保存到世界状态
