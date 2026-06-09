@@ -3,6 +3,7 @@ package com.nekotech.block.entity.machines.coil;
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.block.entity.api.ICatNeedMachine;
 import com.nekotech.block.entity.api.component.ComponentAdaptation;
+import com.nekotech.block.entity.api.electrical.IElectricalAppliance;
 import com.nekotech.block.entity.api.electrical.IElectricalMachine;
 import com.nekotech.block.entity.api.electrical.ITransferElectrical;
 import com.nekotech.block.entity.api.electrical.conductor.ConductorSystem;
@@ -51,7 +52,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
-        implements ICatNeedMachine, IElectricalMachine, ITransferElectrical, ComponentAdaptation, IHaveGoogleHUD {
+        implements ICatNeedMachine, IElectricalAppliance, ComponentAdaptation, IHaveGoogleHUD {
 
     private static final int MAX_COILS = 6;
     private static final int MAX_FLUX = 200;

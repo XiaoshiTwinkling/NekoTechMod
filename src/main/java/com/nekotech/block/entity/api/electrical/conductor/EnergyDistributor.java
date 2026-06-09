@@ -1,29 +1,26 @@
 package com.nekotech.block.entity.api.electrical.conductor;
 
 import com.nekotech.NekoTechnology;
+import com.nekotech.block.entity.api.electrical.IElectricalAppliance;
 import com.nekotech.block.entity.api.electrical.IElectricalMachine;
+import com.nekotech.block.entity.api.electrical.IGenerator;
+import com.nekotech.block.entity.api.electrical.IElectricStorager;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
-/**
- * 智能能量分配器
- * 遵循规则：低速输入端口优先达到最大速度，所有输入端口的总抽取速度不超过所有输出端口的总输出速度
- */
+
 public class EnergyDistributor {
 
     public static class Allocation {
-        public final Port inputPort;
-        public final Port outputPort;
+        public final Port sourcePort;   // 能量来源（发电机/储电器输出）
+        public final Port sinkPort;     // 能量去向（用电器/储电器输入）
         public final float amount;
 
-        public Allocation(Port inputPort, Port outputPort, float amount) {
-            this.inputPort = inputPort;
-            this.outputPort = outputPort;
+        public Allocation(Port sourcePort, Port sinkPort, float amount) {
+            this.sourcePort = sourcePort;
+            this.sinkPort = sinkPort;
             this.amount = amount;
         }
     }
@@ -39,220 +36,158 @@ public class EnergyDistributor {
     }
 
     public AllocationResult distributeEnergy(World world, ConductorGroup group) {
-        // 1. 收集输入端口和输出端口
-        List<InputPortInfo> inputPorts = collectInputPorts(world, group);
-        List<OutputPortInfo> outputPorts = collectOutputPorts(world, group);
+        // 1. 收集所有端口，并按机器类型分类
+        List<SourceInfo> generatorSources = new ArrayList<>();
+        List<SourceInfo> storageSources = new ArrayList<>();
+        List<SinkInfo> applianceSinks = new ArrayList<>();
+        List<SinkInfo> storageSinks = new ArrayList<>();
 
-        if (inputPorts.isEmpty() || outputPorts.isEmpty()) {
-            return new AllocationResult(Collections.emptyList(), 0);
-        }
-
-        // 2. 计算总容量
-        float totalInputCapacity = calculateTotalInputCapacity(inputPorts);
-        float totalOutputCapacity = calculateTotalOutputDemand(outputPorts);
-
-        // 3. 可用能量是输入容量和输出容量的最小值
-        float availableEnergy = Math.min(totalInputCapacity, totalOutputCapacity);
-
-        if (availableEnergy <= 0) {
-            return new AllocationResult(Collections.emptyList(), 0);
-        }
-
-        // 4. 智能分配
-        List<Allocation> allocations = smartAllocate(inputPorts, outputPorts,
-                availableEnergy, totalInputCapacity, totalOutputCapacity);
-
-        // 5. 执行传输
-        if (!allocations.isEmpty()) {
-            executeAllocations(world, allocations);
-        }
-
-        float totalTransferred = allocations.stream().map(a -> a.amount).reduce(0f, Float::sum);
-
-        // 调试日志
-        if (totalTransferred > 0 && world.getTime() % 20 == 0) {
-            NekoTechnology.LOGGER.debug("[能量分配器] 传输: {:.2f} NF, 输入口: {}, 输出口: {}",
-                    totalTransferred, inputPorts.size(), outputPorts.size());
-        }
-
-        return new AllocationResult(allocations, totalTransferred);
-    }
-
-    private List<InputPortInfo> collectInputPorts(World world, ConductorGroup group) {
-        List<InputPortInfo> inputs = new ArrayList<>();
-
+        // 收集输入端口（能量来源：机器→网络）
         for (Port port : group.inputPorts) {
             BlockEntity be = world.getBlockEntity(port.machinePos);
             if (be instanceof IElectricalMachine machine) {
                 float available = machine.getNekoFlux();
                 float maxExtractable = Math.min(available, port.getEffectiveRate());
+                if (maxExtractable <= 0.001f) continue;
 
-                if (maxExtractable > 0.001f) {
-                    inputs.add(new InputPortInfo(port, machine, maxExtractable));
+                SourceInfo info = new SourceInfo(port, machine, maxExtractable);
+                if (be instanceof IGenerator) {
+                    generatorSources.add(info);
+                } else if (be instanceof IElectricStorager) {
+                    storageSources.add(info);
+                } else {
+                    storageSources.add(info);
                 }
             }
         }
-
-        return inputs;
-    }
-
-    private List<OutputPortInfo> collectOutputPorts(World world, ConductorGroup group) {
-        List<OutputPortInfo> outputs = new ArrayList<>();
 
         for (Port port : group.outputPorts) {
             BlockEntity be = world.getBlockEntity(port.machinePos);
             if (be instanceof IElectricalMachine machine) {
-                float spaceAvailable = machine.getMaxNekoFlux() - machine.getNekoFlux();
-                float maxAcceptable = Math.min(spaceAvailable, port.getEffectiveRate());
+                float space = machine.getMaxNekoFlux() - machine.getNekoFlux();
+                float maxAcceptable = Math.min(space, port.getEffectiveRate());
+                if (maxAcceptable <= 0.001f) continue;
 
-                if (maxAcceptable > 0) {
-                    outputs.add(new OutputPortInfo(port, machine, maxAcceptable));
+                SinkInfo info = new SinkInfo(port, machine, maxAcceptable);
+                if (be instanceof IElectricalAppliance) {
+                    applianceSinks.add(info);
+                } else if (be instanceof IElectricStorager) {
+                    storageSinks.add(info);
+                } else {
+                    // 其他类型
+                    storageSinks.add(info);
                 }
             }
         }
 
-        return outputs;
-    }
-
-    private float calculateTotalInputCapacity(List<InputPortInfo> inputs) {
-        float total = 0;
-        for (InputPortInfo info : inputs) {
-            total += info.maxExtractable;
+        if (generatorSources.isEmpty() && storageSources.isEmpty()) {
+            return new AllocationResult(Collections.emptyList(), 0);
         }
-        return total;
-    }
-
-    private float calculateTotalOutputDemand(List<OutputPortInfo> outputs) {
-        float total = 0;
-        for (OutputPortInfo info : outputs) {
-            total += info.maxAcceptable;
+        if (applianceSinks.isEmpty() && storageSinks.isEmpty()) {
+            return new AllocationResult(Collections.emptyList(), 0);
         }
-        return total;
-    }
 
-    private List<Allocation> smartAllocate(List<InputPortInfo> inputs, List<OutputPortInfo> outputs,
-                                           float totalAllocated, float totalInputCapacity, float totalOutputCapacity) {
         List<Allocation> allocations = new ArrayList<>();
-        if (outputs.isEmpty() || inputs.isEmpty() || totalAllocated <= 0) {
-            return allocations;
+
+        // 发电机 → 用电器
+        allocateBetween(generatorSources, applianceSinks, allocations);
+
+        // 储电器（放电） → 用电器（补充剩余需求）
+        allocateBetween(storageSources, applianceSinks, allocations);
+
+        // 发电机（剩余） → 储电器（充电）
+        allocateBetween(generatorSources, storageSinks, allocations);
+
+        if (!allocations.isEmpty()) {
+            executeAllocations(world, allocations);
         }
 
-        float[] inputAllocations = calculateInputAllocations(inputs, totalAllocated, totalInputCapacity, totalOutputCapacity);
-
-        float[] outputRatios = new float[outputs.size()];
-
-        if (totalOutputCapacity > 0) {
-            for (int j = 0; j < outputs.size(); j++) {
-                outputRatios[j] = outputs.get(j).maxAcceptable / totalOutputCapacity;
-            }
-        } else {
-            return allocations;
-        }
-        for (int i = 0; i < inputs.size(); i++) {
-            InputPortInfo inputInfo = inputs.get(i);
-            float inputAlloc = inputAllocations[i];
-
-            if (inputAlloc <= 0) continue;
-
-            for (int j = 0; j < outputs.size(); j++) {
-                OutputPortInfo outputInfo = outputs.get(j);
-                float allocationAmount = inputAlloc * outputRatios[j];
-
-                // 避免极小的分配量
-                if (allocationAmount > 0.001f) {
-                    allocations.add(new Allocation(inputInfo.port, outputInfo.port, allocationAmount));
-                }
-            }
+        float totalTransferred = allocations.stream().map(a -> a.amount).reduce(0f, Float::sum);
+        if (totalTransferred > 0 && world.getTime() % 200 == 0) {
+            NekoTechnology.LOGGER.info("[能量分配器] 传输: {:.2f} NF, 分配项数: {}", totalTransferred, allocations.size());
         }
 
-        return allocations;
+        return new AllocationResult(allocations, totalTransferred);
     }
-
 
     /**
-     * 计算每个输入端口的分配量
+     * 在两个集合之间按比例分配能量
      */
-    private float[] calculateInputAllocations(List<InputPortInfo> inputs, float totalAllocated,
-                                              float totalInputCapacity, float totalOutputCapacity) {
-        float[] allocations = new float[inputs.size()];
+    private void allocateBetween(List<SourceInfo> sources, List<SinkInfo> sinks, List<Allocation> result) {
+        if (sources.isEmpty() || sinks.isEmpty()) return;
 
-        // 按最大速度升序排序（低速优先）
-        List<InputPortInfo> sortedInputs = new ArrayList<>(inputs);
-        sortedInputs.sort(Comparator.comparingDouble(a -> a.maxExtractable));
+        // 计算总可用和总需求
+        float totalAvailable = sources.stream().map(s -> s.remaining).reduce(0f, Float::sum);
+        float totalDemand = sinks.stream().map(s -> s.remaining).reduce(0f, Float::sum);
+        if (totalAvailable <= 0 || totalDemand <= 0) return;
 
-        if (totalOutputCapacity >= totalInputCapacity) {
-            // 情况1：输出容量充足，所有输入端口可达到最大速度
-            for (int i = 0; i < sortedInputs.size(); i++) {
-                InputPortInfo input = sortedInputs.get(i);
-                allocations[i] = input.maxExtractable;
-            }
-        } else {
-            // 情况2：输出容量不足，需要公平分配
-            float remainingCapacity = totalAllocated; // 剩余可分配容量
-            int remainingInputs = sortedInputs.size();
+        float transferAmount = Math.min(totalAvailable, totalDemand);
 
-            for (int i = 0; i < sortedInputs.size(); i++) {
-                InputPortInfo input = sortedInputs.get(i);
-                float average = remainingCapacity / remainingInputs;
+        // 按可用比例分配
+        for (SourceInfo src : sources) {
+            if (src.remaining <= 0) continue;
+            float srcRatio = src.remaining / totalAvailable;
+            float srcAlloc = transferAmount * srcRatio;
 
-                if (input.maxExtractable <= average) {
-                    // 条件3：低速端口可满速运行
-                    allocations[i] = input.maxExtractable;
-                    remainingCapacity -= input.maxExtractable;
-                } else {
-                    // 按平均值分配
-                    allocations[i] = average;
-                    remainingCapacity -= average;
+            for (SinkInfo sink : sinks) {
+                if (sink.remaining <= 0) continue;
+                float sinkRatio = sink.remaining / totalDemand;
+                float alloc = srcAlloc * sinkRatio;
+                if (alloc <= 0.001f) continue;
+
+                // 确保不超过双方剩余
+                alloc = Math.min(alloc, src.remaining);
+                alloc = Math.min(alloc, sink.remaining);
+
+                if (alloc > 0.001f) {
+                    result.add(new Allocation(src.port, sink.port, alloc));
+                    src.remaining -= alloc;
+                    sink.remaining -= alloc;
                 }
-                remainingInputs--;
             }
         }
-
-        return allocations;
     }
 
     private void executeAllocations(World world, List<Allocation> allocations) {
-        for (Allocation allocation : allocations) {
-            // 从输入端扣除能量
-            BlockEntity inputBe = world.getBlockEntity(allocation.inputPort.machinePos);
-            if (inputBe instanceof IElectricalMachine inputMachine) {
-                inputMachine.receiveFlux(allocation.amount);
-                inputBe.markDirty();
+        for (Allocation alloc : allocations) {
+            // 从源机器扣除能量
+            BlockEntity srcBe = world.getBlockEntity(alloc.sourcePort.machinePos);
+            if (srcBe instanceof IElectricalMachine srcMachine) {
+                srcMachine.receiveFlux(alloc.amount);
+                srcBe.markDirty();
             }
 
-            // 向输出端添加能量
-            BlockEntity outputBe = world.getBlockEntity(allocation.outputPort.machinePos);
-            if (outputBe instanceof IElectricalMachine outputMachine) {
-                outputMachine.addFlux(allocation.amount);
-                outputBe.markDirty();
+            // 向目标机器注入能量
+            BlockEntity dstBe = world.getBlockEntity(alloc.sinkPort.machinePos);
+            if (dstBe instanceof IElectricalMachine dstMachine) {
+                dstMachine.addFlux(alloc.amount);
+                dstBe.markDirty();
             }
-
-            NekoTechnology.LOGGER.debug("[能量分配器] 传输: {:.2f} NF 从 {} 到 {}",
-                    allocation.amount, allocation.inputPort.machinePos, allocation.outputPort.machinePos);
         }
     }
 
-    private static class InputPortInfo {
-        public final Port port;
-        public final IElectricalMachine machine;
-        public float maxExtractable;
 
-        public InputPortInfo(Port port, IElectricalMachine machine, float maxExtractable) {
+    private static class SourceInfo {
+        final Port port;
+        final IElectricalMachine machine;
+        float remaining; // 当前还可提供的能量
+
+        SourceInfo(Port port, IElectricalMachine machine, float remaining) {
             this.port = port;
             this.machine = machine;
-            this.maxExtractable = maxExtractable;
+            this.remaining = remaining;
         }
     }
 
-    private static class OutputPortInfo {
-        public final Port port;
-        public final IElectricalMachine machine;
-        public float maxAcceptable;
+    private static class SinkInfo {
+        final Port port;
+        final IElectricalMachine machine;
+        float remaining; // 当前还可接受的能量
 
-        public OutputPortInfo(Port port, IElectricalMachine machine, float maxAcceptable) {
+        SinkInfo(Port port, IElectricalMachine machine, float remaining) {
             this.port = port;
             this.machine = machine;
-            this.maxAcceptable = maxAcceptable;
+            this.remaining = remaining;
         }
     }
 }

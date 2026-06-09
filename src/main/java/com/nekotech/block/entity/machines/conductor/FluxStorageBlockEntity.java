@@ -3,6 +3,7 @@ package com.nekotech.block.entity.machines.conductor;
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.block.entity.api.component.ComponentAdaptation;
 import com.nekotech.block.entity.api.ICatNeedMachine;
+import com.nekotech.block.entity.api.electrical.IElectricStorager;
 import com.nekotech.block.entity.api.electrical.IElectricalMachine;
 import com.nekotech.block.entity.api.electrical.ITransferElectrical;
 import com.nekotech.block.entity.machines.MachineBlockEntity;
@@ -35,7 +36,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class FluxStorageBlockEntity extends MachineBlockEntity
-        implements IElectricalMachine, ICatNeedMachine, ComponentAdaptation, IHaveGoogleHUD, ITransferElectrical {
+        implements  ICatNeedMachine, ComponentAdaptation, IHaveGoogleHUD, IElectricStorager {
 
     private float nekoFlux = 500f;
     private final float maxNekoFlux = 1000f;
