@@ -151,6 +151,7 @@ public class ConductorWorldState extends PersistentState {
     public void readNbt(NbtCompound rootNbt, RegistryWrapper.WrapperLookup registryLookup) {
         // 清空现有数据
         groups.clear();
+        wirePairs.clear();
 
 
         if (rootNbt.contains(NEXT_GROUP_ID, NbtElement.INT_TYPE)) {
@@ -334,9 +335,12 @@ public class ConductorWorldState extends PersistentState {
     }
 
     // 移除配对
-    public void removeWirePair(String key) {
-        wirePairs.remove(key);
-        markDirty();
+    public WirePairData removeWirePair(String key) {
+        WirePairData removed = wirePairs.remove(key);
+        if (removed != null) {
+            markDirty();
+        }
+        return removed;
     }
 
     // 生成唯一键
@@ -344,23 +348,71 @@ public class ConductorWorldState extends PersistentState {
         return pos.getX() + "," + pos.getY() + "," + pos.getZ() + "_" + side.getName();
     }
 
-    public void removeWirePairsInvolving(BlockPos pos) {
-        var toRemove = new ArrayList<String>();
+    public List<WirePairData> removeWirePairAt(BlockPos pos, Direction side) {
+        String key = generateWirePairKey(pos, side);
+        WirePairData data = wirePairs.get(key);
+        if (data == null) {
+            for (WirePairData candidate : wirePairs.values()) {
+                boolean matchesFirstEndpoint = candidate.pos1.equals(pos) && candidate.side1 == side;
+                boolean matchesSecondEndpoint = candidate.pos2.equals(pos) && candidate.side2 == side;
+                if (matchesFirstEndpoint || matchesSecondEndpoint) {
+                    data = candidate;
+                    break;
+                }
+            }
+        }
+        if (data == null) {
+            return Collections.emptyList();
+        }
+
+        return removeWirePairData(data);
+    }
+
+    public List<WirePairData> removeWirePairsInvolving(BlockPos pos) {
+        Set<String> physicalPairs = new HashSet<>();
+        List<WirePairData> removedPairs = new ArrayList<>();
+        Set<String> keysToRemove = new HashSet<>();
+
         for (var e : wirePairs.entrySet()) {
-            if (e.getValue().pos1.equals(pos) || e.getValue().pos2.equals(pos)) {
-                toRemove.add(e.getKey());
-                String otherKey = generateWirePairKey(e.getValue().pos2, e.getValue().side2);
-                String otherKey2 = generateWirePairKey(e.getValue().pos1, e.getValue().side1);
+            WirePairData data = e.getValue();
+            if (data.pos1.equals(pos) || data.pos2.equals(pos)) {
+                String physicalPairKey = generatePhysicalWirePairKey(data);
+                if (physicalPairs.add(physicalPairKey)) {
+                    removedPairs.add(data);
+                }
+                keysToRemove.add(e.getKey());
+                keysToRemove.add(generateWirePairKey(data.pos1, data.side1));
+                keysToRemove.add(generateWirePairKey(data.pos2, data.side2));
             }
         }
-        toRemove.clear();
-        for (Direction d : Direction.values()) {
-            toRemove.add(generateWirePairKey(pos, d));
-        }
-        for (String k : toRemove) {
-            if (wirePairs.remove(k) != null) {
-                markDirty();
+
+        removeWirePairKeys(keysToRemove);
+        return removedPairs;
+    }
+
+    private List<WirePairData> removeWirePairData(WirePairData data) {
+        Set<String> keysToRemove = new HashSet<>();
+        keysToRemove.add(generateWirePairKey(data.pos1, data.side1));
+        keysToRemove.add(generateWirePairKey(data.pos2, data.side2));
+        removeWirePairKeys(keysToRemove);
+        return List.of(data);
+    }
+
+    private void removeWirePairKeys(Set<String> keysToRemove) {
+        boolean removedAny = false;
+        for (String key : keysToRemove) {
+            if (wirePairs.remove(key) != null) {
+                removedAny = true;
             }
         }
+        if (removedAny) {
+            markDirty();
+        }
+    }
+
+    public static String generatePhysicalWirePairKey(WirePairData data) {
+        String key1 = generateWirePairKey(data.pos1, data.side1);
+        String key2 = generateWirePairKey(data.pos2, data.side2);
+        return key1.compareTo(key2) <= 0 ? key1 + "|" + key2 : key2 + "|" + key1;
     }
 }

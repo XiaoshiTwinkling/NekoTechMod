@@ -11,7 +11,9 @@ import com.nekotech.item.api.googles.templates.ContainerHUDData;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
 import com.nekotech.item.custom.NekoTag.NekoTagData;
 import com.nekotech.item.custom.NekoTag.NekoTask;
+import com.nekotech.item.custom.WireBundleItem;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.InventoryProvider;
@@ -84,6 +86,15 @@ public class NetworkHandler {
         PayloadTypeRegistry.playS2C().register(
                 OpenTagListPayload.ID,
                 OpenTagListPayload.CODEC
+        );
+
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
+                server.execute(() ->
+                        SyncWirePairsPayload.WirePairSyncHelper.syncPairsToPlayer(server, handler.getPlayer()))
+        );
+
+        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) ->
+                WireBundleItem.clearFirstClick(handler.getPlayer().getUuid())
         );
     }
 

@@ -36,6 +36,19 @@ public class WireBundleItem extends ModItem {
     // 存储第一次点击信息
     private static final Map<UUID, FirstClick> firstClicks = new HashMap<>();
 
+    public static void clearFirstClicksAt(BlockPos pos) {
+        firstClicks.entrySet().removeIf(entry -> entry.getValue().pos.equals(pos));
+    }
+
+    public static void clearFirstClickAt(BlockPos pos, Direction side) {
+        firstClicks.entrySet().removeIf(entry ->
+                entry.getValue().pos.equals(pos) && entry.getValue().side == side);
+    }
+
+    public static void clearFirstClick(UUID playerId) {
+        firstClicks.remove(playerId);
+    }
+
     private static class FirstClick {
         final BlockPos pos;
         final Direction side;
@@ -108,6 +121,12 @@ public class WireBundleItem extends ModItem {
             return ActionResult.SUCCESS;
         }
 
+        if (!isWirePoleAt(world, firstClick.pos, firstClick.side)) {
+            player.sendMessage(net.minecraft.text.Text.translatable("wire.bundle.not_wirepole"), false);
+            firstClicks.remove(playerId);
+            return ActionResult.FAIL;
+        }
+
         // 检查是否点击了同一个接线柱
         if (pos.equals(firstClick.pos) && side == firstClick.side) {
             player.sendMessage(net.minecraft.text.Text.translatable("wire.pair.same"), false);
@@ -174,6 +193,14 @@ public class WireBundleItem extends ModItem {
         }
 
         return true;
+    }
+
+    private static boolean isWirePoleAt(World world, BlockPos pos, Direction side) {
+        var blockEntity = world.getBlockEntity(pos);
+        if (!(blockEntity instanceof ComponentAdaptation machine)) {
+            return false;
+        }
+        return machine.getComponent(side) instanceof WirePoleItem;
     }
 
     /**

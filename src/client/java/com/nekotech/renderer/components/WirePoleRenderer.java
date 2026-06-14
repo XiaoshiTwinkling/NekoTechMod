@@ -4,10 +4,13 @@ import com.nekotech.network.payload.s2c.SyncWirePairsPayload;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.render.*;
+import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.LightType;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -22,6 +25,7 @@ public class WirePoleRenderer {
     private static final int SEGMENTS = 20;             // 平滑度
     private static final float HEAD_OFFSET = 0.20f;    // 接线柱头部突出距离
     private static final float BRIGHTNESS = 2f;      // 亮度倍增系数
+    private static final Identifier WHITE_TEXTURE = Identifier.ofVanilla("textures/misc/white.png");
     // ==============================================
 
     private static final List<WirePairData> pairs = new ArrayList<>();
@@ -48,9 +52,6 @@ public class WirePoleRenderer {
         matrices.push();
         matrices.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
 
-        // 固定最大光照
-        int light = LightmapTextureManager.pack(15, 15);
-
         for (WirePairData pair : pairs) {
             Vec3d start = getWirePoleHead(pair.pos1, pair.side1);
             Vec3d end = getWirePoleHead(pair.pos2, pair.side2);
@@ -59,7 +60,7 @@ public class WirePoleRenderer {
                     cameraPos.squaredDistanceTo(end) > 6400) continue;
 
             int color = getWireColor(pair.wireType);
-            renderThickLine(matrices, consumers, start, end, color, light);
+            renderThickLine(context, matrices, consumers, start, end, color);
         }
 
         matrices.pop();
@@ -70,11 +71,12 @@ public class WirePoleRenderer {
     }
 
     /**
-     * 渲染有厚度的线缆（长方体，双面渲染，使用 Solid 层 + 固定最大光照 + 亮度倍增）
+     * 渲染有厚度的线缆（长方体，使用无剔除实体层 + 世界光照 + 亮度倍增）
      */
-    private static void renderThickLine(MatrixStack matrices, VertexConsumerProvider consumers,
-                                        Vec3d start, Vec3d end, int color, int light) {
-        VertexConsumer buffer = consumers.getBuffer(RenderLayer.getSolid());
+    private static void renderThickLine(WorldRenderContext context, MatrixStack matrices,
+                                        VertexConsumerProvider consumers, Vec3d start, Vec3d end,
+                                        int color) {
+        VertexConsumer buffer = consumers.getBuffer(RenderLayer.getEntityCutoutNoCull(WHITE_TEXTURE));
 
         Vec3d direction = end.subtract(start);
         double length = direction.length();
@@ -88,6 +90,25 @@ public class WirePoleRenderer {
             right = new Vec3d(0, 0, 1).crossProduct(direction).normalize();
         }
         Vec3d localUp = right.crossProduct(direction).normalize();
+
+        Vector3f nFront = new Vector3f(
+                -(float) direction.x,
+                -(float) direction.y,
+                -(float) direction.z
+        );
+        Vector3f nBack = new Vector3f(
+                (float) direction.x,
+                (float) direction.y,
+                (float) direction.z
+        );
+        Vector3f nRight = new Vector3f(
+                (float) right.x,
+                (float) right.y,
+                (float) right.z
+        );
+        Vector3f nLeft = new Vector3f(nRight).negate();
+        Vector3f nUp = new Vector3f(0, 1, 0);
+        Vector3f nDown = new Vector3f(0, -1, 0);
 
         double halfW = LINE_WIDTH * 0.5;
         double halfH = LINE_HEIGHT * 0.5;
@@ -115,27 +136,26 @@ public class WirePoleRenderer {
             c[6] = p2.add(right.multiply(-halfW)).add(localUp.multiply(halfH));
             c[7] = p2.add(right.multiply(halfW)).add(localUp.multiply(halfH));
 
-            Vector3f nFront = new Vector3f((float)direction.x, (float)direction.y, (float)direction.z);
-            Vector3f nBack = new Vector3f(-(float)direction.x, -(float)direction.y, -(float)direction.z);
-            Vector3f nRight = new Vector3f((float)right.x, (float)right.y, (float)right.z);
-            Vector3f nLeft = new Vector3f(-(float)right.x, -(float)right.y, -(float)right.z);
-            Vector3f nUp = new Vector3f((float)localUp.x, (float)localUp.y, (float)localUp.z);
-            Vector3f nDown = new Vector3f(-(float)localUp.x, -(float)localUp.y, -(float)localUp.z);
+            int light = calculateLight(context, p1.add(p2).multiply(0.5));
 
-            // 双面渲染
-            addQuad(buffer, entry, c[0], c[1], c[3], c[2], r, g, b, light, nFront);
-            addQuad(buffer, entry, c[0], c[2], c[3], c[1], r, g, b, light, new Vector3f(nFront).negate());
-            addQuad(buffer, entry, c[4], c[5], c[7], c[6], r, g, b, light, nBack);
-            addQuad(buffer, entry, c[4], c[6], c[7], c[5], r, g, b, light, new Vector3f(nBack).negate());
-            addQuad(buffer, entry, c[0], c[2], c[6], c[4], r, g, b, light, nLeft);
-            addQuad(buffer, entry, c[0], c[4], c[6], c[2], r, g, b, light, new Vector3f(nLeft).negate());
+            if (i == 0) {
+                addQuad(buffer, entry, c[0], c[2], c[3], c[1], r, g, b, light, nFront);
+            }
+            if (i == points.size() - 2) {
+                addQuad(buffer, entry, c[4], c[5], c[7], c[6], r, g, b, light, nBack);
+            }
+            addQuad(buffer, entry, c[0], c[4], c[6], c[2], r, g, b, light, nLeft);
             addQuad(buffer, entry, c[1], c[3], c[7], c[5], r, g, b, light, nRight);
-            addQuad(buffer, entry, c[1], c[5], c[7], c[3], r, g, b, light, new Vector3f(nRight).negate());
-            addQuad(buffer, entry, c[2], c[3], c[7], c[6], r, g, b, light, nUp);
-            addQuad(buffer, entry, c[2], c[6], c[7], c[3], r, g, b, light, new Vector3f(nUp).negate());
+            addQuad(buffer, entry, c[2], c[6], c[7], c[3], r, g, b, light, nUp);
             addQuad(buffer, entry, c[0], c[1], c[5], c[4], r, g, b, light, nDown);
-            addQuad(buffer, entry, c[0], c[4], c[5], c[1], r, g, b, light, new Vector3f(nDown).negate());
         }
+    }
+
+    private static int calculateLight(WorldRenderContext context, Vec3d pos) {
+        BlockPos lightPos = BlockPos.ofFloored(pos);
+        int blockLight = context.world().getLightLevel(LightType.BLOCK, lightPos);
+        int skyLight = context.world().getLightLevel(LightType.SKY, lightPos);
+        return LightmapTextureManager.pack(blockLight, skyLight);
     }
 
     private static void addQuad(VertexConsumer buffer, MatrixStack.Entry entry,
@@ -144,21 +164,25 @@ public class WirePoleRenderer {
         buffer.vertex(entry.getPositionMatrix(), (float)v1.x, (float)v1.y, (float)v1.z)
                 .color(r, g, b, 1.0f)
                 .texture(0, 0)
+                .overlay(OverlayTexture.DEFAULT_UV)
                 .light(light)
                 .normal(entry, normal.x(), normal.y(), normal.z());
         buffer.vertex(entry.getPositionMatrix(), (float)v2.x, (float)v2.y, (float)v2.z)
                 .color(r, g, b, 1.0f)
                 .texture(0, 0)
+                .overlay(OverlayTexture.DEFAULT_UV)
                 .light(light)
                 .normal(entry, normal.x(), normal.y(), normal.z());
         buffer.vertex(entry.getPositionMatrix(), (float)v3.x, (float)v3.y, (float)v3.z)
                 .color(r, g, b, 1.0f)
                 .texture(0, 0)
+                .overlay(OverlayTexture.DEFAULT_UV)
                 .light(light)
                 .normal(entry, normal.x(), normal.y(), normal.z());
         buffer.vertex(entry.getPositionMatrix(), (float)v4.x, (float)v4.y, (float)v4.z)
                 .color(r, g, b, 1.0f)
                 .texture(0, 0)
+                .overlay(OverlayTexture.DEFAULT_UV)
                 .light(light)
                 .normal(entry, normal.x(), normal.y(), normal.z());
     }

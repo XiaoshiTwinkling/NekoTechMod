@@ -14,7 +14,9 @@ import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public record SyncWirePairsPayload(List<WirePairData> pairs) implements CustomPayload {
     public static final CustomPayload.Id<SyncWirePairsPayload> ID =
@@ -57,23 +59,33 @@ public record SyncWirePairsPayload(List<WirePairData> pairs) implements CustomPa
     public static class WirePairSyncHelper {
         public static void syncAllPairsToPlayers(MinecraftServer server) {
             if (server == null) return;
+            SyncWirePairsPayload payload = new SyncWirePairsPayload(buildPairList(server));
+
+            for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+                ServerPlayNetworking.send(player, payload);
+            }
+        }
+
+        public static void syncPairsToPlayer(MinecraftServer server, ServerPlayerEntity player) {
+            if (server == null || player == null) return;
+            ServerPlayNetworking.send(player, new SyncWirePairsPayload(buildPairList(server)));
+        }
+
+        private static List<SyncWirePairsPayload.WirePairData> buildPairList(MinecraftServer server) {
             ConductorWorldState state = ConductorWorldState.get(server);
-            if (state == null) return;
+            if (state == null) return List.of();
 
             List<SyncWirePairsPayload.WirePairData> pairList = new ArrayList<>();
+            Set<String> seenPairs = new HashSet<>();
             for (ConductorWorldState.WirePairData data : state.getWirePairs().values()) {
-                if (data.pos1.hashCode() <= data.pos2.hashCode()) {
+                if (seenPairs.add(ConductorWorldState.generatePhysicalWirePairKey(data))) {
                     pairList.add(new SyncWirePairsPayload.WirePairData(
                             data.pos1, data.side1, data.pos2, data.side2, data.wireType
                     ));
                 }
             }
 
-            SyncWirePairsPayload payload = new SyncWirePairsPayload(pairList);
-
-            for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-                ServerPlayNetworking.send(player, payload);
-            }
+            return pairList;
         }
     }
 }
