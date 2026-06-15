@@ -1,6 +1,7 @@
 package com.nekotech.mixin;
 
 import com.nekotech.NekoTechnology;
+import com.nekotech.data.worlddata.NekoTagWorldState;
 import com.nekotech.goal.MoveToLaserGoal;
 import com.nekotech.goal.nekotask.NekoCatTaskData;
 import com.nekotech.goal.nekotask.NekoTagInventoryTaskGoal;
@@ -64,9 +65,26 @@ public class CatEntityMixin implements NekoMarkAccess {
 
     private NbtCompound nekoTaskData = new NbtCompound();
 
+    @Unique
+    @Nullable
+    private NekoTagWorldState.TaskCandidate currentNekoTask = null;
+
     @Override
     public NbtCompound neko_technology$getNekoTaskData() {
         return this.nekoTaskData;
+    }
+
+    @Override
+    @Nullable
+    public NekoTagWorldState.TaskCandidate neko_technology$getCurrentNekoTask() {
+        return this.currentNekoTask;
+    }
+
+    @Override
+    public void neko_technology$setCurrentNekoTask(
+            @Nullable NekoTagWorldState.TaskCandidate currentTask
+    ) {
+        this.currentNekoTask = currentTask;
     }
 
     @Unique

@@ -334,15 +334,6 @@ public class ConductorWorldState extends PersistentState {
         markDirty();
     }
 
-    // 移除配对
-    public WirePairData removeWirePair(String key) {
-        WirePairData removed = wirePairs.remove(key);
-        if (removed != null) {
-            markDirty();
-        }
-        return removed;
-    }
-
     // 生成唯一键
     public static String generateWirePairKey(BlockPos pos, Direction side) {
         return pos.getX() + "," + pos.getY() + "," + pos.getZ() + "_" + side.getName();

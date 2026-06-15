@@ -23,6 +23,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -84,16 +85,19 @@ public class NekoTagInventoryTaskGoal extends Goal {
         this.travelTicks = 0;
 
         if (!(cat.getWorld() instanceof ServerWorld world)) {
+            setCurrentTask(null);
             this.finished = true;
             return;
         }
 
         if (this.target == null) {
+            setCurrentTask(null);
             this.finished = true;
             return;
         }
 
         BlockPos pos = this.target.pos();
+        setCurrentTask(this.target);
 
         boolean pathStarted = this.cat.getNavigation().startMovingTo(
                 pos.getX() + 0.5D,
@@ -116,11 +120,13 @@ public class NekoTagInventoryTaskGoal extends Goal {
     @Override
     public void tick() {
         if (!(cat.getWorld() instanceof ServerWorld world)) {
+            setCurrentTask(null);
             this.finished = true;
             return;
         }
 
         if (this.target == null) {
+            setCurrentTask(null);
             this.finished = true;
             return;
         }
@@ -146,6 +152,7 @@ public class NekoTagInventoryTaskGoal extends Goal {
 
     @Override
     public void stop() {
+        setCurrentTask(null);
         this.cat.getNavigation().stop();
         this.target = null;
         this.travelTicks = 0;
@@ -261,6 +268,7 @@ public class NekoTagInventoryTaskGoal extends Goal {
 
     private void executeTarget(ServerWorld world) {
         if (this.target == null) {
+            setCurrentTask(null);
             this.finished = true;
             return;
         }
@@ -453,6 +461,15 @@ public class NekoTagInventoryTaskGoal extends Goal {
         }
 
         this.cat.getNavigation().stop();
+        setCurrentTask(null);
         this.finished = true;
+    }
+
+    private void setCurrentTask(
+            @Nullable NekoTagWorldState.TaskCandidate currentTask
+    ) {
+        if (this.cat instanceof NekoMarkAccess access) {
+            access.neko_technology$setCurrentNekoTask(currentTask);
+        }
     }
 }
