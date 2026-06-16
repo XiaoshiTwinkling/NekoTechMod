@@ -1,6 +1,7 @@
 package com.nekotech.item.custom;
 
 import com.nekotech.block.entity.api.component.ComponentAdaptation;
+import com.nekotech.block.entity.api.electrical.conductor.ConductorSystem;
 import com.nekotech.item.AbstractDurabilityItem;
 import com.nekotech.item.custom.component.WirePoleItem;
 import com.nekotech.util.WirePairHelper;
@@ -8,6 +9,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -56,6 +58,11 @@ public class Hammer extends Item implements AbstractDurabilityItem {
 
             // 移除零件
             machine.removeComponent(side);
+
+            if(!world.isClient()){
+                ConductorSystem.onComponentChanged((ServerWorld) world , pos , side);
+            }
+
 
             // 给予零件物品
             if (!player.getAbilities().creativeMode) {

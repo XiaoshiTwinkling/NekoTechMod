@@ -1,10 +1,12 @@
 package com.nekotech.item.custom.component;
 
 import com.nekotech.block.entity.api.component.ComponentAdaptation;
+import com.nekotech.block.entity.api.electrical.conductor.ConductorSystem;
 import com.nekotech.item.ModItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemUsageContext;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
@@ -46,6 +48,9 @@ public abstract class AbstractComponentItem extends ModItem {
             world.playSound(null, pos, SoundEvents.BLOCK_COPPER_PLACE, SoundCategory.BLOCKS, 1f, 1f);
         }
 
+        if(!world.isClient()){
+            ConductorSystem.onComponentChanged((ServerWorld) world , pos , side);
+        }
 
         return ActionResult.success(world.isClient());
     }
