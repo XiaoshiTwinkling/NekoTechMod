@@ -142,6 +142,7 @@ public class ModItemGroups {
                             entries.add(ModBlocks.ALLOY_POT);
                             entries.add(ModBlocks.WOODEN_CASING);
                             entries.add(ModBlocks.FLUX_STORAGE);
+                            entries.add(ModBlocks.CAT_GENERATOR);
                             entries.add(ModBlocks.WORK_BENCH);
                             entries.add(ModBlocks.COIL_BLOCK);
                             entries.add(ModItems.ELEVATOR_ITEM);

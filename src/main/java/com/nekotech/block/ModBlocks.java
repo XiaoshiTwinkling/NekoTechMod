@@ -54,6 +54,14 @@ public class ModBlocks {
             )
     );
 
+    public static final Block CAT_GENERATOR = register("cat_generator",
+            new CatGeneratorBlock(
+                    Block.Settings.create()
+                            .strength(3.5f)
+                            .nonOpaque()
+            )
+    );
+
     public static final Block WOODEN_CASING = register("wooden_casing",
             new WoodenCasing(
                     Block.Settings.create()

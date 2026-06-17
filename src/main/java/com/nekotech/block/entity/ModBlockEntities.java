@@ -4,6 +4,7 @@ import com.mojang.datafixers.types.Type;
 import com.nekotech.NekoTechnology;
 import com.nekotech.block.entity.machines.*;
 import com.nekotech.block.entity.machines.coil.CoilBlockEntity;
+import com.nekotech.block.entity.machines.conductor.CatGeneratorBlockEntity;
 import com.nekotech.block.entity.machines.conductor.CircuitBreakerBlockEntity;
 import com.nekotech.block.entity.machines.conductor.FluxStorageBlockEntity;
 import com.nekotech.block.entity.machines.conductor.MachineCasingBlockEntity;
@@ -46,6 +47,9 @@ public class ModBlockEntities {
 
     public static BlockEntityType<FluxStorageBlockEntity> FLUX_STORAGE =
             create("flux_storage", BlockEntityType.Builder.create(FluxStorageBlockEntity::new, ModBlocks.FLUX_STORAGE));
+
+    public static BlockEntityType<CatGeneratorBlockEntity> CAT_GENERATOR =
+            create("cat_generator", BlockEntityType.Builder.create(CatGeneratorBlockEntity::new, ModBlocks.CAT_GENERATOR));
 
     public static BlockEntityType<MachineCasingBlockEntity> WOODEN_CASING =
             create("wooden_casing", BlockEntityType.Builder.create(MachineCasingBlockEntity::new, ModBlocks.WOODEN_CASING));
