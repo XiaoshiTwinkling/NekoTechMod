@@ -10,6 +10,7 @@ import com.nekotech.item.custom.NekoMark.NekoMarkAccess;
 import com.nekotech.item.custom.NekoMark.NekoMarkItem;
 import com.nekotech.mixin.Accessor.CatEntityAccessor;
 import com.nekotech.mixin.Accessor.MobEntityAccessor;
+import com.nekotech.block.entity.machines.TreadmillCat;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.entity.passive.CatEntity;
@@ -26,8 +27,11 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -37,7 +41,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.List;
 
 @Mixin(CatEntity.class)
-public class CatEntityMixin implements NekoMarkAccess {
+public class CatEntityMixin implements NekoMarkAccess, TreadmillCat {
     @Unique
     private int nekoDropTimer = 0;
 
@@ -63,6 +67,7 @@ public class CatEntityMixin implements NekoMarkAccess {
     private static final TrackedData<Integer> NEKO_MARK_COLOR =
             DataTracker.registerData(CatEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
+    @Unique
     private NbtCompound nekoTaskData = new NbtCompound();
 
     @Unique
@@ -91,6 +96,16 @@ public class CatEntityMixin implements NekoMarkAccess {
     @Nullable
     private DyeColor nekoMarkColor = null;
 
+    @Unique
+    private boolean neko_runningOnTreadmill = false;
+
+    @Unique
+    private Vec3d neko_treadmillCenter = Vec3d.ZERO.add(0,-0.1,0);
+
+    @Unique
+    private float neko_treadmillFacingYaw = 0f;
+
+    @Unique private int neko_treadmillAlignCd = 0;
 
     @Unique
     private int getRandomInterval() {
@@ -155,7 +170,6 @@ public class CatEntityMixin implements NekoMarkAccess {
 
         if (!cat.getWorld().isClient() && cat.isAlive()) {
 
-            // 初始化一次
             if (nextDropInterval == 0) {
                 nextDropInterval = getRandomInterval();
             }
@@ -168,10 +182,51 @@ public class CatEntityMixin implements NekoMarkAccess {
 
                 nekoDropTimer = 0;
                 nextDropInterval = getRandomInterval();
+            }
+        }
 
-                NekoTechnology.LOGGER.info(
-                        "Cat dropped neko hair! Next interval: {}", nextDropInterval
-                );
+        if (neko_runningOnTreadmill) {
+            boolean client = cat.getWorld().isClient;
+
+            //允许微小移动 这样更好看喵
+            final double SPEED = 0.065;
+            final double CORRECT_DIST = 0.05;
+
+            float wantYaw = neko_treadmillFacingYaw;
+
+            if (!client) {
+                neko_treadmillAlignCd--;
+                if (neko_treadmillAlignCd <= 0) {
+                    neko_treadmillAlignCd = 5;
+                    double dx = neko_treadmillCenter.x - cat.getX();
+                    double dz = neko_treadmillCenter.z - cat.getZ();
+                    if (dx*dx + dz*dz > CORRECT_DIST * CORRECT_DIST) {
+                        cat.refreshPositionAndAngles(
+                                neko_treadmillCenter.x, neko_treadmillCenter.y, neko_treadmillCenter.z,
+                                wantYaw, cat.getPitch()
+                        );
+                    }
+                }
+
+                cat.setYaw(wantYaw);
+                cat.bodyYaw = wantYaw;
+                cat.headYaw = wantYaw;
+
+                double rad = Math.toRadians(wantYaw);
+                double vx = -Math.sin(rad) * SPEED;
+                double vz =  Math.cos(rad) * SPEED;
+                cat.setVelocity(vx, 0.0, vz);
+
+                cat.setOnGround(true);
+                cat.fallDistance = 0f;
+                cat.getNavigation().stop();
+                cat.setSprinting(true);
+            } else {
+                float cur = cat.getYaw();
+                float lerped = cur + MathHelper.wrapDegrees(wantYaw - cur) * 0.3f;
+                cat.setYaw(lerped);
+                cat.bodyYaw = lerped;
+                cat.headYaw = lerped;
             }
         }
     }
@@ -384,4 +439,23 @@ public class CatEntityMixin implements NekoMarkAccess {
             case BLACK -> ModItems.BLACK_NEKO_MARK;
         };
     }
+
+    /**
+     * 让猫在猫跑机上跑步
+     * @param center 猫跑机中心坐标
+     * @param facingYaw 猫应该面向的 yaw 角度
+     */
+    @Override
+    public void neko_technology$startRunningOnTreadmill(Vec3d center, float facingYaw) {
+        this.neko_runningOnTreadmill = true;
+        this.neko_treadmillCenter = center;
+        this.neko_treadmillFacingYaw = facingYaw;
+    }
+
+    /** 停止跑步 */
+    @Override
+    public void neko_technology$stopRunningOnTreadmill() {
+        this.neko_runningOnTreadmill = false;
+    }
+
 }

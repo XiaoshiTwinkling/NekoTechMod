@@ -3,12 +3,8 @@ package com.nekotech.block.custom;
 import com.mojang.serialization.MapCodec;
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.block.entity.api.electrical.conductor.ConductorSystem;
-import com.nekotech.block.entity.machines.conductor.CatGeneratorBlockEntity;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.BlockWithEntity;
-import net.minecraft.block.Blocks;
+import com.nekotech.block.entity.machines.CatGeneratorBlockEntity;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
@@ -24,25 +20,48 @@ import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.util.shape.VoxelShapes;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.stream.Stream;
 
 public class CatGeneratorBlock extends BlockWithEntity {
     public static final MapCodec<CatGeneratorBlock> CODEC = createCodec(CatGeneratorBlock::new);
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     public static final EnumProperty<CatGeneratorPart> PART = EnumProperty.of("part", CatGeneratorPart.class);
 
+    private static final VoxelShape LEFT_SHAPE = VoxelShapes.union(
+            Block.createCuboidShape(0, 0, 0, 16, 4, 15),
+            Block.createCuboidShape(0, 4, 0, 3, 6, 15),
+            Block.createCuboidShape(13, 4, 0, 16, 6, 15)
+    );
+
+    private static final VoxelShape RIGHT_SHAPE = VoxelShapes.union(
+            Block.createCuboidShape(0, 0, 1, 16, 4, 16),
+            Block.createCuboidShape(0, 4, 8, 16, 6, 16),
+            Block.createCuboidShape(0, 4, 1, 16, 6, 8),
+            Block.createCuboidShape(0, 6, 1, 16, 12, 8)
+    );
+
     public CatGeneratorBlock(Settings settings) {
         super(settings);
         this.setDefaultState(this.getStateManager().getDefaultState()
                 .with(FACING, Direction.NORTH)
                 .with(PART, CatGeneratorPart.LEFT));
+    }
+
+    @Override
+    protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+        return state.get(PART) == CatGeneratorPart.LEFT ? LEFT_SHAPE : RIGHT_SHAPE;
     }
 
     @Override

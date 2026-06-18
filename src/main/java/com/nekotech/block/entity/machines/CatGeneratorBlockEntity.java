@@ -1,4 +1,4 @@
-package com.nekotech.block.entity.machines.conductor;
+package com.nekotech.block.entity.machines;
 
 import com.nekotech.block.custom.CatGeneratorBlock;
 import com.nekotech.block.custom.CatGeneratorPart;
@@ -7,12 +7,14 @@ import com.nekotech.block.entity.api.IHaveGoogleHUD;
 import com.nekotech.block.entity.api.component.ComponentAdaptation;
 import com.nekotech.block.entity.api.electrical.IGenerator;
 import com.nekotech.block.entity.api.electrical.conductor.ConductorSystem;
-import com.nekotech.block.entity.machines.MachineBlockEntity;
 import com.nekotech.item.ModItems;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.passive.CatEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
@@ -26,15 +28,11 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class CatGeneratorBlockEntity extends MachineBlockEntity
         implements ComponentAdaptation, IHaveGoogleHUD, IGenerator {
@@ -43,6 +41,12 @@ public class CatGeneratorBlockEntity extends MachineBlockEntity
     private float nekoFlux = 0f;
     private final Map<Direction, Item> attachedComponents = new EnumMap<>(Direction.class);
     private final Set<Item> validComponents = new HashSet<>();
+
+    @Nullable
+    private UUID runningCatUUID = null;
+
+    //发电效率 = 跑步速度 * 这个参数
+    private final float FLUX_RISING_RATE = 3.2f;
 
     public CatGeneratorBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.CAT_GENERATOR, pos, state);
@@ -54,7 +58,80 @@ public class CatGeneratorBlockEntity extends MachineBlockEntity
     public static void tick(World world, BlockPos pos, BlockState state, CatGeneratorBlockEntity blockEntity) {
         if (!world.isClient()) {
             blockEntity.tickComponents(world);
+
+            if (blockEntity.isMainPart()) {
+                blockEntity.handleCatRunning((ServerWorld) world);
+            }
         }
+    }
+
+    private void handleCatRunning(ServerWorld world) {
+        BlockPos leftPos = this.pos;
+        BlockPos rightPos = CatGeneratorBlock.getOtherPartPos(leftPos, getCachedState());
+
+        Box box = new Box(
+                Math.min(leftPos.getX(), rightPos.getX()),
+                leftPos.getY() + 1,
+                Math.min(leftPos.getZ(), rightPos.getZ()),
+                Math.max(leftPos.getX(), rightPos.getX()) + 1,
+                leftPos.getY() + 2,
+                Math.max(leftPos.getZ(), rightPos.getZ()) + 1
+        );
+
+        java.util.List<CatEntity> cats = world.getEntitiesByClass(
+                CatEntity.class, box, Entity::isAlive
+        );
+
+        CatEntity runningCat = null;
+        if (runningCatUUID != null) {
+            for (CatEntity cat : cats) {
+                if (cat.getUuid().equals(runningCatUUID)) {
+                    runningCat = cat;
+                    break;
+                }
+            }
+        }
+
+        if (runningCat == null) {
+            if (runningCatUUID != null) {
+                CatEntity oldCat = (CatEntity) world.getEntity(runningCatUUID);
+                if (oldCat != null) {
+                    ((TreadmillCat) oldCat).neko_technology$stopRunningOnTreadmill();
+                }
+            }
+            runningCatUUID = null;
+        }
+
+        if (runningCatUUID == null && !cats.isEmpty()) {
+            runningCat = cats.getFirst();
+            runningCatUUID = runningCat.getUuid();
+        }
+
+        if (runningCat != null) {
+            controlRunningCat(runningCat, leftPos);
+            generatePower(runningCat);
+        }
+    }
+
+    private void controlRunningCat(CatEntity cat, BlockPos mainPos) {
+        BlockState state = this.getCachedState();
+        Direction facing = state.get(CatGeneratorBlock.FACING);
+        Direction front = facing.rotateClockwise(Direction.Axis.Y);
+
+        BlockPos rightPos = CatGeneratorBlock.getOtherPartPos(mainPos, state);
+        double centerX = (mainPos.getX() + rightPos.getX()) / 2.0 + 0.5;
+        double centerZ = (mainPos.getZ() + rightPos.getZ()) / 2.0 + 0.5;
+        Vec3d center = new Vec3d(centerX, mainPos.getY() + 0.5, centerZ);
+
+        float targetYaw = front.asRotation();
+
+        ((TreadmillCat) cat).neko_technology$startRunningOnTreadmill(center, targetYaw);
+    }
+
+    private void generatePower(CatEntity cat) {
+        double speed = cat.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
+        float increment = (float) (FLUX_RISING_RATE * speed / 20.0);
+        setNekoFlux(getNekoFlux() + increment);
     }
 
     @Override
@@ -68,7 +145,7 @@ public class CatGeneratorBlockEntity extends MachineBlockEntity
 
     @Override
     public boolean canTransfer() {
-        return true;
+        return IGenerator.super.canTransfer();
     }
 
     @Override
@@ -233,5 +310,22 @@ public class CatGeneratorBlockEntity extends MachineBlockEntity
         if (this.world instanceof ServerWorld serverWorld) {
             serverWorld.getChunkManager().markForUpdate(this.pos);
         }
+    }
+
+    public @Nullable UUID getRunningCatUUID() {
+        return runningCatUUID;
+    }
+
+    @Override
+    public void markRemoved() {
+        if (this.world != null && !this.world.isClient && this.runningCatUUID != null) {
+            ServerWorld sw = (ServerWorld) this.world;
+            Entity e = sw.getEntity(this.runningCatUUID);
+            if (e instanceof TreadmillCat tc) {
+                tc.neko_technology$stopRunningOnTreadmill();
+            }
+            this.runningCatUUID = null;
+        }
+        super.markRemoved();
     }
 }
