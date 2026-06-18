@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "brass_ingot",
+  "key": {
+    "#": {
+      "item": "neko-technology:brass_ingot"
+    }
+  },
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neko-technology:brass_block"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "pig_iron_ingot",
+  "ingredients": [
+    {
+      "item": "neko-technology:pig_iron_ingot"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "neko-technology:pig_iron_nugget"
+  }
+}

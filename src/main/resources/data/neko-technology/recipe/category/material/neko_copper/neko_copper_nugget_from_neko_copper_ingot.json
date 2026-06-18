@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "neko_copper_ingot",
+  "ingredients": [
+    {
+      "item": "neko-technology:neko_copper_ingot"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "neko-technology:neko_copper_nugget"
+  }
+}

@@ -5,7 +5,7 @@
   "experience": 0.5,
   "group": "Neko",
   "ingredient": {
-    "item": "minecraft:iron_ingot"
+    "item": "neko-technology:iron_ingot"
   },
   "result": {
     "id": "neko-technology:pig_iron_ingot"

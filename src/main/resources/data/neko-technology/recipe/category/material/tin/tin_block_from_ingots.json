@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "tin_ingot",
+  "key": {
+    "#": {
+      "item": "neko-technology:tin_ingot"
+    }
+  },
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neko-technology:tin_block"
+  }
+}

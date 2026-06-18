@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "aluminum_ingot",
+  "key": {
+    "#": {
+      "item": "neko-technology:aluminum_ingot"
+    }
+  },
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neko-technology:aluminum_block"
+  }
+}

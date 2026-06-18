@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "pig_iron_ingot",
+  "key": {
+    "#": {
+      "item": "neko-technology:pig_iron_ingot"
+    }
+  },
+  "pattern": [
+    "###",
+    "###",
+    "###"
+  ],
+  "result": {
+    "count": 1,
+    "id": "neko-technology:pig_iron_block"
+  }
+}

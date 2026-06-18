@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "brass_ingot",
+  "ingredients": [
+    {
+      "item": "neko-technology:brass_block"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "neko-technology:brass_ingot"
+  }
+}

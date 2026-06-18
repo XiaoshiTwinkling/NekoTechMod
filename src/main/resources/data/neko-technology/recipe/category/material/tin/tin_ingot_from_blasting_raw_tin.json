@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "cookingtime": 100,
+  "experience": 0.7,
+  "group": "tin_ingot",
+  "ingredient": {
+    "item": "neko-technology:raw_tin"
+  },
+  "result": {
+    "id": "neko-technology:tin_ingot"
+  }
+}
