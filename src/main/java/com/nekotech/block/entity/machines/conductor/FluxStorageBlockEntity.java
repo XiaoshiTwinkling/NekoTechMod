@@ -38,7 +38,7 @@ import java.util.Set;
 public class FluxStorageBlockEntity extends MachineBlockEntity
         implements  ICatNeedMachine, ComponentAdaptation, IHaveGoogleHUD, IElectricStorager {
 
-    private float nekoFlux = 500f;
+    private float nekoFlux = 0f;
     private final float maxNekoFlux = 1000f;
 
     @Nullable

@@ -1,5 +1,10 @@
 {
   "variants": {
-    "": { "model": "neko-technology:block/bellows" }
+    "facing=down":  { "model": "neko-technology:block/bellows" },
+    "facing=up":    { "model": "neko-technology:block/bellows", "x": 180 },
+    "facing=north": { "model": "neko-technology:block/bellows", "x": -90 },
+    "facing=east":  { "model": "neko-technology:block/bellows", "x": -90, "y": 90 },
+    "facing=south": { "model": "neko-technology:block/bellows", "x": -90, "y": 180 },
+    "facing=west":  { "model": "neko-technology:block/bellows", "x": -90, "y": 270 }
   }
 }

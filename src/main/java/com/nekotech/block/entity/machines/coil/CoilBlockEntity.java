@@ -64,7 +64,7 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
 
     private List<CoilType> coils = new ArrayList<>(MAX_COILS);
     private boolean isFixed = false;
-    private float nekoFlux = 100;
+    private float nekoFlux = 0;
     private float temperature = 0;
     private float maxTemperature = 0;
     private float heatRate = 0;
@@ -89,10 +89,7 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
 
     private void initValidComponents() {
         validComponents.add(ModItems.BRASS_FLUX_INPUTER);
-        validComponents.add(ModItems.BRASS_FLUX_OUTPUTER);
         validComponents.add(ModItems.NEKO_COPPER_FLUX_INPUTER);
-        validComponents.add(ModItems.NEKO_COPPER_FLUX_OUTPUTER);
-        validComponents.add(ModItems.COMPONENT_CASING);
     }
 
     public float getTemperature() {
