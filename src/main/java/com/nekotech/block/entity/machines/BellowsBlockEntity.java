@@ -150,6 +150,10 @@ public class BellowsBlockEntity extends BlockEntity implements ICatNeedMachine {
         return this.lastProgress + (this.progress - this.lastProgress) * tickDelta;
     }
 
+    public boolean isWorking() {
+        return this.working;
+    }
+
     @Override
     protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         super.writeNbt(nbt, registryLookup);

@@ -1,5 +1,6 @@
 package com.nekotech.block.entity.machines;
 
+import com.nekotech.block.custom.Bellows;
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.block.entity.api.component.ComponentAdaptation;
 import com.nekotech.block.entity.api.TakeFreelyInventory;
@@ -41,18 +42,18 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.state.property.Properties;
+
 
 import java.util.*;
 
 public class HeaterBlockEntity extends MachineBlockEntity
         implements SidedInventory, ComponentAdaptation , TakeFreelyInventory, IHaveGoogleHUD, IcanItemIO {
     private static final int FUEL_SLOT = 0;
-    private static final int MAX_BURN_TIME = 600;
     private static final float MAX_TEMPERATURE = 400.0f;
     private static final float TEMPERATURE_RISING_RATE = 0.14f;
     private static final float BRICK_TEMPERATURE_BONUS = 50.0f;  // 每个砖块增加的温度
     private static final int BRICK_CHECK_RANGE = 1;  // 检查砖块范围
-    private static final int COIL_CHECK_RANGE = 2;
 
     private final DefaultedList<ItemStack> fuelSlots = DefaultedList.ofSize(1, ItemStack.EMPTY);
     private float temperature = 0.0f;
@@ -172,6 +173,23 @@ public class HeaterBlockEntity extends MachineBlockEntity
 
     public float getTemperature() {
         return temperature;
+    }
+
+    private boolean hasBlowingBellows(World world, BlockPos pos) {
+        for (Direction dir : Direction.values()) {
+            BlockPos neighborPos = pos.offset(dir);
+            BlockState neighborState = world.getBlockState(neighborPos);
+            if (neighborState.getBlock() instanceof Bellows) {
+                Direction bellowsFacing = neighborState.get(Properties.FACING);
+                if (bellowsFacing == dir.getOpposite()) {
+                    BlockEntity be = world.getBlockEntity(neighborPos);
+                    if (be instanceof BellowsBlockEntity bellows) {
+                        return bellows.isWorking();
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     //数范围内的砖块数量喵
@@ -440,7 +458,6 @@ public class HeaterBlockEntity extends MachineBlockEntity
         }
     }
 
-    //@Environment(EnvType.SERVER)
     public void serverTick(World world, BlockPos pos, BlockState state) {
         if (world.isClient) return;
 
@@ -453,6 +470,12 @@ public class HeaterBlockEntity extends MachineBlockEntity
         coilHeatRateBonus = coilBonus[1];
 
         max_temperature = MAX_TEMPERATURE + brickTemperatureBonus + coilTemperatureBonus;
+
+        if (hasBlowingBellows(world, pos)) {
+            max_temperature *= 1.2f;
+            max_temperature = (int) max_temperature;
+        }
+
         temperature_rising_rate = TEMPERATURE_RISING_RATE + brickHeatRateBonus + coilHeatRateBonus;
 
         if (getStack(FUEL_SLOT).getCount() > 0) {
