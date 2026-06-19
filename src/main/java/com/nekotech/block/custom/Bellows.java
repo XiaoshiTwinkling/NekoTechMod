@@ -64,6 +64,6 @@ public class Bellows extends BlockWithEntity {
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
         return this.getDefaultState()
-                .with(Properties.FACING, ctx.getHorizontalPlayerFacing().getOpposite());
+                .with(Properties.FACING, ctx.getPlayerLookDirection().getOpposite());
     }
 }
