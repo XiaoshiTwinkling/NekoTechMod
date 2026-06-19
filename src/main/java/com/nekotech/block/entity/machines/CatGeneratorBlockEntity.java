@@ -45,6 +45,10 @@ public class CatGeneratorBlockEntity extends MachineBlockEntity
     @Nullable
     private UUID runningCatUUID = null;
 
+    private boolean lastSyncedCatRunning = false;
+    private float lastSyncedTrackSpeed = 0f;
+
+
     //发电效率 = 跑步速度 * 这个参数
     private final float FLUX_RISING_RATE = 3.2f;
 
@@ -64,6 +68,7 @@ public class CatGeneratorBlockEntity extends MachineBlockEntity
             }
         }
     }
+
 
     private void handleCatRunning(ServerWorld world) {
         BlockPos leftPos = this.pos;
@@ -110,6 +115,18 @@ public class CatGeneratorBlockEntity extends MachineBlockEntity
         if (runningCat != null) {
             controlRunningCat(runningCat, leftPos);
             generatePower(runningCat);
+            catRunning = true;
+            trackSpeed = (float) runningCat.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
+        } else {
+            catRunning = false;
+            trackSpeed = 0f;
+        }
+
+        if (catRunning != lastSyncedCatRunning || Math.abs(trackSpeed - lastSyncedTrackSpeed) > 0.001f) {
+            lastSyncedCatRunning = catRunning;
+            lastSyncedTrackSpeed = trackSpeed;
+            markDirty();
+            sync();
         }
     }
 
@@ -132,6 +149,19 @@ public class CatGeneratorBlockEntity extends MachineBlockEntity
         double speed = cat.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
         float increment = (float) (FLUX_RISING_RATE * speed / 20.0);
         setNekoFlux(getNekoFlux() + increment);
+    }
+
+    private boolean catRunning = false;  // 猫是否在跑（同步到客户端）
+    private float trackSpeed = 0f;       // 履带滚动速度（同步到客户端）
+
+    public boolean isCatRunning() {
+        CatGeneratorBlockEntity main = getMainBlockEntity();
+        return main == this ? this.catRunning : main.isCatRunning();
+    }
+
+    public float getCatRunningSpeed() {
+        CatGeneratorBlockEntity main = getMainBlockEntity();
+        return main == this ? this.trackSpeed : main.getCatRunningSpeed();
     }
 
     @Override
@@ -241,6 +271,8 @@ public class CatGeneratorBlockEntity extends MachineBlockEntity
 
         if (isMainPart()) {
             nbt.putFloat("NekoFlux", this.nekoFlux);
+            nbt.putBoolean("CatRunning", catRunning);
+            nbt.putFloat("TrackSpeed", trackSpeed);
         }
 
         NbtCompound componentsNbt = new NbtCompound();
@@ -256,7 +288,11 @@ public class CatGeneratorBlockEntity extends MachineBlockEntity
 
         if (isMainPart() && nbt.contains("NekoFlux")) {
             this.nekoFlux = nbt.getFloat("NekoFlux");
+            this.catRunning = nbt.getBoolean("CatRunning");
+            this.trackSpeed = nbt.getFloat("TrackSpeed");
         }
+
+
 
         this.attachedComponents.clear();
         if (nbt.contains("AttachedComponents", NbtElement.COMPOUND_TYPE)) {

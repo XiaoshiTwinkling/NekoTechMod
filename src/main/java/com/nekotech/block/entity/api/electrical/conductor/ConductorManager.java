@@ -158,6 +158,7 @@ public class ConductorManager {
      * 保存当前状态到世界状态
      */
     public void saveToWorldState() {
+
         if (worldState == null) {
             NekoTechnology.LOGGER.error("[导体管理器] 世界状态为空，无法保存数据");
             return;
@@ -632,8 +633,8 @@ public class ConductorManager {
             processedPositions.clear();
         }
 
-        // 定期保存（每5秒）
-        if (world.getTime() % 100 == 0) {
+        // 定期保存（每50秒）
+        if (world.getTime() % 1000 == 0) {
             saveToWorldState();
         }
 

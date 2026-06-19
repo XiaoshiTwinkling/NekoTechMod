@@ -14,6 +14,7 @@ import com.nekotech.screens.NekoTagScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
@@ -57,6 +58,12 @@ public class NekoTechnologyClient implements ClientModInitializer {
                 ElevatorCoreBlockEntityRenderer::new
         );
 
+        BlockEntityRendererFactories.register(
+                ModBlockEntities.CAT_GENERATOR,
+                CatGeneratorTrackRenderer::new
+        );
+
+
         registerComponentAttachmentRenderer();
 
         ClientHudNetworkHandler.initialize();
@@ -99,12 +106,6 @@ public class NekoTechnologyClient implements ClientModInitializer {
         WirePoleRenderer.initialize();
 
         BlockEntityRendererFactories.register(ModBlockEntities.FLUX_STORAGE, new BlockEntityRendererFactory<BlockEntity>() {
-            @Override
-            public BlockEntityRenderer<BlockEntity> create(Context ctx) {
-                return new ComponentAttachmentRenderer();
-            }
-        });
-        BlockEntityRendererFactories.register(ModBlockEntities.CAT_GENERATOR, new BlockEntityRendererFactory<BlockEntity>() {
             @Override
             public BlockEntityRenderer<BlockEntity> create(Context ctx) {
                 return new ComponentAttachmentRenderer();

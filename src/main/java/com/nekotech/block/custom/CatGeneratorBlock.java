@@ -33,6 +33,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.stream.Stream;
+import net.minecraft.util.math.RotationAxis;
+import net.minecraft.util.shape.VoxelShapes;
 
 public class CatGeneratorBlock extends BlockWithEntity {
     public static final MapCodec<CatGeneratorBlock> CODEC = createCodec(CatGeneratorBlock::new);
@@ -58,6 +60,8 @@ public class CatGeneratorBlock extends BlockWithEntity {
                 .with(FACING, Direction.NORTH)
                 .with(PART, CatGeneratorPart.LEFT));
     }
+
+
 
     @Override
     protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
@@ -108,6 +112,11 @@ public class CatGeneratorBlock extends BlockWithEntity {
         }
 
         super.onPlaced(world, pos, state, placer, itemStack);
+    }
+
+    @Override
+    public float getAmbientOcclusionLightLevel(BlockState state, BlockView world, BlockPos pos) {
+        return 1.0f;
     }
 
     @Override
