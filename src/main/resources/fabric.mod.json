@@ -1,17 +1,18 @@
 {
 	"schemaVersion": 1,
 	"id": "neko-technology",
-	"version": "${version}",
+	"version": "1.0.0-alpha",
 	"name": "Neko Technology",
-	"description": "Meow Meow Technology o(=•ェ•=)m",
+	"description": "Meow Meow Technology.",
 	"authors": [
-		"Xiaoshi_"
+		"Xiaoshi_",
+		"Petitioner"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://github.com/XiaoshiTwinkling/NekoTechMod",
+		"sources": "https://github.com/XiaoshiTwinkling/NekoTechMod"
 	},
-	"license": "CC0-1.0",
+	"license": "MIT",
 	"icon": "assets/neko-technology/icon.png",
 	"environment": "*",
 	"entrypoints": {
