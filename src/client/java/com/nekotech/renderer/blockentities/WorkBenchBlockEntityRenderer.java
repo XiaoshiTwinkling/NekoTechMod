@@ -25,11 +25,11 @@ public class WorkBenchBlockEntityRenderer implements BlockEntityRenderer<WorkBen
 
         ItemStack inputStack = entity.getStack(WorkBenchBlockEntity.INPUT_SLOT);
             renderItemOnBench(entity, inputStack, rotationAngle, matrices, vertexConsumers, light,
-                    -0.25f, 0.0f, 0.15f);
+                    0f, 0.0f, 0f);
 
         ItemStack outputStack = entity.getStack(WorkBenchBlockEntity.OUTPUT_SLOT);
             renderItemOnBench(entity, outputStack, rotationAngle, matrices, vertexConsumers, light,
-                    0.25f, 0.0f, -0.15f);
+                    0.31f, 0.0f, -0.23f);
     }
 
     private void renderItemOnBench(WorkBenchBlockEntity entity,ItemStack stack, float yaw, MatrixStack matrices,
@@ -45,6 +45,8 @@ public class WorkBenchBlockEntityRenderer implements BlockEntityRenderer<WorkBen
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(yaw));
         matrices.translate(xOffset, yOffset, zOffset);
         matrices.scale(0.5f, 0.5f, 0.5f);
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-90f));
+
         MinecraftClient.getInstance().getItemRenderer().renderItem(
                 stack,
                 ModelTransformationMode.FIXED,
