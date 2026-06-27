@@ -3,7 +3,6 @@ package com.nekotech.recipe.WorkBench.forging;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.nekotech.item.custom.Hammer;
 import com.nekotech.recipe.ModRecipes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
@@ -89,6 +88,8 @@ public class ForgingRecipe implements Recipe<SingleStackRecipeInput> {
     public Ingredient getInput() {
         return input;
     }
+
+    public ItemStack getOutput() { return output; }
 
     public float getSuccessChance() {
         return successChance;
