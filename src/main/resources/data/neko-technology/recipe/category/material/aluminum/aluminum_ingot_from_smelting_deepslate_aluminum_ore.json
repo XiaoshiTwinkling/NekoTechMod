@@ -5,7 +5,7 @@
   "experience": 0.7,
   "group": "aluminum_ingot",
   "ingredient": {
-    "item": "neko-technology:aluminum_ore"
+    "item": "neko-technology:deepslate_aluminum_ore"
   },
   "result": {
     "id": "neko-technology:aluminum_ingot"
