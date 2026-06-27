@@ -182,6 +182,10 @@ public class ModBlocks {
     public static final Block PETGRASS_CROP = Registry.register(Registries.BLOCK, Identifier.of(NekoTechnology.MOD_ID, "petgrass_crop"),
             new PetgrassCropBlock(AbstractBlock.Settings.copy(Blocks.WHEAT)));
 
+    public static final Block BEACON_DIFFUSER = register("beacon_diffuser",
+            new BeaconDiffuserBlock(AbstractBlock.Settings.copy(Blocks.STONE_PRESSURE_PLATE)
+                    .strength(0.5f)
+                    .requiresTool()));
 
     public static void registerBlockItems(String id, Block block){
         BlockItem item = Registry.register(Registries.ITEM, Identifier.of(NekoTechnology.MOD_ID, id), new BlockItem(block, new Item.Settings()));

@@ -191,6 +191,11 @@
   "block.neko-technology.cat_house.cat_stored": "已将猫存入猫舍",
   "block.neko-technology.cat_house.inventory_full": "物品栏已满，无法取出猫猫",
   "block.neko-technology.cat_house.unnamed_cat": "未命名猫猫",
+  "block.neko-technology.beacon_diffuser": "信标扩散器",
+  "hud.beacon_diffuser.level": "信标等级：%d",
+  "hud.beacon_diffuser.flux": "能量：%s",
+  "hud.beacon_diffuser.effect": "效果：%s",
+  "hud.none": "无",
 
   "hud.coil.copper": "铜线圈: %d",
   "hud.coil.pig_iron": "生铁线圈: %d",

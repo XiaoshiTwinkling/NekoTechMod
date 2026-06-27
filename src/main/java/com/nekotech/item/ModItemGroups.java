@@ -147,6 +147,7 @@ public class ModItemGroups {
                             entries.add(ModBlocks.COIL_BLOCK);
                             entries.add(ModItems.ELEVATOR_ITEM);
                             entries.add(ModBlocks.CIRCUIT_BREAKER);
+                            entries.add(ModBlocks.BEACON_DIFFUSER);
 
                         })).build());
 

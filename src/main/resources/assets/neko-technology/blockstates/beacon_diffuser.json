@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "active=true":  { "model": "neko-technology:block/beacon_diffuser/beacon_diffuser_open"},
+    "active=false":    { "model": "neko-technology:block/beacon_diffuser/beacon_diffuser_close"}
+  }
+}

@@ -69,6 +69,17 @@ public class ModBlockEntities {
         Type<?> type = Util.getChoiceType(TypeReferences.BLOCK_ENTITY, id);
         return Registry.register(Registries.BLOCK_ENTITY_TYPE, Identifier.of(NekoTechnology.MOD_ID, id), builder.build(type));
     }
+
+    public static final BlockEntityType<BeaconDiffuserBlockEntity> BEACON_DIFFUSER =
+            Registry.register(
+                    Registries.BLOCK_ENTITY_TYPE,
+                    Identifier.of("neko-technology", "beacon_diffuser"),
+                    BlockEntityType.Builder.create(
+                            BeaconDiffuserBlockEntity::new,
+                            ModBlocks.BEACON_DIFFUSER
+                    ).build()
+            );
+
     public static void registerBlockEntities(){
 
     }
