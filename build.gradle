@@ -78,8 +78,15 @@ dependencies {
 	//Mod Menu
 	modImplementation("com.terraformersmc:modmenu:11.0.4")
 
-	modCompileOnly("mezz.jei:jei-1.21.1-fabric-api:19.27.0.340")
-	modRuntimeOnly("mezz.jei:jei-1.21.1-fabric:19.27.0.340")
+	modCompileOnly("mezz.jei:jei-1.21.1-common-api-intermediary:19.25.1.332") {
+		transitive = false
+	}
+	modCompileOnly("mezz.jei:jei-1.21.1-fabric-api:19.25.1.332") {
+		transitive = false
+	}
+	modRuntimeOnly("mezz.jei:jei-1.21.1-fabric:19.25.1.332") {
+		transitive = false
+	}
 }
 
 processResources {
@@ -129,4 +136,3 @@ publishing {
 		// retrieving dependencies.
 	}
 }
-
