@@ -6,6 +6,7 @@ import com.nekotech.block.custom.WorkBench;
 import com.nekotech.recipe.ModRecipes;
 import com.nekotech.recipe.WorkBench.forging.ForgingRecipe;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.SidedInventory;
@@ -34,7 +35,15 @@ public class WorkBenchBlockEntity extends TakeFreelyMachineBlockEntity implement
     public static final int INVENTORY_SIZE = 2;
 
     public WorkBenchBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.WORK_BENCH, pos, state, INVENTORY_SIZE);
+        this(ModBlockEntities.WORK_BENCH, pos, state);
+    }
+
+    protected WorkBenchBlockEntity(
+            BlockEntityType<?> type,
+            BlockPos pos,
+            BlockState state
+    ) {
+        super(type, pos, state, INVENTORY_SIZE);
     }
 
     @Override
@@ -75,39 +84,8 @@ public class WorkBenchBlockEntity extends TakeFreelyMachineBlockEntity implement
      * @return 是否成功执行了锻造
      */
     public boolean tryForging(PlayerEntity player, ItemStack hammerStack) {
-        if (world == null || world.isClient) {
-            return false;
-        }
-
-        ItemStack inputStack = getStack(INPUT_SLOT);
-        if (inputStack.isEmpty()) {
-            if (player instanceof ServerPlayerEntity) {
-                player.sendMessage(Text.translatable("message.neko-technology.forging.no_input"), true);
-            }
-            return false;
-        }
-
-        ForgingRecipe recipe = findMatchingRecipe(inputStack);
-        if (recipe == null) {
-            if (player instanceof ServerPlayerEntity) {
-                player.sendMessage(Text.translatable("message.neko-technology.forging.no_recipe"), true);
-            }
-            return false;
-        }
-
-        ItemStack outputStack = getStack(OUTPUT_SLOT);
-        ItemStack recipeOutput = recipe.getResult(world.getRegistryManager()).copy();
-
-        if (!outputStack.isEmpty()) {
-            boolean canCombine = ItemStack.areItemsAndComponentsEqual(outputStack, recipeOutput);
-            boolean isFull = outputStack.getCount() + recipeOutput.getCount() > outputStack.getMaxCount();
-            if (!canCombine || isFull) {
-                if (player instanceof ServerPlayerEntity) {
-                    player.sendMessage(Text.translatable("message.neko-technology.forging.output_full"), true);
-                }
-                return false;
-            }
-        }
+        PreparedForging prepared = prepareForging(player);
+        if (prepared == null) return false;
 
         if (hammerStack.getDamage() >= hammerStack.getMaxDamage() - 1) {
             if (player instanceof ServerPlayerEntity) {
@@ -117,14 +95,74 @@ public class WorkBenchBlockEntity extends TakeFreelyMachineBlockEntity implement
         }
 
         Random random = world.random;
-        float successChance = recipe.getSuccessChance();
+        float successChance = prepared.recipe().getSuccessChance();
 
         if (random.nextFloat() <= successChance) {
-
-            return executeForging(player, hammerStack, inputStack, outputStack, recipeOutput, recipe, true);
+            return executeForging(player, hammerStack, prepared, true);
         } else {
+            return executeForging(player, hammerStack, prepared, false);
+        }
+    }
 
-            return executeForging(player, hammerStack, inputStack, outputStack, recipeOutput, recipe, false);
+    /**
+     * 尝试执行一次无需玩家和锤子的锻造。
+     *
+     * @return 是否实际开始了一次锻造；配方概率失败也视为已经执行
+     */
+    protected boolean tryAutomatedForging() {
+        PreparedForging prepared = prepareForging(null);
+        if (prepared == null || world == null) return false;
+
+        boolean success = world.random.nextFloat() <= prepared.recipe().getSuccessChance();
+        executeForging(null, null, prepared, success);
+
+        if (success) {
+            world.playSound(null, pos, SoundEvents.BLOCK_ANVIL_USE,
+                    SoundCategory.BLOCKS, 0.8f, 0.8f + world.random.nextFloat() * 0.4f);
+        } else {
+            world.playSound(null, pos, SoundEvents.BLOCK_ANVIL_LAND,
+                    SoundCategory.BLOCKS, 0.5f, 0.5f);
+        }
+
+        return true;
+    }
+
+    @Nullable
+    private PreparedForging prepareForging(@Nullable PlayerEntity player) {
+        if (world == null || world.isClient) {
+            return null;
+        }
+
+        ItemStack inputStack = getStack(INPUT_SLOT);
+        if (inputStack.isEmpty()) {
+            sendForgingMessage(player, "message.neko-technology.forging.no_input");
+            return null;
+        }
+
+        ForgingRecipe recipe = findMatchingRecipe(inputStack);
+        if (recipe == null) {
+            sendForgingMessage(player, "message.neko-technology.forging.no_recipe");
+            return null;
+        }
+
+        ItemStack outputStack = getStack(OUTPUT_SLOT);
+        ItemStack recipeOutput = recipe.getResult(world.getRegistryManager()).copy();
+
+        if (!outputStack.isEmpty()) {
+            boolean canCombine = ItemStack.areItemsAndComponentsEqual(outputStack, recipeOutput);
+            boolean isFull = outputStack.getCount() + recipeOutput.getCount() > outputStack.getMaxCount();
+            if (!canCombine || isFull) {
+                sendForgingMessage(player, "message.neko-technology.forging.output_full");
+                return null;
+            }
+        }
+
+        return new PreparedForging(inputStack, outputStack, recipeOutput, recipe);
+    }
+
+    private void sendForgingMessage(@Nullable PlayerEntity player, String translationKey) {
+        if (player instanceof ServerPlayerEntity) {
+            player.sendMessage(Text.translatable(translationKey), true);
         }
     }
 
@@ -148,13 +186,17 @@ public class WorkBenchBlockEntity extends TakeFreelyMachineBlockEntity implement
      * 执行锻造操作
      * @param success 是否成功
      */
-    private boolean executeForging(PlayerEntity player, ItemStack hammerStack,
-                                   ItemStack inputStack, ItemStack outputStack,
-                                   ItemStack recipeOutput, ForgingRecipe recipe,
+    private boolean executeForging(@Nullable PlayerEntity player,
+                                   @Nullable ItemStack hammerStack,
+                                   PreparedForging prepared,
                                    boolean success) {
         if (world == null) {
             return false;
         }
+
+        ItemStack inputStack = prepared.inputStack();
+        ItemStack outputStack = prepared.outputStack();
+        ItemStack recipeOutput = prepared.recipeOutput();
 
         inputStack.decrement(1);
         if (inputStack.isEmpty()) {
@@ -163,7 +205,7 @@ public class WorkBenchBlockEntity extends TakeFreelyMachineBlockEntity implement
             setStack(INPUT_SLOT, inputStack);
         }
 
-        if (!player.getAbilities().creativeMode) {
+        if (player != null && hammerStack != null && !player.getAbilities().creativeMode) {
             hammerStack.damage(1, player, EquipmentSlot.MAINHAND);
 
             // 检查锤子是否损坏
@@ -208,6 +250,14 @@ public class WorkBenchBlockEntity extends TakeFreelyMachineBlockEntity implement
         markDirty();
 
         return success;
+    }
+
+    private record PreparedForging(
+            ItemStack inputStack,
+            ItemStack outputStack,
+            ItemStack recipeOutput,
+            ForgingRecipe recipe
+    ) {
     }
 
     /**

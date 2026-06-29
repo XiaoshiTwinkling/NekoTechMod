@@ -144,6 +144,7 @@ public class ModItemGroups {
                             entries.add(ModBlocks.FLUX_STORAGE);
                             entries.add(ModBlocks.CAT_GENERATOR);
                             entries.add(ModBlocks.WORK_BENCH);
+                            entries.add(ModBlocks.ADVANCED_WORK_BENCH);
                             entries.add(ModBlocks.COIL_BLOCK);
                             entries.add(ModItems.ELEVATOR_ITEM);
                             entries.add(ModBlocks.CIRCUIT_BREAKER);

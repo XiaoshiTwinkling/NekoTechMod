@@ -56,6 +56,12 @@ public class ModBlockEntities {
     public static BlockEntityType<WorkBenchBlockEntity> WORK_BENCH =
             create("work_bench", BlockEntityType.Builder.create(WorkBenchBlockEntity::new, ModBlocks.WORK_BENCH));
 
+    public static BlockEntityType<AdvancedWorkBenchBlockEntity> ADVANCED_WORK_BENCH =
+            create("advanced_work_bench", BlockEntityType.Builder.create(
+                    AdvancedWorkBenchBlockEntity::new,
+                    ModBlocks.ADVANCED_WORK_BENCH
+            ));
+
     public static BlockEntityType<CoilBlockEntity> COIL_BLOCK =
             create("coil_block", BlockEntityType.Builder.create(CoilBlockEntity::new, ModBlocks.COIL_BLOCK));
 

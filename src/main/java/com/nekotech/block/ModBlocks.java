@@ -76,6 +76,13 @@ public class ModBlocks {
             )
     );
 
+    public static final Block ADVANCED_WORK_BENCH = register("advanced_work_bench",
+            new AdvancedWorkBench(
+                    Block.Settings.create()
+                            .strength(3.5f)
+            )
+    );
+
     public static final Block COIL_BLOCK = register("coil_block",
             new CoilBlock(
                     Block.Settings.create()

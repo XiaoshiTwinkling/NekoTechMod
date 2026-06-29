@@ -168,6 +168,7 @@
   "block.neko-technology.cat_generator.description": "§2储能：§0 %s/%s NF",
   "block.neko-technology.bellows": "猫风箱",
   "block.neko-technology.work_bench": "加工台",
+  "block.neko-technology.advanced_work_bench": "高级加工台",
   "message.neko-technology.workbench.covered": "§7玻璃罩已盖上，无法直接存取物品！",
   "message.neko-technology.forging.no_input": "§7加工台输入槽是空的！",
   "message.neko-technology.forging.no_recipe": "§7没有可用的锻造配方！",
@@ -222,6 +223,7 @@
   "screen.neko-technology.neko_tag": "猫咪标签",
   "task.neko-technology.input": "猫输入",
   "task.neko-technology.output": "猫输出",
+  "task.neko-technology.forging": "猫加工",
 
   "screen.neko-technology.neko_tag.color": "颜色",
   "screen.neko-technology.neko_tag.item": "物品",

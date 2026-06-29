@@ -167,6 +167,7 @@
   "block.neko-technology.cat_generator.description": "§2Storage: §0 %s/%s NF",
   "block.neko-technology.bellows": "Neko Bellows",
   "block.neko-technology.work_bench": "Workbench",
+  "block.neko-technology.advanced_work_bench": "Advanced Workbench",
   "message.neko-technology.workbench.covered": "§7The glass cover is on, cannot access items directly!",
   "message.neko-technology.forging.no_input": "§7The workbench input slot is empty!",
   "message.neko-technology.forging.no_recipe": "§7No matching forging recipe!",
@@ -220,6 +221,7 @@
   "screen.neko-technology.neko_tag": "Neko Tag",
   "task.neko-technology.input": "Input",
   "task.neko-technology.output": "Output",
+  "task.neko-technology.forging": "Forging",
 
   "screen.neko-technology.neko_tag.color": "Color",
   "screen.neko-technology.neko_tag.item": "Item",

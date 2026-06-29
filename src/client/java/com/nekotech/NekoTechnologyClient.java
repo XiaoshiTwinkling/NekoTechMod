@@ -91,6 +91,10 @@ public class NekoTechnologyClient implements ClientModInitializer {
         );
         HandledScreens.register(ModScreenHandlers.NEKO_TAG, NekoTagScreen::new);
         BlockEntityRendererFactories.register(ModBlockEntities.WORK_BENCH, WorkBenchBlockEntityRenderer::new);
+        BlockEntityRendererFactories.register(
+                ModBlockEntities.ADVANCED_WORK_BENCH,
+                WorkBenchBlockEntityRenderer::new
+        );
 
         ModelPredicateProviderRegistry.register(
                 ModItems.NEKO_TAG,
@@ -121,6 +125,7 @@ public class NekoTechnologyClient implements ClientModInitializer {
 
     private void registerRenderLayerMap(){
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.WORK_BENCH, RenderLayer.getTranslucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ADVANCED_WORK_BENCH, RenderLayer.getTranslucent());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ELEVATOR_CORE_BLOCK, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ELEVATOR_PART_BLOCK, RenderLayer.getCutout());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.CATNIP_CROP, RenderLayer.getCutout());

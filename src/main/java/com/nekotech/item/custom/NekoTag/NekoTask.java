@@ -4,7 +4,8 @@ import net.minecraft.util.Identifier;
 
 public enum NekoTask {
     INPUT("input", "gui/task/input.png"),
-    OUTPUT("output", "gui/task/output.png");
+    OUTPUT("output", "gui/task/output.png"),
+    FORGING("forging", "item/hammer.png");
 
     public static final String MOD_ID = "neko-technology";
 

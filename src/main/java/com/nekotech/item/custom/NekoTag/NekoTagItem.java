@@ -1,5 +1,6 @@
 package com.nekotech.item.custom.NekoTag;
 
+import com.nekotech.block.entity.machines.AdvancedWorkBenchBlockEntity;
 import com.nekotech.screen.NekoTag.NekoTagScreenHandler;
 import com.nekotech.item.ModItem;
 import net.minecraft.entity.player.PlayerEntity;
@@ -75,13 +76,12 @@ public class NekoTagItem extends ModItem {
         }
 
         BlockPos pos = context.getBlockPos();
-
-        if (!hasInventoryLikeStorage(serverWorld, pos, context)) {
-            return ActionResult.PASS;
-        }
-
         ItemStack stack = context.getStack();
         NekoPlacedTag placedTag = NekoPlacedTag.fromStack(stack);
+
+        if (!canPlaceTag(serverWorld, pos, context, placedTag)) {
+            return ActionResult.PASS;
+        }
 
         NekoTagWorldState state = NekoTagWorldState.get(serverWorld.getServer());
         NekoTagWorldState.ToggleResult result = state.toggle(serverWorld, pos, placedTag);
@@ -101,6 +101,20 @@ public class NekoTagItem extends ModItem {
         }
 
         return ActionResult.SUCCESS;
+    }
+
+    private static boolean canPlaceTag(
+            ServerWorld world,
+            BlockPos pos,
+            ItemUsageContext context,
+            NekoPlacedTag tag
+    ) {
+        NekoTask task = NekoTask.byId(tag.task());
+
+        return switch (task) {
+            case INPUT, OUTPUT -> hasInventoryLikeStorage(world, pos, context);
+            case FORGING -> world.getBlockEntity(pos) instanceof AdvancedWorkBenchBlockEntity;
+        };
     }
 
     private static boolean hasInventoryLikeStorage(
