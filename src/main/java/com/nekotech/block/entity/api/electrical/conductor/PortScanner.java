@@ -38,13 +38,11 @@ public class PortScanner {
             Item item = entry.getValue();
 
             if (item instanceof FluxInputerItem inputer) {
-                Port port = new Port(Port.Type.OUTPUT, inputer.getInputSpeed(), // 改为 OUTPUT
+                node.outputPort = new Port(Port.Type.OUTPUT, inputer.getInputSpeed(), // 改为 OUTPUT
                         node.pos, true, node.pos, "flux_inputer");
-                node.outputPort = port;
             } else if (item instanceof FluxOutputerItem outputer) {
-                Port port = new Port(Port.Type.INPUT, outputer.getOutputSpeed(), // 改为 INPUT
+                node.inputPort = new Port(Port.Type.INPUT, outputer.getOutputSpeed(), // 改为 INPUT
                         node.pos, true, node.pos, "flux_outputer");
-                node.inputPort = port;
             }
         }
     }
@@ -74,14 +72,12 @@ public class PortScanner {
                 Item neighborItem = neighborCa.getComponent(dir.getOpposite());
 
                 if (neighborItem instanceof FluxInputerItem inputer) {
-                    Port port = new Port(Port.Type.INPUT, inputer.getInputSpeed(), // 改为 INPUT
+                    node.inputPort = new Port(Port.Type.INPUT, inputer.getInputSpeed(), // 改为 INPUT
                             node.pos, false, neighborPos, "neighbor_inputer");
-                    node.inputPort = port;
 
                 } else if (neighborItem instanceof FluxOutputerItem outputer) {
-                    Port port = new Port(Port.Type.OUTPUT, outputer.getOutputSpeed(), // 改为 OUTPUT
+                    node.outputPort = new Port(Port.Type.OUTPUT, outputer.getOutputSpeed(), // 改为 OUTPUT
                             node.pos, false, neighborPos, "neighbor_outputer");
-                    node.outputPort = port;
                 }
             }
         }

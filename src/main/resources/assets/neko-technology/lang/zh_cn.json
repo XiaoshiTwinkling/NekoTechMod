@@ -247,5 +247,8 @@
   "item.neko-technology.neko_tag_reader": "Neko 标签读取器",
 
   "gui.neko-technology.settings": "选项",
-  "gui.neko-technology.about": "关于模组"
+  "gui.neko-technology.about": "关于模组",
+
+  "patchouli_books.neko-technology.book_name": "猫猫科技手册",
+  "patchouli_books.neko-technology.landing_text": "欢迎来到猫猫科技！"
 }
