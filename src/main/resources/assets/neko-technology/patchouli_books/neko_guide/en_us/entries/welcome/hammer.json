@@ -1,0 +1,20 @@
+{
+    "name": "锤子",
+    "icon": "neko-technology:hammer",
+    "category": "neko-technology:welcome",
+    "pages": [
+        {
+            "type": "spotlight",
+            "title": "锤子",
+            "link_recipe": true,
+            "item": "neko-technology:hammer",
+            "scale": 1.2,
+            "text": "锤子是猫猫科技中的重要工具，你需要用它来加工以及安装零件等。"
+        },
+        {
+            "type": "crafting",
+            "title": "锤子",
+            "recipe": "neko-technology:hammer"
+        }
+    ]
+}

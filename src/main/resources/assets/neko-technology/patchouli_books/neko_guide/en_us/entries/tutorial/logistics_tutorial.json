@@ -1,0 +1,11 @@
+{
+  "name": "猫猫物流",
+  "icon": "neko-technology:neko_tag",
+  "category": "neko-technology:tutorial",
+  "pages": [
+    {
+      "type": "text",
+      "text": "猫猫物流系统也是猫猫科技的特色，我们没有设计其他的管道或者传送带，旨在让可爱的猫猫在工厂中到处跑。$(br2)为了使用猫猫物流，你需要制作一个猫猫标签与不同颜色的猫猫铭牌。以下是介绍。"
+    }
+  ]
+}

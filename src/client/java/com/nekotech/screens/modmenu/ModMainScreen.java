@@ -39,7 +39,7 @@ public class ModMainScreen extends Screen {
         ModContainer container = containerOpt.get();
         ModMetadata metadata = container.getMetadata();
 
-        context.drawCenteredTextWithShadow(textRenderer, Text.literal(NekoTechnology.MOD_ID + " " + metadata.getVersion().toString()), 5, height - 10, 0xffffff);
+        context.drawCenteredTextWithShadow(textRenderer, Text.literal(NekoTechnology.MOD_ID + " " + metadata.getVersion().toString()), width / 3, height - 10, 0xffffff);
 
     }
 

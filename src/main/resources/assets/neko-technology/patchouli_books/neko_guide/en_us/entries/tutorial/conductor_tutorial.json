@@ -1,0 +1,108 @@
+{
+  "name": "零件及电路系统",
+  "icon": "neko-technology:circuit_breaker",
+  "category": "neko-technology:tutorial",
+  "pages": [
+    {
+      "type": "text",
+      "text": "零件系统是猫猫科技的特色，机器本身不自带输入输出等接口，玩家可以通过制作不同的零件来为机器自定义输入输出等接口。玩家可以手持零件右键机器某个面，便可以将零件安装上去；相反，玩家也可以手持锤子蹲下右键来卸下对应面上的零件。$(br2)安装了零件的面会与周围的电路或者其他容器进行交互，但是这必须要所安装的机器被管理猫猫所管理才会运行。"
+    },
+    {
+      "type": "text",
+      "text": "猫猫科技的电路系统相较于其他科技模组有所不同，并且与零件系统相辅相成。猫猫科技的电路系统将众多互相毗邻的$(l)导电方块$()（含电芯的方块、$(l)用电器$()、$(l)发电机$()、$(l)储电器$()等）的整体视作一整个$(l)导体$()，导体与导体之间还可以通过接线柱远程连接。用电器会直接调用发电器和储电器中的猫猫通量来运行，这样做有利于提升模组性能。$(br2)接下来我将介绍零件系统。"
+    },
+    {
+      "type": "spotlight",
+      "title": "猫猫通量输入零件",
+      "link_recipe": true,
+      "item": "neko-technology:brass_flux_inputer",
+      "scale": 1.2,
+      "text": "猫猫通量输入零件用于将机器所在导体通量导入机器，即安装了该零件的机器会从其所在导体的安装了猫猫通量输出零件的发电器或储电器中的猫猫通量吸取猫猫通量。$(br2)猫猫通量输入零件安装在任意面上的效果相同。"
+    },
+    {
+      "type": "spotlight",
+      "title": "猫猫通量输出零件",
+      "link_recipe": true,
+      "item": "neko-technology:brass_flux_outputer",
+      "scale": 1.2,
+      "text": "猫猫通量输出零件用于将机器内的通量导出到所在导体，即安装了该零件的机器可以被其所在导体的安装了猫猫通量输入零件的用电器吸取猫猫通量。$(br2)猫猫通量输出零件安装在任意面上的效果相同。"
+    },
+    {
+      "type": "spotlight",
+      "title": "物品输入零件",
+      "link_recipe": true,
+      "item": "neko-technology:brass_item_inputer",
+      "scale": 1.2,
+      "text": "物品输入零件用于将安装了该零件的容器其安装面上的毗邻容器中的物品吸取过来。"
+    },
+    {
+      "type": "spotlight",
+      "title": "物品输出零件",
+      "link_recipe": true,
+      "item": "neko-technology:brass_item_outputer",
+      "scale": 1.2,
+      "text": "物品输出零件用于将安装了该零件的容器其中的物品放入其安装面上的毗邻容器中。"
+    },
+    {
+      "type": "spotlight",
+      "title": "接线柱",
+      "link_recipe": true,
+      "item": "neko-technology:wire_pole",
+      "scale": 1.2,
+      "text": "接线柱是一种特殊的零件，它可以被安装在任意导电方块上。玩家可以手持金属丝捆分别右键两个不同位置的接线柱，这样就把金属丝捆连接到两个接线柱上了；相反，玩家也可以使用锤子取消连接。被连接的两个接线柱所在的导体会配对并远程合并为同一个导体，于是玩家便可以利用接线柱远程传输猫猫通量。"
+    },
+    {
+      "type": "image",
+      "title": "使用接线柱连接的两个导体",
+      "border": true,
+      "images": [
+        "neko-technology:textures/gui/entries/conductor_tutorial1.png"
+      ],
+      "text": ""
+    },
+    {
+      "type": "text",
+      "text": "然后我来讲解电路系统中的一些方块。"
+    },
+    {
+      "type": "spotlight",
+      "title": "含导体木制机壳",
+      "link_recipe": true,
+      "item": "neko-technology:wooden_casing",
+      "scale": 1.2,
+      "text": "含导体木制机壳既是制作机器的基础材料，也是导体中的导电方块。含导体木制机壳可以单独成为一个导体，也可以作为短距离连接导体系统的方块。"
+    },
+    {
+      "type": "spotlight",
+      "title": "断路器",
+      "link_recipe": true,
+      "item": "neko-technology:circuit_breaker",
+      "scale": 1.2,
+      "text": "断路器是导体中的特殊的导电方块。它可以被红石激活，也可以手动开关闸。总之当其闭合的时候它可以导电，用来连接导体；反之当其断开的时候，他就不可以连接导体了。"
+    },
+    {
+      "type": "spotlight",
+      "title": "用电器",
+      "link_recipe": true,
+      "item": "neko-technology:beacon_diffuser",
+      "scale": 1.2,
+      "text": "用电器是导体中的灵魂，有了用电器玩家才可以进步。导体中，用电器必须要安装猫猫通量输入零件，不然就无法导入猫猫通量，机器也无法工作。$(br2)当然，绝大多数的用电器也是需要管理猫猫才能运行的。"
+    },
+    {
+      "type": "spotlight",
+      "title": "储电器",
+      "link_recipe": true,
+      "item": "neko-technology:flux_storage",
+      "scale": 1.2,
+      "text": "如果发电机发出的电还有富余，那么储电器就派上用场了。导体中，储电器必须要安装猫猫通量输入和猫猫通量输出两种零件，这样它才能输出猫猫通量到用电器，也可以从发电机中吸取能量。$(br2)储电器不需要管理猫猫就能运行。"
+    },
+    {
+      "type": "spotlight",
+      "title": "发电机",
+      "link_recipe": true,
+      "item": "neko-technology:cat_generator",
+      "scale": 1.2,
+      "text": "发电机用于发电，是猫猫通量的来源。导体中，发电机必须要安装猫猫通量输出零件，不然就无法导出猫猫通量，不过即便没有猫猫通量输出零件，发电机也能工作。$(br2)发电机不需要管理猫猫就能运行。"
+    }
+  ]
+}

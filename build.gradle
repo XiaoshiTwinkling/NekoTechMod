@@ -40,6 +40,9 @@ repositories {
 			name = "ModMaven"
 			url = "https://modmaven.dev"
 		}
+
+		maven { url 'https://maven.blamejared.com' }
+
 	}
 
 
@@ -87,6 +90,8 @@ dependencies {
 	modRuntimeOnly("mezz.jei:jei-1.21.1-fabric:19.25.1.332") {
 		transitive = false
 	}
+
+	modImplementation("vazkii.patchouli:Patchouli:1.21.1-93-FABRIC")
 }
 
 processResources {

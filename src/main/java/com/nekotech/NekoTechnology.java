@@ -9,6 +9,7 @@ import com.nekotech.handler.DriedFishTameHandler;
 import com.nekotech.item.ModItemGroups;
 import com.nekotech.item.ModItems;
 import com.nekotech.block.ModBlocks;
+import com.nekotech.loot.LootInjection;
 import com.nekotech.network.NetworkHandler;
 import com.nekotech.recipe.ModRecipes;
 import com.nekotech.screen.ModScreenHandlers;
@@ -54,6 +55,7 @@ public class NekoTechnology implements ModInitializer {
 		new ConductorSystem().onInitialize();
         ModWorldGeneration.register();
         ModFeatures.register();
+		LootInjection.register();
 
 		UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
 			// 调用自定义处理逻辑

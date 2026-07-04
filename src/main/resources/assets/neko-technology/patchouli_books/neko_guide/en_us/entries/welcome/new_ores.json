@@ -1,0 +1,27 @@
+{
+    "name": "新增矿物",
+    "icon": "neko-technology:aluminum_ingot",
+    "category": "neko-technology:welcome",
+    "pages": [
+        {
+            "type": "text",
+            "text": "猫猫科技在世界中新增了两种矿物：锡矿和铝矿。玩家在模组初期阶段无法处理这两种矿物，但是玩家可以多采集一些。"
+        },
+        {
+            "type": "spotlight",
+            "title": "锡矿",
+            "link_recipe": true,
+            "item": "neko-technology:raw_tin",
+            "scale": 1.2,
+            "text": "你可以在主世界的 y=-24~70 处寻找锡矿，并使用挖掘等级在铁镐及以上的镐子挖掘锡矿。锡矿较为常见，矿脉通常有4~12块锡矿。"
+        },
+        {
+            "type": "spotlight",
+            "title": "铝矿",
+            "link_recipe": true,
+            "item": "neko-technology:raw_aluminum",
+            "scale": 1.2,
+            "text": "你可以在主世界的 y=-24~12 处寻找铝矿，并使用挖掘等级在铁镐及以上的镐子挖掘铝矿。铝矿较为稀有，矿脉通常只有1~2块铝矿。"
+        }
+    ]
+}
