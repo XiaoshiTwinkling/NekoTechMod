@@ -1,0 +1,40 @@
+{
+  "name": "加工台",
+  "icon": "neko-technology:work_bench",
+  "category": "neko-technology:welcome",
+  "pages": [
+    {
+      "type": "spotlight",
+      "title": "加工台",
+      "link_recipe": true,
+      "item": "neko-technology:work_bench",
+      "scale": 1.2,
+      "text": "金属板是猫猫科技中的基础材料，你需要它们来制作各种机器或者工具。为此，你需要制作加工台和锤子。"
+    },
+
+    {
+      "type": "image",
+      "title": "加工",
+      "border": true,
+      "images": [
+        "neko-technology:textures/gui/entries/work_bench1.png"
+      ],
+      "text": "你可以右键将待加工的物品右键放置在加工台上，然后使用锤子进行加工，"
+    },
+
+    {
+      "type": "text",
+      "text": "加工后的成品可以空手蹲下右键拿出来。"
+    },
+
+    {
+      "type": "image",
+      "title": "展示",
+      "border": true,
+      "images": [
+        "neko-technology:textures/gui/entries/work_bench2.png"
+      ],
+      "text": "手持玻璃罩蹲下右键加工台来安装玻璃罩，这样就可以把加工台制作成展柜。"
+    }
+  ]
+}

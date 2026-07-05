@@ -1,11 +1,55 @@
 {
-  "name": "猫猫物流",
+  "name": "Cat Tasks & Logistics",
   "icon": "neko-technology:neko_tag",
   "category": "neko-technology:tutorial",
   "pages": [
     {
       "type": "text",
-      "text": "猫猫物流系统也是猫猫科技的特色，我们没有设计其他的管道或者传送带，旨在让可爱的猫猫在工厂中到处跑。$(br2)为了使用猫猫物流，你需要制作一个猫猫标签与不同颜色的猫猫铭牌。以下是介绍。"
+      "text": "The Cat Task & Logistics system is another signature feature of Neko Technology. Instead of pipes or conveyor belts, we let adorable cats run around your factory! This system lets you assign tasks to cats, automating your workflows.$(br2)To use the system, you'll need a Neko Tag and some colored Neko Marks.$(br2)Here's how it works."
+    },
+    {
+      "type": "spotlight",
+      "title": "Neko Mark",
+      "link_recipe": true,
+      "item": "neko-technology:pink_neko_mark",
+      "scale": 1.2,
+      "text": "Neko Marks come in many colors. Right-click a cat with a Neko Mark to give it a collar of that color. Cats with a collar will carry out $(l)Cat Tasks$() matching their collar color — shown by their collar color changing."
+    },
+    {
+      "type": "spotlight",
+      "title": "Neko Tag",
+      "link_recipe": true,
+      "item": "neko-technology:neko_tag",
+      "scale": 1.2,
+      "text": "The Neko Tag is the foundation of the task system. Right-click with a Neko Tag to open its interface. Sneak-right-click a machine with a configured Neko Tag to assign the task to that block. Sneak-right-click again to remove it. Use a Neko Tag Reader to inspect a block's tags."
+    },
+    {
+      "type": "image",
+      "title": "Neko Tag Interface",
+      "border": true,
+      "images": [
+        "neko-technology:textures/gui/entries/logistics_tutorial1.png"
+      ],
+      "text": "Open a Neko Tag to see its interface. You can set the tag's color, choose a task, and configure options."
+    },
+    {
+      "type": "text",
+      "text": "A block with a Neko Tag will be serviced by nearby cats wearing the matching collar color. Some tasks require cats to carry items — you can specify which item in the tag's item slot. For complex tasks, you can set a priority — higher priority tasks are completed first.$(br2)Here are the different Cat Tasks."
+    },
+    {
+      "type": "text",
+      "title": "Cat Input",
+      "text": "The Cat Input task is used for $(l)cat logistics$(). Place this tag on a container. Nearby cats with the matching collar color will fetch specific items from a Cat Output container of the same color and deliver them here."
+    },
+    {
+      "type": "text",
+      "title": "Cat Output",
+      "text": "The Cat Output task is also used for cat logistics. Place this tag on a container. Nearby cats with the matching collar color will take specific items from this container and deliver them to a corresponding Cat Input container."
+    },
+    {
+      "type": "text",
+      "title": "Cat Crafting",
+      "text": "The Cat Crafting task is used for automating Work Benches. You'll need an Advanced Work Bench to use this task. Place the tag on an Advanced Work Bench, and nearby cats with the matching collar color will automatically process materials."
     }
   ]
 }

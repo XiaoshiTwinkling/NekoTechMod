@@ -1,15 +1,15 @@
 {
-    "name": "合金系统",
+    "name": "Alloy System",
     "icon": "neko-technology:neko_copper_ingot",
     "category": "neko-technology:tutorial",
     "pages": [
         {
             "type": "text",
-            "text": "在猫猫科技中，玩家的主线任务是不断地制作新的材料，从而不断推进科技树，来获得更高级的机器以及更高级的工具及装备。为了获得更高级的材料，玩家需要使用合金（Alloy）配方，将两个物质融合来获取更高级的材料。"
+            "text": "In Neko Technology, your main quest is to continuously craft new materials, advancing through the tech tree to unlock better machines, tools, and equipment. To obtain advanced materials, you'll need to use Alloy recipes — fusing two substances together to create something greater."
         },
         {
             "type": "multiblock",
-            "name": "合金釜结构",
+            "name": "Alloy Pot Setup",
             "multiblock": {
                 "mapping": {
                     "H": "neko-technology:heater",
@@ -24,54 +24,54 @@
                 "offset": [0,1,0]
             },
             "enable_visualize": true,
-            "text": "为了处理合金配方，玩家需要制作一个合金釜和一个加热器来搭建合金多方块结构。"
+            "text": "To process alloys, you'll need to build a multiblock structure consisting of an Alloy Pot atop a Heater."
         },
         {
             "type": "spotlight",
-            "title": "合金釜",
+            "title": "Alloy Pot",
             "link_recipe": true,
             "item": "neko-technology:alloy_pot",
             "scale": 1.2,
-            "text": "合金釜是合金结构的核心，你需要使用它来处理合金配方。玩家可以右键把物品放入合金釜，或者蹲下右键将物品全部拿出来。玩家必须为合金釜提供炉温，所有合金配方都需要当炉温达到一定水平才可以进行。因此提升炉温也是玩家的主线任务之一。$(br2)合金釜需要管理猫猫才能工作。"
+            "text": "The Alloy Pot is the core of the alloy system. Use it to process alloy recipes. Right-click to insert items, or sneak-right-click to remove all items at once. The Alloy Pot requires heat from below — every alloy recipe needs a certain temperature to proceed. Raising the temperature is one of your main objectives.$(br2)The Alloy Pot also needs a managing cat to function."
         },
         {
             "type": "spotlight",
-            "title": "加热器",
+            "title": "Heater",
             "link_recipe": true,
             "item": "neko-technology:heater",
             "scale": 1.2,
-            "text": "加热器可以为其上方的合金釜提供炉温，前期玩家可以通过直接给加热器提供煤炭来升温，后期则可以使用升温更快的线圈方块。加热时，炉温最高到达加热炉的$(l)最大炉温$()，最大炉温初始是400，玩家可以通过在其周围添加砖块、安装鼓风机或者线圈方块的方式提升其最大炉温。$(br2)玩家可以使用小鱼干温度计来获取加热器的炉温及最大炉温，后期则可以使用猫猫护目镜。"
+            "text": "The Heater provides heat to the Alloy Pot above it. Early on, you can fuel it with coal. Later, you can use Coil Blocks for faster heating. The Heater has a $(l)maximum temperature$(), which starts at 400. You can increase this cap by placing Bricks around it, attaching a Bellows, or adding Coil Blocks underneath.$(br2)Use a Dried Fish Thermometer to check the current and maximum temperature. Later, you can use Neko Goggles instead."
         },
         {
             "type": "image",
-            "title": "使用砖块提升炉温",
+            "title": "Increasing Temperature with Bricks",
             "border": true,
             "images": [
                 "neko-technology:textures/gui/entries/alloy_tutorial1.png"
             ],
-            "text": "玩家可以在加热炉周围放置砖块，每块砖块提升50最大炉温"
+            "text": "Place Bricks around the Heater. Each Brick increases the maximum temperature by 50."
         },
         {
             "type": "image",
-            "title": "使用鼓风机提升炉温",
+            "title": "Increasing Temperature with a Bellows",
             "border": true,
             "images": [
                 "neko-technology:textures/gui/entries/alloy_tutorial2.png"
             ],
-            "text": "玩家可以在加热器的一侧放置鼓风机，并将鼓风机的风口对准加热器后为其提供管理猫猫，便可以将加热器的最大炉温按比例提升20%"
+            "text": "Place a Bellows next to the Heater with its nozzle facing the Heater. Assign a managing cat to the Bellows, and it will boost the Heater's maximum temperature by 20%."
         },
         {
             "type": "image",
-            "title": "使用线圈方块提升炉温",
+            "title": "Increasing Temperature with Coil Blocks",
             "border": true,
             "images": [
                 "neko-technology:textures/gui/entries/alloy_tutorial3.png"
             ],
-            "text": "玩家可以在加热器的底部放置线圈方块，并为线圈方块缠上生铁丝线圈与铜丝线圈，其提升的最大炉温受到这两个线圈的数量影响，"
+            "text": "Place a Coil Block beneath the Heater and equip it with Pig Iron Coils and Copper Coils. The temperature increase depends on the number of each coil installed."
         },
         {
             "type": "text",
-            "text": "若玩家缠了a个生铁丝线圈，b个铜丝线圈，那么最大炉温提升值 = a×b×180 . $(br2)当然，玩家也需要给予线圈方块猫猫通量以及管理猫猫才可以工作。"
+            "text": "If you have 'a' Pig Iron Coils and 'b' Copper Coils installed, the maximum temperature increase is: a × b × 180.$(br2)Of course, the Coil Block also needs Neko Flux and a managing cat to operate."
         }
     ]
 }

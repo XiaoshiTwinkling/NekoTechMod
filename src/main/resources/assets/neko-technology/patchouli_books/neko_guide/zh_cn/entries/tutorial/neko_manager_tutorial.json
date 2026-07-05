@@ -1,0 +1,33 @@
+{
+  "name": "猫猫管理系统",
+  "icon": "neko-technology:cat_house",
+  "category": "neko-technology:tutorial",
+  "pages": [
+    {
+      "type": "text",
+      "text": "猫猫科技中，一部分机器需要有管理猫猫的参与，即有一部分机器需要猫的参与才能工作。玩家需要驯服猫并制作猫猫管理方块来让猫管理机器。通常，玩家只要让猫在猫猫管理方块中即可绑定并管理周围机器，然后维持机器的运行。"
+    },
+    {
+      "type": "image",
+      "title": "使用猫猫坐垫管理机器",
+      "border": true,
+      "images": [
+        "neko-technology:textures/gui/entries/neko_manager_tutorial1.png"
+      ],
+      "text": "玩家可以将猫放置在猫猫坐垫上，这时猫猫坐垫周围的方块便会被管理运行。"
+    },
+    {
+      "type": "image",
+      "title": "使用猫舍管理机器",
+      "border": true,
+      "images": [
+        "neko-technology:textures/gui/entries/neko_manager_tutorial2.png"
+      ],
+      "text": "玩家可以手持装有猫的猫猫纸箱邀请猫入住猫舍，这时猫舍周围一定范围的机器"
+    },
+    {
+      "type": "text",
+      "text": "都会被管理运行，最多管理4台机器。"
+    }
+  ]
+}

@@ -1,31 +1,31 @@
 {
-    "name": "新增作物",
+    "name": "New Crops",
     "icon": "neko-technology:catnip",
     "category": "neko-technology:welcome",
     "pages": [
         {
             "type": "text",
-            "text": "猫猫科技在世界中新增了两种作物：猫薄荷和猫草。这两个材料都主要用于合成。"
+            "text": "Neko Technology adds two new crops to the world: Catnip and Cat Grass. These materials are mainly used in crafting."
         },
         {
             "type": "spotlight",
-            "title": "猫薄荷",
+            "title": "Catnip",
             "link_recipe": true,
             "item": "neko-technology:catnip",
             "scale": 1.2,
-            "text": "猫薄荷是猫最喜欢的作物了，其特有的香气能让猫咪兴奋。猫薄荷不会自然生成，要获得猫薄荷的种子，你需要驯服几只猫。当玩家睡觉的时候，已驯服且未坐下的猫会走上它们的主人所睡的床并趴在床上睡觉。当玩家醒来时，猫也会醒来。与玩家一起睡觉的猫有一定概率在度过夜晚后给予玩家礼物，这时有概率获得猫薄荷种子（猫送礼实则是原版的一个机制）。"
+            "text": "Catnip is a feline favorite! Its unique aroma drives cats wild with excitement. Catnip does not generate naturally in the world. To obtain Catnip Seeds, you'll need to tame some cats. When you sleep, any tamed, sitting cats will hop onto your bed and curl up beside you. Upon waking, there's a chance they'll leave you a morning gift — and that gift may include Catnip Seeds! (This is based on vanilla Minecraft's cat gift mechanic.)"
         },
         {
             "type": "text",
-            "text": "你需要使用耕地来种植猫薄荷。"
+            "text": "Plant Catnip Seeds on farmland to grow your own catnip."
         },
         {
             "type": "spotlight",
-            "title": "猫草",
+            "title": "Cat Grass",
             "link_recipe": true,
             "item": "neko-technology:petgrass",
             "scale": 1.2,
-            "text": "猫草十分常见，你可以很容易在主世界的河流群系周围找到散落的猫草。$(br2)猫草可以直接种植在草方块等非耕地上（耕地也可以）。"
+            "text": "Cat Grass is very common. You can easily find it growing near river biomes in the Overworld.$(br2)Cat Grass can be planted directly on grass blocks or other non-farmland blocks (farmland works too)."
         }
     ]
 }

@@ -1,24 +1,24 @@
 {
-    "name": "Neko Fur",
+    "name": "猫猫毛",
     "icon": "neko-technology:neko_hair",
     "category": "neko-technology:welcome",
     "pages": [
         {
             "type": "spotlight",
-            "title": "Neko Fur",
+            "title": "猫猫毛",
             "link_recipe": true,
             "item": "neko-technology:neko_hair",
             "scale": 1.2,
-            "text": "Neko Fur is a basic material in Neko Technology, obtained from cats. Both tamed and untamed cats will occasionally drop a Neko Fur where they stand. Neko Fur can be crafted into Neko Silk, Neko Webs, and other materials."
+            "text": "猫猫毛是猫猫科技中的基本材料，你可以从猫身上获取猫猫毛。无论猫是否被驯服，每过一段时间猫都会在原地掉落一个猫猫毛。猫猫毛可以用于制作猫猫丝绸、猫猫网等材料。"
         },
         {
             "type": "image",
-            "title": "Cat Shedding Fur",
+            "title": "猫猫掉毛",
             "border": true,
             "images": [
                 "neko-technology:textures/gui/entries/neko_hair1.png"
             ],
-            "text": "A cat dropping Neko Fur on the ground."
+            "text": "猫在原地掉落猫猫毛。"
         }
     ]
 }

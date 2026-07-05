@@ -1,40 +1,37 @@
 {
-  "name": "加工台",
+  "name": "Work Bench",
   "icon": "neko-technology:work_bench",
   "category": "neko-technology:welcome",
   "pages": [
     {
       "type": "spotlight",
-      "title": "加工台",
+      "title": "Work Bench",
       "link_recipe": true,
       "item": "neko-technology:work_bench",
       "scale": 1.2,
-      "text": "金属板是猫猫科技中的基础材料，你需要它们来制作各种机器或者工具。为此，你需要制作加工台和锤子。"
+      "text": "Metal Plates are fundamental materials in Neko Technology. You'll need them to craft machines and tools. To get started, craft a Work Bench and a Hammer."
     },
-
     {
       "type": "image",
-      "title": "加工",
+      "title": "Crafting at the Work Bench",
       "border": true,
       "images": [
         "neko-technology:textures/gui/entries/work_bench1.png"
       ],
-      "text": "你可以右键将待加工的物品右键放置在加工台上，然后使用锤子进行加工，"
+      "text": "Right-click to place an item on the Work Bench, then use your Hammer to work it."
     },
-
     {
       "type": "text",
-      "text": "加工后的成品可以空手蹲下右键拿出来。"
+      "text": "Sneak and right-click while empty-handed to retrieve the finished product."
     },
-
     {
       "type": "image",
-      "title": "展示",
+      "title": "Display Case",
       "border": true,
       "images": [
         "neko-technology:textures/gui/entries/work_bench2.png"
       ],
-      "text": "手持玻璃罩蹲下右键加工台来安装玻璃罩，这样就可以把加工台制作成展柜。"
+      "text": "Sneak and right-click with a Glass Cover to turn your Work Bench into a display case."
     }
   ]
 }

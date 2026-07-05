@@ -1,15 +1,15 @@
 {
-    "name": "Pig Iron Ingot",
+    "name": "生铁锭",
     "icon": "neko-technology:pig_iron_ingot",
     "category": "neko-technology:welcome",
     "pages": [
         {
             "type": "spotlight",
-            "title": "Pig Iron Ingot",
+            "title": "生铁锭",
             "link_recipe": true,
             "item": "neko-technology:pig_iron_ingot",
             "scale": 1.2,
-            "text": "Pig Iron Ingots are the first metal material in Neko Technology. You can obtain them by smelting Iron Ingots in a Blast Furnace."
+            "text": "生铁锭是猫猫科技中的第一个金属材料，你可以通过高炉烧制铁锭获得。"
         }
     ]
 }
