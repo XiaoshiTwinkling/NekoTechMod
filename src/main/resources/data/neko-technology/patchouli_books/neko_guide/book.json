@@ -3,5 +3,6 @@
   "landing_text": "patchouli_books.neko-technology.landing_text",
   "version": 1,
   "creative_tab": "neko-technology:nekotech_tools",
+  "model": "neko-technology:guide_book",
   "use_resource_pack": true
 }
