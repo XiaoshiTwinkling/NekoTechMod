@@ -1,13 +1,13 @@
 {
   "variants": {
-    "facing=north,part=left":  { "model": "neko-technology:block/cat_generator/cat_generator_left",  "y": 90, "uvlock": true },
-    "facing=east,part=left":   { "model": "neko-technology:block/cat_generator/cat_generator_left",  "y": 180, "uvlock": true },
-    "facing=south,part=left":  { "model": "neko-technology:block/cat_generator/cat_generator_left",  "y": 270, "uvlock": true },
-    "facing=west,part=left":   { "model": "neko-technology:block/cat_generator/cat_generator_left",  "uvlock": true },
+    "facing=north,part=left":  { "model": "neko-technology:block/cat_generator/cat_generator_left",  "y": 90, "uvlock": false },
+    "facing=east,part=left":   { "model": "neko-technology:block/cat_generator/cat_generator_left",  "y": 180, "uvlock": false },
+    "facing=south,part=left":  { "model": "neko-technology:block/cat_generator/cat_generator_left",  "y": 270, "uvlock": false },
+    "facing=west,part=left":   { "model": "neko-technology:block/cat_generator/cat_generator_left",  "uvlock": false },
 
-    "facing=north,part=right": { "model": "neko-technology:block/cat_generator/cat_generator_right", "y": 90, "uvlock": true },
-    "facing=east,part=right":  { "model": "neko-technology:block/cat_generator/cat_generator_right", "y": 180, "uvlock": true },
-    "facing=south,part=right": { "model": "neko-technology:block/cat_generator/cat_generator_right", "y": 270, "uvlock": true },
-    "facing=west,part=right":  { "model": "neko-technology:block/cat_generator/cat_generator_right", "uvlock": true }
+    "facing=north,part=right": { "model": "neko-technology:block/cat_generator/cat_generator_right", "y": 90, "uvlock": false },
+    "facing=east,part=right":  { "model": "neko-technology:block/cat_generator/cat_generator_right", "y": 180, "uvlock": false },
+    "facing=south,part=right": { "model": "neko-technology:block/cat_generator/cat_generator_right", "y": 270, "uvlock": false },
+    "facing=west,part=right":  { "model": "neko-technology:block/cat_generator/cat_generator_right", "uvlock": false }
   }
 }

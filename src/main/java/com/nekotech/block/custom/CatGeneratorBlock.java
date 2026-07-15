@@ -41,18 +41,10 @@ public class CatGeneratorBlock extends BlockWithEntity {
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
     public static final EnumProperty<CatGeneratorPart> PART = EnumProperty.of("part", CatGeneratorPart.class);
 
-    private static final VoxelShape LEFT_SHAPE = VoxelShapes.union(
-            Block.createCuboidShape(0, 0, 0, 16, 4, 15),
-            Block.createCuboidShape(0, 4, 0, 3, 6, 15),
-            Block.createCuboidShape(13, 4, 0, 16, 6, 15)
-    );
+    private static final VoxelShape COLLISION_SHAPE = Block.createCuboidShape(0, 0, 0, 16, 6, 16);
 
-    private static final VoxelShape RIGHT_SHAPE = VoxelShapes.union(
-            Block.createCuboidShape(0, 0, 1, 16, 4, 16),
-            Block.createCuboidShape(0, 4, 8, 16, 6, 16),
-            Block.createCuboidShape(0, 4, 1, 16, 6, 8),
-            Block.createCuboidShape(0, 6, 1, 16, 12, 8)
-    );
+    private static final VoxelShape LEFT_OUTLINE_SHAPE = Block.createCuboidShape(0, 0, 0, 16, 16, 16);
+    private static final VoxelShape RIGHT_OUTLINE_SHAPE = Block.createCuboidShape(0, 0, 0, 16, 6, 16);
 
     public CatGeneratorBlock(Settings settings) {
         super(settings);
@@ -65,7 +57,12 @@ public class CatGeneratorBlock extends BlockWithEntity {
 
     @Override
     protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return state.get(PART) == CatGeneratorPart.LEFT ? LEFT_SHAPE : RIGHT_SHAPE;
+        return state.get(PART) == CatGeneratorPart.RIGHT ? LEFT_OUTLINE_SHAPE : RIGHT_OUTLINE_SHAPE;
+    }
+
+    @Override
+    protected VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+        return COLLISION_SHAPE;
     }
 
     @Override

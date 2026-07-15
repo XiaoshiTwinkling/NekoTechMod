@@ -2,7 +2,7 @@ package com.nekotech.block.custom;
 
 import com.mojang.serialization.MapCodec;
 import com.nekotech.block.entity.api.electrical.conductor.ConductorSystem;
-import com.nekotech.block.entity.machines.conductor.MachineCasingBlockEntity;
+import com.nekotech.block.entity.machines.conductor.WoodenCasingBlockEntity;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
@@ -26,7 +26,7 @@ public class WoodenCasing extends DirectionalMachineBlock{
 
     @Override
     public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return new MachineCasingBlockEntity(pos, state);
+        return new WoodenCasingBlockEntity(pos, state);
     }
 
     @Override

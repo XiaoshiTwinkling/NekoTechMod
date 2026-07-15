@@ -117,6 +117,11 @@ public class CatGeneratorBlockEntity extends MachineBlockEntity
             generatePower(runningCat);
             catRunning = true;
             trackSpeed = (float) runningCat.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
+
+            if(runningCat.isSitting()){
+                runningCat.setSitting(false);
+            }
+
         } else {
             catRunning = false;
             trackSpeed = 0f;

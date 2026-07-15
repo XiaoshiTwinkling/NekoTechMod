@@ -7,7 +7,7 @@ import com.nekotech.block.entity.machines.coil.CoilBlockEntity;
 import com.nekotech.block.entity.machines.CatGeneratorBlockEntity;
 import com.nekotech.block.entity.machines.conductor.CircuitBreakerBlockEntity;
 import com.nekotech.block.entity.machines.conductor.FluxStorageBlockEntity;
-import com.nekotech.block.entity.machines.conductor.MachineCasingBlockEntity;
+import com.nekotech.block.entity.machines.conductor.WoodenCasingBlockEntity;
 import com.nekotech.block.ModBlocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -50,8 +50,8 @@ public class ModBlockEntities {
     public static BlockEntityType<CatGeneratorBlockEntity> CAT_GENERATOR =
             create("cat_generator", BlockEntityType.Builder.create(CatGeneratorBlockEntity::new, ModBlocks.CAT_GENERATOR));
 
-    public static BlockEntityType<MachineCasingBlockEntity> WOODEN_CASING =
-            create("wooden_casing", BlockEntityType.Builder.create(MachineCasingBlockEntity::new, ModBlocks.WOODEN_CASING));
+    public static BlockEntityType<WoodenCasingBlockEntity> WOODEN_CASING =
+            create("wooden_casing", BlockEntityType.Builder.create(WoodenCasingBlockEntity::new, ModBlocks.WOODEN_CASING));
 
     public static BlockEntityType<WorkBenchBlockEntity> WORK_BENCH =
             create("work_bench", BlockEntityType.Builder.create(WorkBenchBlockEntity::new, ModBlocks.WORK_BENCH));

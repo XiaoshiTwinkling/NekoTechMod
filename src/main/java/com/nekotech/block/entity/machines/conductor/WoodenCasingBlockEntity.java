@@ -7,8 +7,8 @@ import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class MachineCasingBlockEntity extends MachineBlockEntity implements ITransferElectrical {
-    public MachineCasingBlockEntity(BlockPos pos, BlockState state) {
+public class WoodenCasingBlockEntity extends MachineBlockEntity implements ITransferElectrical {
+    public WoodenCasingBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.WOODEN_CASING,pos, state);
     }
 
