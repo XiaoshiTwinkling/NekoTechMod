@@ -189,6 +189,12 @@ public class CoilBlockEntity extends TakeFreelyMachineBlockEntity
         return pigIronCount > 0 && nekoFlux > 0.01f && canMachineRun();
     }
 
+    public boolean isWorking(){
+        int[] counts = getCoilCounts();
+        int CopperCount = counts[0];
+        return CopperCount > 0 && nekoFlux > 0.01f && canMachineRun();
+    }
+
     private void updateNeighbors() {
         if (world == null || world.isClient) return;
 

@@ -149,8 +149,8 @@ public class ModItemGroups {
                             entries.add(ModItems.ELEVATOR_ITEM);
                             entries.add(ModBlocks.CIRCUIT_BREAKER);
                             entries.add(ModBlocks.BEACON_DIFFUSER);
-
-                        })).build());
+                            entries.add(ModBlocks.CHARGE_STATION);
+                       })).build());
 
 
 

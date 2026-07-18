@@ -6,9 +6,11 @@ import com.nekotech.block.entity.machines.*;
 import com.nekotech.block.entity.machines.coil.CoilBlockEntity;
 import com.nekotech.block.entity.machines.CatGeneratorBlockEntity;
 import com.nekotech.block.entity.machines.conductor.CircuitBreakerBlockEntity;
+import com.nekotech.block.entity.machines.conductor.DebugFluxStorageBlockEntity;
 import com.nekotech.block.entity.machines.conductor.FluxStorageBlockEntity;
 import com.nekotech.block.entity.machines.conductor.WoodenCasingBlockEntity;
 import com.nekotech.block.ModBlocks;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.datafixer.TypeReferences;
@@ -47,6 +49,9 @@ public class ModBlockEntities {
     public static BlockEntityType<FluxStorageBlockEntity> FLUX_STORAGE =
             create("flux_storage", BlockEntityType.Builder.create(FluxStorageBlockEntity::new, ModBlocks.FLUX_STORAGE));
 
+    public static BlockEntityType<DebugFluxStorageBlockEntity> DEBUG_FLUX_STORAGE =
+            create("debug_flux_storage", BlockEntityType.Builder.create(DebugFluxStorageBlockEntity::new, ModBlocks.DEBUG_FLUX_STORAGE));
+
     public static BlockEntityType<CatGeneratorBlockEntity> CAT_GENERATOR =
             create("cat_generator", BlockEntityType.Builder.create(CatGeneratorBlockEntity::new, ModBlocks.CAT_GENERATOR));
 
@@ -70,6 +75,9 @@ public class ModBlockEntities {
 
     public static BlockEntityType<CatHouseBlockEntity> CAT_HOUSE =
             create("cat_house", BlockEntityType.Builder.create(CatHouseBlockEntity::new, ModBlocks.CAT_HOUSE));
+
+    public static BlockEntityType<ChargeStationBlockEntity> CHARGE_STATION =
+            create("charge_station", BlockEntityType.Builder.create(ChargeStationBlockEntity::new, ModBlocks.CHARGE_STATION));
 
     private static <T extends BlockEntity> BlockEntityType<T> create(String id, BlockEntityType.Builder<T> builder){
         Type<?> type = Util.getChoiceType(TypeReferences.BLOCK_ENTITY, id);

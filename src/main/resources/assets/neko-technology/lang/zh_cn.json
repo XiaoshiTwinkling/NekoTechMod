@@ -1,13 +1,13 @@
 {
-  "itemGroup.nekotech_ingredients" : "猫猫科技材料",
+  "itemGroup.nekotech_ingredients": "猫猫科技材料",
   "itemGroup.nekotech_tools": "猫猫科技工具",
   "itemGroup.nekotech_blocks": "猫猫科技方块",
 
-  "item.neko-technology.neko_silk" : "猫猫丝绸",
+  "item.neko-technology.neko_silk": "猫猫丝绸",
   "item.neko-technology.neko_silk.tooltip": "这是充满猫猫气味的丝绸喵~",
-  "item.neko-technology.neko_hair" : "猫猫毛",
+  "item.neko-technology.neko_hair": "猫猫毛",
   "item.neko-technology.neko_hair.tooltip": "这是猫猫经常会掉的毛喵~",
-  "item.neko-technology.enhanced_neko_hair" : "强化猫猫毛",
+  "item.neko-technology.enhanced_neko_hair": "强化猫猫毛",
   "item.neko-technology.enhanced_neko_hair.tooltip": "超级硬的猫毛喵！10只劫掠兽都拉不开喵！",
   "item.neko-technology.stone_powder": "石头粉",
   "item.neko-technology.neko_feather": "硬化猫之羽",
@@ -39,7 +39,7 @@
   "item.neko-technology.neko_box.what_in_it_defualt": "§7装有: §e一只猫猫",
   "item.neko-technology.neko_box.put": "§8右键空地放出猫猫",
   "item.neko-technology.neko_box.empty": "§7空纸箱",
-  "item.neko-technology.neko_box.get":"§8对着猫右键可以收起来",
+  "item.neko-technology.neko_box.get": "§8对着猫右键可以收起来",
   "item.neko-technology.thermometer": "小鱼干温度计",
   "item.neko-technology.thermometer.tooltip": "用小鱼干做的可爱温度计~ 蹲下来可以测机器的温度喵~",
   "item.neko-technology.neko_tail": "猫尾饰品",
@@ -139,7 +139,6 @@
   "item.neko-technology.red_neko_mark": "红色猫猫铭牌",
   "item.neko-technology.black_neko_mark": "黑色猫猫铭牌",
 
-
   "block.neko-technology.yes": "是",
   "block.neko-technology.no": "否",
 
@@ -206,6 +205,15 @@
   "hud.yes": "是",
   "hud.no": "否",
 
+  "block.neko-technology.charge_station": "充能台",
+  "container.charge_station": "充能台",
+  "hud.charge_station.item": "物品: %s",
+  "hud.charge_station.coil_status": "线圈状态: %s",
+  "hud.charge_station.progress": "充能进度: %d%%",
+  "hud.charge_station.waiting": "等待充能条件...",
+  "hud.active": "工作中",
+  "hud.inactive": "未工作",
+  "hud.empty": "空",
 
   "message.nekotech.item_put": "%s 已放入喵~",
   "message.nekotech.all_items_taken": "东西全部拿出来了喵~",

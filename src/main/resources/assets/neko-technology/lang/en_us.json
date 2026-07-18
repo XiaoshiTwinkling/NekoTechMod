@@ -242,5 +242,21 @@
   "message.neko-technology.placed": "Elevator generated.",
   "gui.neko-technology.tag_list": "Neko Tags",
   "gui.neko-technology.no_tags": "No Tags",
-  "item.neko-technology.neko_tag_reader": "Neko Tag Reader"
+  "item.neko-technology.neko_tag_reader": "Neko Tag Reader",
+
+  "gui.neko-technology.settings": "Settings",
+  "gui.neko-technology.about": "About Mod",
+
+  "patchouli_books.neko-technology.book_name": "Neko Technology Manual",
+  "patchouli_books.neko-technology.landing_text": "Welcome to Neko Technology!",
+
+  "block.neko-technology.charge_station": "Charge Station",
+  "container.charge_station": "Charge Station",
+  "hud.charge_station.item": "Item: %s",
+  "hud.charge_station.coil_status": "Coil Status: %s",
+  "hud.charge_station.progress": "Charging Progress: %d%%",
+  "hud.charge_station.waiting": "Waiting for charging conditions...",
+  "hud.active": "Active",
+  "hud.inactive": "Inactive",
+  "hud.empty": "Empty"
 }

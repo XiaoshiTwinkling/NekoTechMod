@@ -12,6 +12,9 @@ import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.block.entity.api.IHaveGoogleHUD;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.BlockWithEntity;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -47,7 +50,17 @@ public class FluxStorageBlockEntity extends MachineBlockEntity
     private final Map<Direction, Item> attachedComponents = new EnumMap<>(Direction.class);
     private final Set<Item> validComponents ;
 
-    private boolean isActive = false;
+    boolean isActive = false;
+
+    public FluxStorageBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
+        validComponents= new HashSet<>();
+        validComponents.add(ModItems.BRASS_FLUX_OUTPUTER);
+        validComponents.add(ModItems.BRASS_FLUX_INPUTER);
+        validComponents.add(ModItems.NEKO_COPPER_FLUX_INPUTER);
+        validComponents.add(ModItems.NEKO_COPPER_FLUX_OUTPUTER);
+        validComponents.add(ModItems.WIRE_POLE);
+    }
 
     public FluxStorageBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.FLUX_STORAGE, pos, state);

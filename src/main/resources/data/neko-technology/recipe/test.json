@@ -1,0 +1,10 @@
+{
+  "type": "neko-technology:charge",
+  "input": {
+    "item": "minecraft:iron_nugget"
+  },
+  "output": {
+    "id": "minecraft:iron_ingot"
+  },
+  "charge_time": 100
+}

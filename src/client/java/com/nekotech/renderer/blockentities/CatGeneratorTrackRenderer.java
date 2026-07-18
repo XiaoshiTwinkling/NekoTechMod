@@ -62,7 +62,6 @@ public class CatGeneratorTrackRenderer implements BlockEntityRenderer<CatGenerat
         float uOffset = 0f;
 
         if (entity.isCatRunning()) {
-            NekoTechnology.LOGGER.info("111");
             float catSpeed = entity.getCatRunningSpeed();
             float effectiveSpeed = TRACK_SPEED * Math.max(catSpeed, 0.1f);
             uOffset = -((time + tickDelta) * effectiveSpeed % 1.0f);

@@ -194,6 +194,17 @@ public class ModBlocks {
                     .strength(0.5f)
                     .requiresTool()));
 
+    public static final Block CHARGE_STATION = register("charge_station",
+            new ChargeStationBlock(AbstractBlock.Settings.copy(Blocks.STONE_PRESSURE_PLATE)
+                    .strength(0.5f)
+                    .requiresTool()));
+
+    public static final Block DEBUG_FLUX_STORAGE = register(
+            "debug_flux_storage",
+            new DebugFluxStorageBlock(AbstractBlock.Settings.copy(Blocks.IRON_BLOCK).nonOpaque())
+    );
+
+
     public static void registerBlockItems(String id, Block block){
         BlockItem item = Registry.register(Registries.ITEM, Identifier.of(NekoTechnology.MOD_ID, id), new BlockItem(block, new Item.Settings()));
         item.appendBlocks(Item.BLOCK_ITEMS, item);
