@@ -6,6 +6,7 @@ import com.nekotech.block.ModBlocks;
 import com.nekotech.item.custom.*;
 import com.nekotech.item.custom.NekoMark.NekoMarkItem;
 import com.nekotech.item.custom.NekoTag.NekoTagItem;
+import com.nekotech.item.custom.battery.GenericBatteryItem;
 import com.nekotech.item.custom.component.*;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
@@ -121,6 +122,20 @@ public class ModItems {
     public static final Item NEKO_TAG_READER = registerItems("neko_tag_reader", new NekoTagReaderItem(new Item.Settings().maxCount(1)));
     public static final Item NEKO_CAT_CAMERA_TERMINAL = registerItems("neko_cat_camera_terminal", new CatCameraTerminalItem(new Item.Settings().maxCount(1)));
 
+    public static final Item COPPER_BATTERY = registerItems("copper_battery",
+            new GenericBatteryItem(new Item.Settings(), 500.0f, 5.0f, "copper"));
+    public static final Item IRON_BATTERY = registerItems("iron_battery",
+            new GenericBatteryItem(new Item.Settings(), 500.0f, 5.0f, "iron"));
+    public static final Item TIN_BATTERY = registerItems("tin_battery",
+            new GenericBatteryItem(new Item.Settings(), 800.0f, 8.0f, "tin"));
+    public static final Item ALUMINUM_BATTERY = registerItems("aluminum_battery",
+            new GenericBatteryItem(new Item.Settings(), 1200.0f, 12.0f, "aluminum"));
+    public static final Item PIG_IRON_BATTERY = registerItems("pig_iron_battery",
+            new GenericBatteryItem(new Item.Settings(), 2000.0f, 20.0f, "pig_iron"));
+    public static final Item BRASS_BATTERY = registerItems("brass_battery",
+            new GenericBatteryItem(new Item.Settings(), 2000.0f, 20.0f, "brass"));
+    public static final Item NEKO_COPPER_BATTERY = registerItems("neko_copper_battery",
+            new GenericBatteryItem(new Item.Settings(), 3200.0f, 28.0f, "neko_copper"));
 
     private static Item registerItems(String id, Item item){
         return Registry.register(Registries.ITEM, Identifier.of(NekoTechnology.MOD_ID ,id), item);

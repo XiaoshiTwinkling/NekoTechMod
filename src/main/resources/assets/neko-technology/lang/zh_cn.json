@@ -70,6 +70,7 @@
   "item.neko-technology.neko_copper_leggings.tooltip": "猫猫紫铜全套效果: 迅捷Ⅱ",
   "item.neko-technology.neko_copper_boots.tooltip": "猫猫紫铜全套效果: 迅捷Ⅱ",
   "item.neko-technology.ray_item": "激光笔",
+  "item.neko-technology.ray_item.tooltip": "需要充能的激光笔喵~",
   "item.neko-technology.component_casing": "零件外壳",
   "item.neko-technology.component_casing.tooltip": "木制棒棒喵",
   "item.neko-technology.brass_flux_outputer": "黄铜通量输出零件",
@@ -138,6 +139,14 @@
   "item.neko-technology.green_neko_mark": "绿色猫猫铭牌",
   "item.neko-technology.red_neko_mark": "红色猫猫铭牌",
   "item.neko-technology.black_neko_mark": "黑色猫猫铭牌",
+
+  "item.neko-technology.copper_battery": "铜电池",
+  "item.neko-technology.iron_battery": "铁电池",
+  "item.neko-technology.tin_battery": "锡电池",
+  "item.neko-technology.aluminum_battery": "铝电池",
+  "item.neko-technology.pig_iron_battery": "生铁电池",
+  "item.neko-technology.brass_battery": "黄铜电池",
+  "item.neko-technology.neko_copper_battery": "猫猫紫铜电池",
 
   "block.neko-technology.yes": "是",
   "block.neko-technology.no": "否",
@@ -217,6 +226,8 @@
 
   "message.nekotech.item_put": "%s 已放入喵~",
   "message.nekotech.all_items_taken": "东西全部拿出来了喵~",
+  "message.neko-technology.energy_depleted": "能量不足！",
+  "tooltip.neko-technology.energy": "能量: %s/%s NF",
 
   "container.box": "猫猫存储机壳",
   "container.alloy_pot": "合金釜",

@@ -70,6 +70,7 @@
   "item.neko-technology.neko_copper_leggings.tooltip": "Full Neko Copper set bonus: Speed II",
   "item.neko-technology.neko_copper_boots.tooltip": "Full Neko Copper set bonus: Speed II",
   "item.neko-technology.ray_item": "Laser Pointer",
+  "item.neko-technology.ray_item.tooltip": "A laser pointer that needs charging, nya~",
   "item.neko-technology.component_casing": "Component Casing",
   "item.neko-technology.component_casing.tooltip": "A wooden stick, nya~",
   "item.neko-technology.brass_flux_outputer": "Brass Flux Outputer",
@@ -139,6 +140,14 @@
   "item.neko-technology.red_neko_mark": "Red Neko Mark",
   "item.neko-technology.black_neko_mark": "Black Neko Mark",
 
+  "item.neko-technology.copper_battery": "Copper Battery",
+  "item.neko-technology.iron_battery": "Iron Battery",
+  "item.neko-technology.tin_battery": "Tin Battery",
+  "item.neko-technology.aluminum_battery": "Aluminum Battery",
+  "item.neko-technology.pig_iron_battery": "Pig Iron Battery",
+  "item.neko-technology.brass_battery": "Brass Battery",
+  "item.neko-technology.neko_copper_battery": "Neko Copper Battery",
+
   "block.neko-technology.yes": "Yes",
   "block.neko-technology.no": "No",
 
@@ -207,6 +216,8 @@
 
   "message.nekotech.item_put": "%s has been placed in, nya~",
   "message.nekotech.all_items_taken": "Everything has been taken out, nya~",
+  "message.neko-technology.energy_depleted": "Not enough energy!",
+  "tooltip.neko-technology.energy": "Energy: %s/%s NF",
 
   "container.box": "Neko Storage Casing",
   "container.alloy_pot": "Alloy Pot",

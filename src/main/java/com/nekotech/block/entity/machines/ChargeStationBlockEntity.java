@@ -5,7 +5,9 @@ import com.nekotech.block.entity.api.ICatNeedMachine;
 import com.nekotech.block.entity.api.IHaveGoogleHUD;
 import com.nekotech.block.entity.api.ImplementedInventory;
 import com.nekotech.block.entity.api.TakeFreelyInventory;
+import com.nekotech.block.entity.api.electrical.ITransferElectrical;
 import com.nekotech.block.entity.machines.coil.CoilBlockEntity;
+import com.nekotech.item.api.chargeable_item.IChargeableItem;
 import com.nekotech.item.api.googles.GoogleAbstractHUD;
 import com.nekotech.item.api.googles.templates.ContainerHUDData;
 import com.nekotech.item.api.googles.templates.InfoBoxHUDData;
@@ -36,20 +38,28 @@ import java.util.List;
 import java.util.Optional;
 
 public class ChargeStationBlockEntity extends TakeFreelyMachineBlockEntity
-        implements TakeFreelyInventory, IHaveGoogleHUD, ICatNeedMachine, ImplementedInventory {
+        implements TakeFreelyInventory, IHaveGoogleHUD, ICatNeedMachine, ImplementedInventory, ITransferElectrical {
+
     public static final int SLOT = 0;
     public static final int INVENTORY_SIZE = 1;
+    /** 每 tick 充入/消耗的能量单位 */
+    private static final float ENERGY_PER_TICK = 1.0f;
 
     private int chargeProgress = 0;
     private int chargeTimeTotal = 0;
-    private RecipeEntry<ChargeRecipe> cachedRecipe = null;
     private boolean isCharging = false;
+
+    private RecipeEntry<ChargeRecipe> cachedRecipe = null;
+
+    private boolean isChargeableMode = false;
+    private float targetFlux = 0; // 充能目标值（最大能量）
 
     private final DefaultedList<ItemStack> items = DefaultedList.ofSize(INVENTORY_SIZE, ItemStack.EMPTY);
 
     public ChargeStationBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.CHARGE_STATION, pos, state, INVENTORY_SIZE);
     }
+
 
     public static void tick(World world, BlockPos pos, BlockState state, ChargeStationBlockEntity blockEntity) {
         if (world.isClient) {
@@ -78,12 +88,72 @@ public class ChargeStationBlockEntity extends TakeFreelyMachineBlockEntity
         boolean hasActiveCoil = hasActiveCoilBelow();
 
         if (!hasActiveCoil) {
-            // Coil 停止工作，重置进度
             if (isCharging) {
                 resetCharging();
                 markDirty();
             }
             return;
+        }
+
+        // 判断物品类型：可充能物品 或 配方物品
+        if (inputStack.getItem() instanceof IChargeableItem chargeable) {
+            handleChargeableItem(inputStack, chargeable);
+        } else {
+            handleRecipeItem(inputStack);
+        }
+
+        markDirty();
+    }
+
+
+    private void handleChargeableItem(ItemStack stack, IChargeableItem chargeable) {
+        float currentFlux = chargeable.getNekoFlux(stack);
+        float maxFlux = chargeable.getMaxNekoFlux(stack);
+
+        if (currentFlux >= maxFlux) {
+            resetCharging();
+            return;
+        }
+
+        if (!isCharging || !isChargeableMode) {
+            isChargeableMode = true;
+            isCharging = true;
+            chargeProgress = 0;
+            targetFlux = maxFlux;
+            chargeTimeTotal = (int) (maxFlux - currentFlux); // 剩余需要充能的量
+            cachedRecipe = null; // 清除配方缓存
+        }
+
+        CoilBlockEntity coil = getCoilBelow();
+        if (coil == null || coil.getNekoFlux() < ENERGY_PER_TICK) {
+            if (isCharging) {
+                resetCharging();
+            }
+            return;
+        }
+
+        coil.setNekoFlux(coil.getNekoFlux() - ENERGY_PER_TICK);
+
+        float newFlux = Math.min(maxFlux, currentFlux + ENERGY_PER_TICK);
+        chargeable.setNekoFlux(stack, newFlux);
+        chargeProgress++;
+
+        if (world instanceof ServerWorld serverWorld && chargeProgress % 10 == 0) {
+            serverWorld.spawnParticles(ParticleTypes.ELECTRIC_SPARK,
+                    pos.getX() + 0.5, pos.getY() + 1.2, pos.getZ() + 0.5,
+                    3, 0.2, 0.1, 0.2, 0.05);
+        }
+
+        if (newFlux >= maxFlux) {
+            completeCharging();
+        }
+    }
+
+
+    private void handleRecipeItem(ItemStack inputStack) {
+        // 如果之前是充电模式，重置
+        if (isChargeableMode) {
+            resetCharging();
         }
 
         // 缓存配方
@@ -94,6 +164,8 @@ public class ChargeStationBlockEntity extends TakeFreelyMachineBlockEntity
                 return;
             }
             chargeTimeTotal = cachedRecipe.value().getChargeTime();
+            isCharging = true;
+            chargeProgress = 0;
         }
 
         // 开始/继续充能
@@ -111,27 +183,34 @@ public class ChargeStationBlockEntity extends TakeFreelyMachineBlockEntity
         if (chargeProgress >= chargeTimeTotal) {
             completeCharging();
         }
-
-        markDirty();
     }
 
-    // ========== 充能流程 ==========
 
     private void completeCharging() {
-        if (cachedRecipe == null || world == null) return;
+        if (world == null) return;
 
-        ItemStack output = cachedRecipe.value().getResult(world.getRegistryManager()).copy();
-        setStack(SLOT, output);
+        if (isChargeableMode) {
+            world.playSound(null, pos,
+                    net.minecraft.sound.SoundEvents.BLOCK_BEACON_ACTIVATE,
+                    net.minecraft.sound.SoundCategory.BLOCKS, 0.6f, 1.2f);
+            if (world instanceof ServerWorld serverWorld) {
+                serverWorld.spawnParticles(ParticleTypes.END_ROD,
+                        pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
+                        15, 0.3, 0.2, 0.3, 0.1);
+            }
+        } else {
+            if (cachedRecipe == null) return;
+            ItemStack output = cachedRecipe.value().getResult(world.getRegistryManager()).copy();
+            setStack(SLOT, output);
 
-        // 播放完成音效
-        world.playSound(null, pos,
-                net.minecraft.sound.SoundEvents.BLOCK_BEACON_ACTIVATE,
-                net.minecraft.sound.SoundCategory.BLOCKS, 0.6f, 1.2f);
-
-        if (world instanceof ServerWorld serverWorld) {
-            serverWorld.spawnParticles(ParticleTypes.END_ROD,
-                    pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
-                    15, 0.3, 0.2, 0.3, 0.1);
+            world.playSound(null, pos,
+                    net.minecraft.sound.SoundEvents.BLOCK_BEACON_ACTIVATE,
+                    net.minecraft.sound.SoundCategory.BLOCKS, 0.6f, 1.2f);
+            if (world instanceof ServerWorld serverWorld) {
+                serverWorld.spawnParticles(ParticleTypes.END_ROD,
+                        pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
+                        15, 0.3, 0.2, 0.3, 0.1);
+            }
         }
 
         resetCharging();
@@ -142,26 +221,31 @@ public class ChargeStationBlockEntity extends TakeFreelyMachineBlockEntity
         chargeTimeTotal = 0;
         cachedRecipe = null;
         isCharging = false;
+        isChargeableMode = false;
+        targetFlux = 0;
     }
 
 
     private boolean hasActiveCoilBelow() {
-        if (world == null) return false;
-
-        BlockPos belowPos = pos.down();
-        BlockEntity below = world.getBlockEntity(belowPos);
-
-        if (!(below instanceof CoilBlockEntity coil)) return false;
-
-        if(coil.getCoilCounts()[0] != 6) return false;
-
+        CoilBlockEntity coil = getCoilBelow();
+        if (coil == null) return false;
+        if (coil.getCoilCounts()[0] != 6) return false; // 铜线圈必须满6个
         return coil.isWorking();
     }
 
+    @Nullable
+    private CoilBlockEntity getCoilBelow() {
+        if (world == null) return null;
+        BlockPos belowPos = pos.down();
+        BlockEntity below = world.getBlockEntity(belowPos);
+        if (below instanceof CoilBlockEntity coil) {
+            return coil;
+        }
+        return null;
+    }
 
     private Optional<RecipeEntry<ChargeRecipe>> findMatchingRecipe(ItemStack stack) {
         if (world == null) return Optional.empty();
-
         SingleStackRecipeInput input = new SingleStackRecipeInput(stack);
         return world.getRecipeManager()
                 .getFirstMatch(ModRecipes.CHARGE_RECIPE_TYPE, input, world);
@@ -176,7 +260,7 @@ public class ChargeStationBlockEntity extends TakeFreelyMachineBlockEntity
 
     @Override
     public boolean canExtract(ItemStack stack, int slot) {
-        return true; // 可以取出任何物品
+        return true;
     }
 
     @Override
@@ -194,26 +278,14 @@ public class ChargeStationBlockEntity extends TakeFreelyMachineBlockEntity
         return canExtract(stack, slot);
     }
 
-
-    @Override
-    public boolean handleRightClick(PlayerEntity player, ItemStack stack) {
-        if (!getStack(SLOT).isEmpty()) {
-            if (player.isSneaking()) {
-                return takeOutAllItems(player);
-            }
-            return takeOutAllItems(player);
-        }
-
-        return putInItem(player, stack);
-    }
-
-
     @Override
     protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         super.writeNbt(nbt, registryLookup);
         nbt.putInt("ChargeProgress", chargeProgress);
         nbt.putInt("ChargeTimeTotal", chargeTimeTotal);
         nbt.putBoolean("IsCharging", isCharging);
+        nbt.putBoolean("IsChargeableMode", isChargeableMode);
+        nbt.putFloat("TargetFlux", targetFlux);
     }
 
     @Override
@@ -222,8 +294,9 @@ public class ChargeStationBlockEntity extends TakeFreelyMachineBlockEntity
         chargeProgress = nbt.getInt("ChargeProgress");
         chargeTimeTotal = nbt.getInt("ChargeTimeTotal");
         isCharging = nbt.getBoolean("IsCharging");
+        isChargeableMode = nbt.getBoolean("IsChargeableMode");
+        targetFlux = nbt.getFloat("TargetFlux");
     }
-
 
     @Override
     public List<GoogleAbstractHUD> getGoogleHUDs(World world, BlockPos pos, BlockState state) {
@@ -254,11 +327,11 @@ public class ChargeStationBlockEntity extends TakeFreelyMachineBlockEntity
 
         Text content = Text.literal(info.toString());
         huds.add(new InfoBoxHUDData(pos, title, content));
+
         List<ItemStack> items = new ArrayList<>();
         if (this instanceof Inventory inventory) {
             for (int i = 0; i < inventory.size(); i++) {
-                stack = inventory.getStack(i);
-                items.add(stack.copy()); // 复制一份，避免修改原物品
+                items.add(inventory.getStack(i).copy());
             }
         }
         Text containerTitle = Text.translatable("block.neko-technology.charge_station");
@@ -280,42 +353,34 @@ public class ChargeStationBlockEntity extends TakeFreelyMachineBlockEntity
         super.markRemoved();
     }
 
-    public int getChargeProgress() {
-        return chargeProgress;
-    }
 
-    public int getChargeTimeTotal() {
-        return chargeTimeTotal;
-    }
+    public int getChargeProgress() { return chargeProgress; }
+    public int getChargeTimeTotal() { return chargeTimeTotal; }
+    public boolean isCharging() { return isCharging; }
+    public boolean isChargeableMode() { return isChargeableMode; }
 
-    public boolean isCharging() {
-        return isCharging;
-    }
 
     private void spawnChargeParticles() {
         if (world == null) return;
-
         double x = pos.getX() + 0.5;
         double y = pos.getY() + 0.8;
         double z = pos.getZ() + 0.5;
-
         for (int i = 0; i < 3; i++) {
             double offsetX = (world.random.nextDouble() - 0.5) * 0.8;
             double offsetY = world.random.nextDouble() * 0.3;
             double offsetZ = (world.random.nextDouble() - 0.5) * 0.8;
-
-            world.addParticle(
-                    ParticleTypes.WHITE_ASH,
+            world.addParticle(ParticleTypes.WHITE_ASH,
                     x + offsetX, y + offsetY, z + offsetZ,
-                    0, 0.02, 0
-            );
+                    0, 0.02, 0);
         }
     }
+
 
     @Override
     public DefaultedList<ItemStack> getItems() {
         return items;
     }
+
 
     @Override
     public @Nullable BlockPos getBoundControllerPos() {
@@ -324,5 +389,23 @@ public class ChargeStationBlockEntity extends TakeFreelyMachineBlockEntity
 
     @Override
     public void setBoundControllerPos(@Nullable BlockPos pos) {
+    }
+
+    @Override
+    public void setStack(int slot, ItemStack stack) {
+        super.setStack(slot, stack);
+        if (stack.isEmpty()) {
+            resetCharging();
+            markDirty();
+        }
+    }
+
+    @Override
+    public boolean handleRightClick(PlayerEntity player, ItemStack stack) {
+        if (!getStack(SLOT).isEmpty()) {
+            boolean result = takeOutAllItems(player);
+            return result;
+        }
+        return putInItem(player, stack);
     }
 }

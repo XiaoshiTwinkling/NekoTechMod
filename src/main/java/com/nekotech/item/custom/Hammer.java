@@ -2,7 +2,7 @@ package com.nekotech.item.custom;
 
 import com.nekotech.block.entity.api.component.ComponentAdaptation;
 import com.nekotech.block.entity.api.electrical.conductor.ConductorSystem;
-import com.nekotech.item.AbstractDurabilityItem;
+import com.nekotech.item.api.AbstractDurabilityItem;
 import com.nekotech.item.custom.component.WirePoleItem;
 import com.nekotech.util.WirePairHelper;
 import net.minecraft.entity.player.PlayerEntity;
