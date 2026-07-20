@@ -2,12 +2,16 @@ package com.nekotech.mixin;
 
 import com.nekotech.NekoTechnology;
 import com.nekotech.data.worlddata.NekoTagWorldState;
+import com.nekotech.catcamera.CatCameraChannelAccess;
+import com.nekotech.catcamera.CatCameraChannelData;
+import com.nekotech.catcamera.CatCameraChannelService;
 import com.nekotech.goal.MoveToLaserGoal;
 import com.nekotech.goal.nekotask.NekoCatTaskData;
 import com.nekotech.goal.nekotask.NekoTagInventoryTaskGoal;
 import com.nekotech.item.ModItems;
 import com.nekotech.item.custom.NekoMark.NekoMarkAccess;
 import com.nekotech.item.custom.NekoMark.NekoMarkItem;
+import com.nekotech.item.custom.CatCameraTerminalItem;
 import com.nekotech.mixin.Accessor.CatEntityAccessor;
 import com.nekotech.mixin.Accessor.MobEntityAccessor;
 import com.nekotech.block.entity.machines.TreadmillCat;
@@ -41,7 +45,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.List;
 
 @Mixin(CatEntity.class)
-public class CatEntityMixin implements NekoMarkAccess, TreadmillCat {
+public class CatEntityMixin implements NekoMarkAccess, TreadmillCat, CatCameraChannelAccess {
     @Unique
     private int nekoDropTimer = 0;
 
@@ -68,6 +72,17 @@ public class CatEntityMixin implements NekoMarkAccess, TreadmillCat {
             DataTracker.registerData(CatEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
     @Unique
+    private static final TrackedData<Boolean> CAT_CAMERA_CHANNEL_ACTIVE =
+            DataTracker.registerData(CatEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+
+    @Unique
+    @Nullable
+    private CatCameraChannelData catCameraChannelData;
+
+    @Unique
+    private boolean catCameraChannelReconciled;
+
+    @Unique
     private NbtCompound nekoTaskData = new NbtCompound();
 
     @Unique
@@ -77,6 +92,36 @@ public class CatEntityMixin implements NekoMarkAccess, TreadmillCat {
     @Override
     public NbtCompound neko_technology$getNekoTaskData() {
         return this.nekoTaskData;
+    }
+
+    @Override
+    @Nullable
+    public CatCameraChannelData neko_technology$getCatCameraChannel() {
+        return catCameraChannelData;
+    }
+
+    @Override
+    public void neko_technology$setCatCameraChannel(@Nullable CatCameraChannelData data) {
+        this.catCameraChannelData = data;
+        ((CatEntity)(Object)this).getDataTracker().set(
+                CAT_CAMERA_CHANNEL_ACTIVE,
+                data != null && data.active()
+        );
+    }
+
+    @Override
+    public boolean neko_technology$isCatCameraChannelActive() {
+        return ((CatEntity)(Object)this).getDataTracker().get(CAT_CAMERA_CHANNEL_ACTIVE);
+    }
+
+    @Override
+    public boolean neko_technology$isCatCameraChannelReconciled() {
+        return catCameraChannelReconciled;
+    }
+
+    @Override
+    public void neko_technology$setCatCameraChannelReconciled(boolean reconciled) {
+        this.catCameraChannelReconciled = reconciled;
     }
 
     @Override
@@ -142,6 +187,7 @@ public class CatEntityMixin implements NekoMarkAccess, TreadmillCat {
     @Inject(method = "initDataTracker", at = @At("TAIL"))
     private void initNekoMarkDataTracker(DataTracker.Builder builder, CallbackInfo ci) {
         builder.add(NEKO_MARK_COLOR, NO_NEKO_MARK_COLOR);
+        builder.add(CAT_CAMERA_CHANNEL_ACTIVE, false);
     }
 
     @Inject(method = "initGoals", at = @At("TAIL"))
@@ -169,6 +215,12 @@ public class CatEntityMixin implements NekoMarkAccess, TreadmillCat {
         CatEntity cat = (CatEntity) (Object) this;
 
         if (!cat.getWorld().isClient() && cat.isAlive()) {
+
+            if (!catCameraChannelReconciled) {
+                CatCameraChannelService.reconcile(cat);
+            } else if (cat.age % 20 == 0) {
+                CatCameraChannelService.updateLocation(cat);
+            }
 
             if (nextDropInterval == 0) {
                 nextDropInterval = getRandomInterval();
@@ -240,6 +292,9 @@ public class CatEntityMixin implements NekoMarkAccess, TreadmillCat {
             nbt.putString(NEKO_MARK_COLOR_KEY, nekoMarkColor.getName());
         }
         nbt.put(NEKO_TASK_DATA_KEY, this.nekoTaskData.copy());
+        if (catCameraChannelData != null) {
+            nbt.put(CatCameraChannelData.NBT_KEY, catCameraChannelData.toNbt());
+        }
     }
 
     @Inject(method = "readCustomDataFromNbt", at = @At("HEAD"))
@@ -275,6 +330,17 @@ public class CatEntityMixin implements NekoMarkAccess, TreadmillCat {
         } else {
             this.nekoTaskData = new NbtCompound();
         }
+
+        if (nbt.contains(CatCameraChannelData.NBT_KEY, NbtElement.COMPOUND_TYPE)) {
+            this.catCameraChannelData = CatCameraChannelData.fromNbt(nbt.getCompound(CatCameraChannelData.NBT_KEY));
+        } else {
+            this.catCameraChannelData = null;
+        }
+        this.catCameraChannelReconciled = false;
+        ((CatEntity)(Object)this).getDataTracker().set(
+                CAT_CAMERA_CHANNEL_ACTIVE,
+                catCameraChannelData != null && catCameraChannelData.active()
+        );
     }
 
     @Inject(method = "getDeathSound", at = @At("HEAD"))
@@ -283,6 +349,10 @@ public class CatEntityMixin implements NekoMarkAccess, TreadmillCat {
 
         if (cat.getWorld().isClient()) {
             return;
+        }
+
+        if (neko_technology$isCatCameraChannelActive()) {
+            CatCameraChannelService.delete(cat);
         }
 
         dropCurrentNekoMark(cat);
@@ -333,6 +403,12 @@ public class CatEntityMixin implements NekoMarkAccess, TreadmillCat {
         CatEntity cat = (CatEntity)(Object)this;
 
         ItemStack stack = player.getStackInHand(hand);
+
+        if (stack.getItem() instanceof CatCameraTerminalItem terminal) {
+            cir.setReturnValue(terminal.useOnEntity(stack, player, cat, hand));
+            cir.cancel();
+            return;
+        }
 
         if (stack.getItem() instanceof NekoMarkItem nekoMarkItem) {
             cir.setReturnValue(handleNekoMarkInteraction(cat, player, stack, nekoMarkItem));

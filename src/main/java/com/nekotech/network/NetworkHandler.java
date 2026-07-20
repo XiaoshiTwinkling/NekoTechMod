@@ -1,6 +1,7 @@
 package com.nekotech.network;
 
 import com.nekotech.NekoTechnology;
+import com.nekotech.catcamera.CatCameraViewManager;
 import com.nekotech.network.payload.c2s.NekoTagUpdatePayload;
 import com.nekotech.network.payload.c2s.RequestHudDataPayload;
 import com.nekotech.network.payload.s2c.*;
@@ -40,6 +41,7 @@ import java.util.Optional;
 
 public class NetworkHandler {
     public static void initialize() {
+        CatCameraNetworkHandler.initialize();
         // 注册网络包类型
         PayloadTypeRegistry.playC2S().register(
                 RequestHudDataPayload.ID,
@@ -89,13 +91,15 @@ public class NetworkHandler {
         );
 
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) ->
-                server.execute(() ->
-                        SyncWirePairsPayload.WirePairSyncHelper.syncPairsToPlayer(server, handler.getPlayer()))
+                server.execute(() -> {
+                    CatCameraViewManager.exit(handler.getPlayer(), true);
+                    SyncWirePairsPayload.WirePairSyncHelper.syncPairsToPlayer(server, handler.getPlayer());
+                })
         );
 
-        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) ->
-                WireBundleItem.clearFirstClick(handler.getPlayer().getUuid())
-        );
+        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
+            WireBundleItem.clearFirstClick(handler.getPlayer().getUuid());
+        });
     }
 
     private static void handleNekoTagUpdate(ServerPlayerEntity player, NekoTagUpdatePayload payload) {

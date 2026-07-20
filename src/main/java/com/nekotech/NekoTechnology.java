@@ -4,6 +4,8 @@ import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.block.entity.api.electrical.conductor.ConductorManager;
 import com.nekotech.block.entity.api.electrical.conductor.ConductorSystem;
 import com.nekotech.events.BlockBreakEvents;
+import com.nekotech.catcamera.CatCameraViewManager;
+import com.nekotech.entity.ModEntities;
 import com.nekotech.events.ServerTick;
 import com.nekotech.handler.DriedFishTameHandler;
 import com.nekotech.item.ModItemGroups;
@@ -43,6 +45,7 @@ public class NekoTechnology implements ModInitializer {
 		// Proceed with mild caution
 
 		ModItems.registerModItems();
+		ModEntities.initialize();
 		ModItemGroups.registerModItemGroups();
 		ModBlocks.registerModBlocks();
 		ModBlockEntities.registerBlockEntities();
@@ -63,6 +66,7 @@ public class NekoTechnology implements ModInitializer {
 		});
 
 		ServerTickEvents.END_SERVER_TICK.register(server -> {
+			CatCameraViewManager.tick(server);
 			for (ServerWorld world : server.getWorlds()) {
 				ConductorManager manager = ConductorManager.get(world);
 				manager.tick(world);

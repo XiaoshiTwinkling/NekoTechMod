@@ -3,8 +3,10 @@ package com.nekotech;
 import com.nekotech.block.ModBlocks;
 import com.nekotech.block.entity.ModBlockEntities;
 import com.nekotech.item.ModItems;
+import com.nekotech.entity.ModEntities;
 import com.nekotech.item.custom.NekoTag.NekoTagData;
 import com.nekotech.network.ClientHudNetworkHandler;
+import com.nekotech.network.CatCameraClientNetworkHandler;
 import com.nekotech.renderer.*;
 import com.nekotech.renderer.blockentities.*;
 import com.nekotech.renderer.components.ComponentAttachmentRenderer;
@@ -15,6 +17,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.block.entity.BlockEntity;
@@ -36,7 +39,9 @@ public class NekoTechnologyClient implements ClientModInitializer {
     public void onInitializeClient() {
         NekoTechnology.LOGGER.info("NekoTechnologyClient initialized");
 
+        CatCameraModels.initialize();
         registerBlockEntityRenderers();
+        EntityRendererRegistry.register(ModEntities.CAT_CAMERA_BODY, CatCameraBodyEntityRenderer::new);
         registerComponentAttachmentRenderers();
         registerRenderLayerMap();
         registerModelPredicates();
@@ -152,6 +157,7 @@ public class NekoTechnologyClient implements ClientModInitializer {
 
                     if (renderer instanceof CatEntityRenderer catRenderer) {
                         helper.register(new NekoMarkFeatureRenderer(catRenderer));
+                        helper.register(new CatCameraFeatureRenderer(catRenderer));
                     }
                 }
         );
@@ -165,5 +171,6 @@ public class NekoTechnologyClient implements ClientModInitializer {
 
     private void registerNetworkHandlers() {
         ClientHudNetworkHandler.initialize();
+        CatCameraClientNetworkHandler.initialize();
     }
 }

@@ -258,5 +258,25 @@
   "hud.charge_station.waiting": "Waiting for charging conditions...",
   "hud.active": "Active",
   "hud.inactive": "Inactive",
-  "hud.empty": "Empty"
+  "hud.empty": "Empty",
+
+  "item.neko-technology.neko_cat_camera_terminal": "Neko Camera Terminal",
+  "gui.neko-technology.cat_camera.name.title": "Create Neko Camera Channel",
+  "gui.neko-technology.cat_camera.name.field": "Channel name",
+  "gui.neko-technology.cat_camera.create": "Create",
+  "gui.neko-technology.cat_camera.list.title": "Neko Camera Channels",
+  "gui.neko-technology.cat_camera.list.empty": "No channels available",
+  "key.neko-technology.cat_camera.exit": "Exit Neko Camera View",
+  "category.neko-technology.cat_camera": "Neko Technology: Camera",
+  "hud.neko-technology.cat_camera.exit": "Press V to exit Neko Camera view",
+  "message.neko-technology.cat_camera.not_owner": "Only the cat's owner can manage its channel",
+  "message.neko-technology.cat_camera.removed": "Neko camera channel removed",
+  "message.neko-technology.cat_camera.no_terminal": "You must hold a Neko Camera Terminal",
+  "message.neko-technology.cat_camera.cat_too_far": "The cat is too far away",
+  "message.neko-technology.cat_camera.already_bound": "This cat already has a channel",
+  "message.neko-technology.cat_camera.invalid_name": "Channel names must contain 1 to 16 characters",
+  "message.neko-technology.cat_camera.duplicate_name": "That channel name already exists",
+  "message.neko-technology.cat_camera.created": "Neko camera channel created",
+  "message.neko-technology.cat_camera.channel_missing": "That channel no longer exists",
+  "message.neko-technology.cat_camera.target_unavailable": "The cat is currently unavailable"
 }

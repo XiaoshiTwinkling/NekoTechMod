@@ -258,5 +258,25 @@
   "gui.neko-technology.about": "关于模组",
 
   "patchouli_books.neko-technology.book_name": "猫猫科技手册",
-  "patchouli_books.neko-technology.landing_text": "欢迎来到猫猫科技！"
+  "patchouli_books.neko-technology.landing_text": "欢迎来到猫猫科技！",
+
+  "item.neko-technology.neko_cat_camera_terminal": "猫咪摄像机终端",
+  "gui.neko-technology.cat_camera.name.title": "创建猫咪摄像机频道",
+  "gui.neko-technology.cat_camera.name.field": "频道名",
+  "gui.neko-technology.cat_camera.create": "创建",
+  "gui.neko-technology.cat_camera.list.title": "猫咪摄像机频道",
+  "gui.neko-technology.cat_camera.list.empty": "目前没有频道",
+  "key.neko-technology.cat_camera.exit": "退出猫咪摄像机视角",
+  "category.neko-technology.cat_camera": "猫猫科技：摄像机",
+  "hud.neko-technology.cat_camera.exit": "按 V 退出猫咪摄像机视角",
+  "message.neko-technology.cat_camera.not_owner": "只有猫咪主人才能操作频道",
+  "message.neko-technology.cat_camera.removed": "猫咪摄像机频道已删除",
+  "message.neko-technology.cat_camera.no_terminal": "需要手持猫咪摄像机终端",
+  "message.neko-technology.cat_camera.cat_too_far": "猫咪已经离得太远",
+  "message.neko-technology.cat_camera.already_bound": "这只猫咪已经绑定频道",
+  "message.neko-technology.cat_camera.invalid_name": "频道名必须为 1 至 16 个字符",
+  "message.neko-technology.cat_camera.duplicate_name": "这个频道名已经存在",
+  "message.neko-technology.cat_camera.created": "猫咪摄像机频道创建成功",
+  "message.neko-technology.cat_camera.channel_missing": "频道已不存在",
+  "message.neko-technology.cat_camera.target_unavailable": "猫咪当前不可用"
 }

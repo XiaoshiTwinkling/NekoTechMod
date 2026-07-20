@@ -4,7 +4,9 @@
 	"compatibilityLevel": "JAVA_21",
 	"client": [
 		"OcelotEntityModelAccessor",
-		"RenderLayerMixin"
+		"RenderLayerMixin",
+		"CatCameraMixin",
+		"CatCameraInputMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

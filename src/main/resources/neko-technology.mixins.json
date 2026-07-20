@@ -6,6 +6,9 @@
     	"Accessor.CatEntityAccessor",
     	"Accessor.MobEntityAccessor",
     	"CatEntityMixin",
+		"EntityCatCameraRemovalMixin",
+		"PlayerCatCameraViewMixin",
+		"ServerPlayNetworkHandlerMixin",
     	"AbstractFurnaceBlockEntityMixin",
     	"HeaterBrickChangeMixin"
 	],

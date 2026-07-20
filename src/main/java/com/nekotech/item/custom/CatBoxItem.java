@@ -1,6 +1,7 @@
 package com.nekotech.item.custom;
 
 import com.nekotech.NekoTechnology;
+import com.nekotech.catcamera.CatCameraChannelService;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.Entity;
@@ -159,6 +160,7 @@ public class CatBoxItem extends Item {
         }
 
         NbtCompound catData = new NbtCompound();
+        CatCameraChannelService.deleteForBox(cat);
         cat.writeNbt(catData);
         sanitizeCatNbt(catData);
 

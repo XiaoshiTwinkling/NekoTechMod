@@ -126,6 +126,7 @@ public class ModItemGroups {
                             entries.add(ModItems.RED_NEKO_MARK);
                             entries.add(ModItems.BLACK_NEKO_MARK);
                             entries.add(ModItems.NEKO_TAG_READER);
+                            entries.add(ModItems.NEKO_CAT_CAMERA_TERMINAL);
 
 
                         })).build());
