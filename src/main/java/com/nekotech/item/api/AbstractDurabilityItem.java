@@ -1,4 +1,4 @@
-package com.nekotech.item;
+package com.nekotech.item.api;
 
 import net.fabricmc.fabric.api.item.v1.FabricItem;
 import net.minecraft.item.ItemStack;

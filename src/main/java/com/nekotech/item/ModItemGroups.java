@@ -126,8 +126,13 @@ public class ModItemGroups {
                             entries.add(ModItems.RED_NEKO_MARK);
                             entries.add(ModItems.BLACK_NEKO_MARK);
                             entries.add(ModItems.NEKO_TAG_READER);
-
-
+                            entries.add(ModItems.COPPER_BATTERY);
+                            entries.add(ModItems.IRON_BATTERY);
+                            entries.add(ModItems.TIN_BATTERY);
+                            entries.add(ModItems.ALUMINUM_BATTERY);
+                            entries.add(ModItems.PIG_IRON_BATTERY);
+                            entries.add(ModItems.BRASS_BATTERY);
+                            entries.add(ModItems.NEKO_COPPER_BATTERY);
                         })).build());
 
         Registry.register(Registries.ITEM_GROUP, NekoTech_BLOCKS,
