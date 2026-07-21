@@ -85,6 +85,7 @@
   "item.neko-technology.brass_item_inputer.tooltip": "物品输入效率: 0.05 个/tick",
   "item.neko-technology.brass_item_outputer": "黄铜物品输出零件",
   "item.neko-technology.brass_item_outputer.tooltip": "物品输出效率: 0.05 个/tick",
+  "item.neko-technology.neko_cat_camera": "猫猫录像机",
 
   "item.neko-technology.glass_cover": "玻璃罩",
   "item.neko-technology.copper_coil": "铜丝线圈",

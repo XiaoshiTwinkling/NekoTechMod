@@ -1,8 +1,7 @@
-package com.nekotech.item.custom;
+package com.nekotech.item.custom.camera;
 
 import com.nekotech.data.worlddata.CatCameraChannelWorldState;
 import com.nekotech.catcamera.CatCameraChannelAccess;
-import com.nekotech.catcamera.CatCameraChannelData;
 import com.nekotech.catcamera.CatCameraChannelService;
 import com.nekotech.catcamera.CatCameraViewManager;
 import com.nekotech.network.payload.s2c.OpenCatCameraListPayload;

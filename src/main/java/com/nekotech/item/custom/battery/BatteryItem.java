@@ -19,7 +19,7 @@ public abstract class BatteryItem extends AbstractChargeableItem {
     /**
      * @param settings          物品设置
      * @param maxCapacity       最大能量容量（NF）
-     * @param maxDischargeRate  每 tick 最大输出能量（NF/tick） 0 表示不可放电
+     * @param maxDischargeRate  每 tick 最大输出能量（NF/tick） 0 表示不可放电 
      */
     public BatteryItem(Settings settings, float maxCapacity, float maxDischargeRate) {
         super(settings, maxCapacity);

@@ -33,9 +33,9 @@ public class CatCameraFeatureRenderer extends FeatureRenderer<CatEntity, CatEnti
 
         matrices.push();
         ((OcelotEntityModelAccessor) getContextModel()).neko_technology$getHead().rotate(matrices);
-        matrices.translate(0.0D, -0.30D, -0.10D);
-        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180.0F));
-        matrices.scale(0.30F, 0.30F, 0.30F);
+        matrices.translate(0.0D, -0.16D, -0.10D);
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(0.0F));
+        matrices.scale(0.60F, 0.60F, 0.60F);
 
         var itemRenderer = MinecraftClient.getInstance().getItemRenderer();
         BakedModel model = CatCameraModels.getCameraModel();

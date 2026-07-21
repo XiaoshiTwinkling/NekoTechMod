@@ -7,10 +7,11 @@ import com.nekotech.item.custom.*;
 import com.nekotech.item.custom.NekoMark.NekoMarkItem;
 import com.nekotech.item.custom.NekoTag.NekoTagItem;
 import com.nekotech.item.custom.battery.GenericBatteryItem;
+import com.nekotech.item.custom.camera.CatCameraTerminalItem;
+import com.nekotech.item.custom.camera.NekoCatCameraItem;
 import com.nekotech.item.custom.component.*;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.block.Blocks;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -121,6 +122,7 @@ public class ModItems {
 
     public static final Item NEKO_TAG_READER = registerItems("neko_tag_reader", new NekoTagReaderItem(new Item.Settings().maxCount(1)));
     public static final Item NEKO_CAT_CAMERA_TERMINAL = registerItems("neko_cat_camera_terminal", new CatCameraTerminalItem(new Item.Settings().maxCount(1)));
+    public static final Item NEKO_CAT_CAMERA = registerItems("neko_cat_camera", new NekoCatCameraItem(new Item.Settings()));
 
     public static final Item COPPER_BATTERY = registerItems("copper_battery",
             new GenericBatteryItem(new Item.Settings(), 500.0f, 5.0f, "copper"));

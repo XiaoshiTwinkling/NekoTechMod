@@ -1,6 +1,5 @@
 package com.nekotech.mixin;
 
-import com.nekotech.NekoTechnology;
 import com.nekotech.data.worlddata.NekoTagWorldState;
 import com.nekotech.catcamera.CatCameraChannelAccess;
 import com.nekotech.catcamera.CatCameraChannelData;
@@ -11,7 +10,7 @@ import com.nekotech.goal.nekotask.NekoTagInventoryTaskGoal;
 import com.nekotech.item.ModItems;
 import com.nekotech.item.custom.NekoMark.NekoMarkAccess;
 import com.nekotech.item.custom.NekoMark.NekoMarkItem;
-import com.nekotech.item.custom.CatCameraTerminalItem;
+import com.nekotech.item.custom.camera.CatCameraTerminalItem;
 import com.nekotech.mixin.Accessor.CatEntityAccessor;
 import com.nekotech.mixin.Accessor.MobEntityAccessor;
 import com.nekotech.block.entity.machines.TreadmillCat;
@@ -35,7 +34,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
