@@ -4,9 +4,12 @@ import com.nekotech.data.worlddata.CatCameraChannelWorldState;
 import com.nekotech.catcamera.CatCameraChannelAccess;
 import com.nekotech.catcamera.CatCameraChannelService;
 import com.nekotech.catcamera.CatCameraViewManager;
+import com.nekotech.item.ModItems;
+import com.nekotech.item.api.chargeable_item.AbstractChargeableItem;
 import com.nekotech.network.payload.s2c.OpenCatCameraListPayload;
 import com.nekotech.network.payload.s2c.OpenCatCameraNamePayload;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.CatEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -21,8 +24,14 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
-public class CatCameraTerminalItem extends Item {
-    public CatCameraTerminalItem(Settings settings) { super(settings.maxCount(1)); }
+public class CatCameraTerminalItem extends AbstractChargeableItem {
+
+    private static final float MAX_ENERGY = 3000.0f; // 总能量
+    private static final float ENERGY_PER_TICK = 0.1f; // 每tick消耗
+
+    public CatCameraTerminalItem(Settings settings) {
+        super(settings.maxCount(1), MAX_ENERGY);
+    }
 
     @Override
     public ActionResult useOnEntity(ItemStack stack, PlayerEntity user, LivingEntity entity, Hand hand) {
@@ -36,10 +45,22 @@ public class CatCameraTerminalItem extends Item {
 
         CatCameraChannelAccess access = (CatCameraChannelAccess) cat;
         if (access.neko_technology$isCatCameraChannelActive()) {
+            ItemStack headStack = cat.getEquippedStack(EquipmentSlot.HEAD);
+            if (headStack.getItem() == ModItems.NEKO_CAT_CAMERA) {
+                cat.dropStack(headStack);
+                cat.equipStack(EquipmentSlot.HEAD, ItemStack.EMPTY);
+            }
             CatCameraViewManager.exitWatchers(player.getServer(), cat.getUuid());
             CatCameraChannelService.delete(cat);
             player.sendMessage(Text.translatable("message.neko-technology.cat_camera.removed"), true);
         } else {
+            ItemStack cameraStack = findCameraInInventory(player);
+            if (cameraStack.isEmpty()) {
+                player.sendMessage(Text.translatable("message.neko-technology.cat_camera.no_camera"), true);
+                return ActionResult.FAIL;
+            }
+            cameraStack.decrement(1);
+            cat.equipStack(EquipmentSlot.HEAD, new ItemStack(ModItems.NEKO_CAT_CAMERA));
             ServerPlayNetworking.send(player, new OpenCatCameraNamePayload(cat.getUuid()));
         }
         return ActionResult.SUCCESS;
@@ -56,5 +77,29 @@ public class CatCameraTerminalItem extends Item {
             ServerPlayNetworking.send(player, new OpenCatCameraListPayload(channels));
         }
         return TypedActionResult.success(stack, world.isClient());
+    }
+
+    private ItemStack findCameraInInventory(PlayerEntity player) {
+        for (int i = 0; i < player.getInventory().size(); i++) {
+            ItemStack s = player.getInventory().getStack(i);
+            if (s.getItem() == ModItems.NEKO_CAT_CAMERA) {
+                return s;
+            }
+        }
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    public boolean performAction(ItemStack stack, World world, PlayerEntity player, Hand hand) {
+        return false;
+    }
+
+    @Override
+    protected float getEnergyCostPerUse(ItemStack stack) {
+        return 0;
+    }
+
+    public static float getEnergyPerTick() {
+        return ENERGY_PER_TICK;
     }
 }

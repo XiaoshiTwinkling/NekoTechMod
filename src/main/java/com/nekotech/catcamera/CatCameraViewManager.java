@@ -4,16 +4,20 @@ import com.nekotech.data.worlddata.CatCameraChannelWorldState;
 import com.nekotech.data.worlddata.CatCameraViewSessionWorldState;
 import com.nekotech.entity.CatCameraBodyEntity;
 import com.nekotech.entity.ModEntities;
+import com.nekotech.item.custom.camera.CatCameraTerminalItem;
 import com.nekotech.network.payload.s2c.CatCameraActionResultPayload;
 import com.nekotech.network.payload.s2c.CatCameraViewStatePayload;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.CatEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 
@@ -120,11 +124,30 @@ public final class CatCameraViewManager {
             if (!(camera instanceof CatEntity) || !camera.isAlive()
                     || channel == null || !channel.active()) {
                 exit(player, true);
+                continue;
+            }
+
+            if (!consumeTerminalEnergy(player)) {
+                exit(player, true);
+                player.sendMessage(Text.translatable("message.neko-technology.cat_camera.energy_depleted"), true);
             }
         }
     }
 
     private static void fail(ServerPlayerEntity player, String key) {
         ServerPlayNetworking.send(player, new CatCameraActionResultPayload(false, false, key));
+    }
+
+    private static boolean consumeTerminalEnergy(ServerPlayerEntity player) {
+        for (Hand hand : Hand.values()) {
+            ItemStack stack = player.getStackInHand(hand);
+            if (stack.getItem() instanceof CatCameraTerminalItem terminal) {
+                float current = terminal.getNekoFlux(stack);
+                if (current <= 0) return false;
+                terminal.consumeNekoFlux(stack, CatCameraTerminalItem.getEnergyPerTick());
+                return true;
+            }
+        }
+        return false;
     }
 }

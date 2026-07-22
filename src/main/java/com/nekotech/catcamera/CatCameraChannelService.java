@@ -1,7 +1,10 @@
 package com.nekotech.catcamera;
 
 import com.nekotech.data.worlddata.CatCameraChannelWorldState;
+import com.nekotech.item.ModItems;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.passive.CatEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.ChunkPos;
 
@@ -84,6 +87,7 @@ public final class CatCameraChannelService {
         if (!(cat.getWorld() instanceof ServerWorld world) || !(cat instanceof CatCameraChannelAccess access)) {
             return;
         }
+        dropCameraIfPresent(cat);
         CatCameraChannelWorldState state = CatCameraChannelWorldState.get(world.getServer());
         CatCameraChannelData tombstone = CatCameraChannelData.tombstone(cat.getUuid(), state.allocateRevision());
         state.put(cat.getUuid(), tombstone);
@@ -95,6 +99,7 @@ public final class CatCameraChannelService {
         if (!(cat.getWorld() instanceof ServerWorld world) || !(cat instanceof CatCameraChannelAccess access)) {
             return;
         }
+        dropCameraIfPresent(cat);
         CatCameraChannelWorldState state = CatCameraChannelWorldState.get(world.getServer());
         state.put(cat.getUuid(), CatCameraChannelData.tombstone(cat.getUuid(), state.allocateRevision()));
         access.neko_technology$setCatCameraChannel(null);
@@ -128,5 +133,13 @@ public final class CatCameraChannelService {
 
     private static String dimension(ServerWorld world) {
         return world.getRegistryKey().getValue().toString();
+    }
+
+    private static void dropCameraIfPresent(CatEntity cat) {
+        ItemStack headStack = cat.getEquippedStack(EquipmentSlot.HEAD);
+        if (headStack.getItem() == ModItems.NEKO_CAT_CAMERA) {
+            cat.dropStack(headStack);
+            cat.equipStack(EquipmentSlot.HEAD, ItemStack.EMPTY);
+        }
     }
 }

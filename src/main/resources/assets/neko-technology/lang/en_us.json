@@ -86,6 +86,10 @@
   "item.neko-technology.brass_item_outputer": "Brass Item Outputer",
   "item.neko-technology.brass_item_outputer.tooltip": "Item output rate: 0.05 items/tick",
   "item.neko-technology.neko_cat_camera": "Neko Camera",
+  "item.neko-technology.cat_camera_terminal": "Cat Camera Terminal",
+  "item.neko-technology.cat_camera_terminal.tooltip": "A rechargeable terminal for viewing cat cameras",
+  "message.neko-technology.cat_camera.no_camera": "You need a Neko Cat Camera to equip your cat!",
+  "message.neko-technology.cat_camera.energy_depleted": "The terminal battery is drained! View ended.",
 
   "item.neko-technology.glass_cover": "Glass Cover",
   "item.neko-technology.copper_coil": "Copper Coil",
