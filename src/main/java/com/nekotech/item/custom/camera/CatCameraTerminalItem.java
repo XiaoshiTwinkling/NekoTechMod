@@ -54,13 +54,10 @@ public class CatCameraTerminalItem extends AbstractChargeableItem {
             CatCameraChannelService.delete(cat);
             player.sendMessage(Text.translatable("message.neko-technology.cat_camera.removed"), true);
         } else {
-            ItemStack cameraStack = findCameraInInventory(player);
-            if (cameraStack.isEmpty()) {
+            if (findCameraInInventory(player).isEmpty()) {
                 player.sendMessage(Text.translatable("message.neko-technology.cat_camera.no_camera"), true);
                 return ActionResult.FAIL;
             }
-            cameraStack.decrement(1);
-            cat.equipStack(EquipmentSlot.HEAD, new ItemStack(ModItems.NEKO_CAT_CAMERA));
             ServerPlayNetworking.send(player, new OpenCatCameraNamePayload(cat.getUuid()));
         }
         return ActionResult.SUCCESS;
