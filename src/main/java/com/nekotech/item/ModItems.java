@@ -125,10 +125,6 @@ public class ModItems {
 
     public static final Item COPPER_BATTERY = registerItems("copper_battery",
             new GenericBatteryItem(new Item.Settings(), 500.0f, 5.0f, "copper"));
-    public static final Item IRON_BATTERY = registerItems("iron_battery",
-            new GenericBatteryItem(new Item.Settings(), 500.0f, 5.0f, "iron"));
-    public static final Item TIN_BATTERY = registerItems("tin_battery",
-            new GenericBatteryItem(new Item.Settings(), 800.0f, 8.0f, "tin"));
     public static final Item ALUMINUM_BATTERY = registerItems("aluminum_battery",
             new GenericBatteryItem(new Item.Settings(), 1200.0f, 12.0f, "aluminum"));
     public static final Item PIG_IRON_BATTERY = registerItems("pig_iron_battery",

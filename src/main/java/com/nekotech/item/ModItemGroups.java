@@ -130,8 +130,6 @@ public class ModItemGroups {
                             entries.add(ModItems.CAT_CAMERA);
 
                             entries.add(ModItems.COPPER_BATTERY);
-                            entries.add(ModItems.IRON_BATTERY);
-                            entries.add(ModItems.TIN_BATTERY);
                             entries.add(ModItems.ALUMINUM_BATTERY);
                             entries.add(ModItems.PIG_IRON_BATTERY);
                             entries.add(ModItems.BRASS_BATTERY);
