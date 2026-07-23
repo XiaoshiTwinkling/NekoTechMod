@@ -16,9 +16,7 @@ import com.nekotech.network.payload.s2c.OpenCatCameraNamePayload;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.passive.CatEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 public final class CatCameraNetworkHandler {
@@ -74,15 +72,10 @@ public final class CatCameraNetworkHandler {
             return;
         }
 
-        ItemStack cameraStack = findCameraInInventory(player);
-        if (cameraStack.isEmpty()) {
+        if (!CatCameraChannelService.create(cat, player, name)) {
             result(player, false, false, "message.neko-technology.cat_camera.no_camera");
             return;
         }
-        cameraStack.decrement(1);
-        cat.equipStack(EquipmentSlot.HEAD, new ItemStack(ModItems.NEKO_CAT_CAMERA));
-
-        CatCameraChannelService.create(cat, player.getUuid(), name);
         result(player, true, true, "message.neko-technology.cat_camera.created");
     }
 
@@ -95,21 +88,11 @@ public final class CatCameraNetworkHandler {
     }
 
     private static boolean hasTerminal(ServerPlayerEntity player) {
-        return player.getMainHandStack().isOf(ModItems.NEKO_CAT_CAMERA_TERMINAL)
-                || player.getOffHandStack().isOf(ModItems.NEKO_CAT_CAMERA_TERMINAL);
+        return player.getMainHandStack().isOf(ModItems.CAT_CAMERA_TERMINAL)
+                || player.getOffHandStack().isOf(ModItems.CAT_CAMERA_TERMINAL);
     }
 
     private static void result(ServerPlayerEntity player, boolean success, boolean close, String key) {
         ServerPlayNetworking.send(player, new CatCameraActionResultPayload(success, close, key));
-    }
-
-    private static ItemStack findCameraInInventory(ServerPlayerEntity player) {
-        for (int i = 0; i < player.getInventory().size(); i++) {
-            ItemStack s = player.getInventory().getStack(i);
-            if (s.getItem() == ModItems.NEKO_CAT_CAMERA) {
-                return s;
-            }
-        }
-        return ItemStack.EMPTY;
     }
 }

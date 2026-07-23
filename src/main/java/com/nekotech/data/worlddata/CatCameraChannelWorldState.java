@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class CatCameraChannelWorldState extends PersistentState {
-    private static final String ID = "neko_cat_camera_channels";
+    private static final String ID = "cat_camera_channels";
     private final Map<UUID, CatCameraChannelData> entries = new HashMap<>();
     private long nextRevision = 1L;
 

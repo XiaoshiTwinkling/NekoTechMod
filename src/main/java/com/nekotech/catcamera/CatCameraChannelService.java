@@ -4,6 +4,7 @@ import com.nekotech.data.worlddata.CatCameraChannelWorldState;
 import com.nekotech.item.ModItems;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.passive.CatEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.ChunkPos;
@@ -72,15 +73,27 @@ public final class CatCameraChannelService {
         access.neko_technology$setCatCameraChannelReconciled(true);
     }
 
-    public static CatCameraChannelData create(CatEntity cat, UUID ownerUuid, String name) {
+    public static boolean create(CatEntity cat, PlayerEntity owner, String name) {
+        ItemStack cameraStack = findCameraInInventory(owner);
+        if (cameraStack.isEmpty()) {
+            return false;
+        }
+
+        cameraStack.decrement(1);
+        cat.equipStack(EquipmentSlot.HEAD, new ItemStack(ModItems.CAT_CAMERA));
+
         ServerWorld world = (ServerWorld) cat.getWorld();
         CatCameraChannelWorldState state = CatCameraChannelWorldState.get(world.getServer());
         ChunkPos chunk = cat.getChunkPos();
-        CatCameraChannelData data = new CatCameraChannelData(cat.getUuid(), name, ownerUuid,
+        CatCameraChannelData data = new CatCameraChannelData(cat.getUuid(), name, owner.getUuid(),
                 dimension(world), chunk.x, chunk.z, state.allocateRevision(), true);
         state.put(cat.getUuid(), data);
         ((CatCameraChannelAccess) cat).neko_technology$setCatCameraChannel(data);
-        return data;
+        return true;
+    }
+
+    public static boolean hasCamera(PlayerEntity player) {
+        return !findCameraInInventory(player).isEmpty();
     }
 
     public static void delete(CatEntity cat) {
@@ -137,9 +150,19 @@ public final class CatCameraChannelService {
 
     private static void dropCameraIfPresent(CatEntity cat) {
         ItemStack headStack = cat.getEquippedStack(EquipmentSlot.HEAD);
-        if (headStack.getItem() == ModItems.NEKO_CAT_CAMERA) {
+        if (headStack.getItem() == ModItems.CAT_CAMERA) {
             cat.dropStack(headStack);
             cat.equipStack(EquipmentSlot.HEAD, ItemStack.EMPTY);
         }
+    }
+
+    private static ItemStack findCameraInInventory(PlayerEntity player) {
+        for (int i = 0; i < player.getInventory().size(); i++) {
+            ItemStack stack = player.getInventory().getStack(i);
+            if (stack.isOf(ModItems.CAT_CAMERA)) {
+                return stack;
+            }
+        }
+        return ItemStack.EMPTY;
     }
 }

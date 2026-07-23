@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class CatCameraViewSessionWorldState extends PersistentState {
-    private static final String ID = "neko_cat_camera_view_sessions";
+    private static final String ID = "cat_camera_view_sessions";
     private final Map<UUID, Session> sessions = new HashMap<>();
 
     public static final Type<CatCameraViewSessionWorldState> TYPE = new Type<>(

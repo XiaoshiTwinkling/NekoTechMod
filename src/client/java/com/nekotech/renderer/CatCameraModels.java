@@ -9,7 +9,7 @@ import net.minecraft.util.Identifier;
 
 public final class CatCameraModels {
     public static final Identifier CAMERA_MODEL_ID =
-            Identifier.of(NekoTechnology.MOD_ID, "item/neko_cat_camera");
+            Identifier.of(NekoTechnology.MOD_ID, "item/cat_camera");
 
     private CatCameraModels() {}
 

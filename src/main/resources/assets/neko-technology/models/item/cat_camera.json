@@ -3,8 +3,8 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [64, 64],
 	"textures": {
-		"0": "neko-technology:item/neko_cat_camera",
-		"particle": "neko-technology:item/neko_cat_camera"
+		"0": "neko-technology:item/cat_camera",
+		"particle": "neko-technology:item/cat_camera"
 	},
 	"elements": [
 		{
