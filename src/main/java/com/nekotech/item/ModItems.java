@@ -120,8 +120,8 @@ public class ModItems {
     public static final Item BLACK_NEKO_MARK = registerItems("black_neko_mark", new NekoMarkItem(new Item.Settings(), "black_neko_mark", DyeColor.BLACK));
 
     public static final Item NEKO_TAG_READER = registerItems("neko_tag_reader", new NekoTagReaderItem(new Item.Settings().maxCount(1)));
-    public static final Item NEKO_CAT_CAMERA_TERMINAL = registerItems("neko_cat_camera_terminal", new CatCameraTerminalItem(new Item.Settings().maxCount(1)));
-    public static final Item NEKO_CAT_CAMERA = registerItems("neko_cat_camera", new Item(new Item.Settings()));
+    public static final Item CAT_CAMERA_TERMINAL = registerItems("cat_camera_terminal", new CatCameraTerminalItem(new Item.Settings().maxCount(1)));
+    public static final Item CAT_CAMERA = registerItems("cat_camera", new Item(new Item.Settings()));
 
     public static final Item COPPER_BATTERY = registerItems("copper_battery",
             new GenericBatteryItem(new Item.Settings(), 500.0f, 5.0f, "copper"));

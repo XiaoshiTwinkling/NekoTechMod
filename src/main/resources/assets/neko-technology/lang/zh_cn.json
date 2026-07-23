@@ -85,7 +85,7 @@
   "item.neko-technology.brass_item_inputer.tooltip": "物品输入效率: 0.05 个/tick",
   "item.neko-technology.brass_item_outputer": "黄铜物品输出零件",
   "item.neko-technology.brass_item_outputer.tooltip": "物品输出效率: 0.05 个/tick",
-  "item.neko-technology.neko_cat_camera": "猫猫录像机",
+  "item.neko-technology.cat_camera": "猫猫录像机",
   "item.neko-technology.cat_camera_terminal": "猫猫摄像终端",
   "item.neko-technology.cat_camera_terminal.tooltip": "用于观看猫猫摄像头的可充能终端",
   "message.neko-technology.cat_camera.no_camera": "你需要一个猫猫录像机来给你的猫装备！",
@@ -276,7 +276,6 @@
   "patchouli_books.neko-technology.book_name": "猫猫科技手册",
   "patchouli_books.neko-technology.landing_text": "欢迎来到猫猫科技！",
 
-  "item.neko-technology.neko_cat_camera_terminal": "猫咪摄像机终端",
   "gui.neko-technology.cat_camera.name.title": "创建猫咪摄像机频道",
   "gui.neko-technology.cat_camera.name.field": "频道名",
   "gui.neko-technology.cat_camera.create": "创建",

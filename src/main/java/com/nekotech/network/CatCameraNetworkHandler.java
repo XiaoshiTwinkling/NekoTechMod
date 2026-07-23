@@ -72,7 +72,10 @@ public final class CatCameraNetworkHandler {
             return;
         }
 
-        CatCameraChannelService.create(cat, player.getUuid(), name);
+        if (!CatCameraChannelService.create(cat, player, name)) {
+            result(player, false, false, "message.neko-technology.cat_camera.no_camera");
+            return;
+        }
         result(player, true, true, "message.neko-technology.cat_camera.created");
     }
 
@@ -85,8 +88,8 @@ public final class CatCameraNetworkHandler {
     }
 
     private static boolean hasTerminal(ServerPlayerEntity player) {
-        return player.getMainHandStack().isOf(ModItems.NEKO_CAT_CAMERA_TERMINAL)
-                || player.getOffHandStack().isOf(ModItems.NEKO_CAT_CAMERA_TERMINAL);
+        return player.getMainHandStack().isOf(ModItems.CAT_CAMERA_TERMINAL)
+                || player.getOffHandStack().isOf(ModItems.CAT_CAMERA_TERMINAL);
     }
 
     private static void result(ServerPlayerEntity player, boolean success, boolean close, String key) {

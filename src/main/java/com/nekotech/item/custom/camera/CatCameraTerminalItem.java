@@ -4,16 +4,13 @@ import com.nekotech.data.worlddata.CatCameraChannelWorldState;
 import com.nekotech.catcamera.CatCameraChannelAccess;
 import com.nekotech.catcamera.CatCameraChannelService;
 import com.nekotech.catcamera.CatCameraViewManager;
-import com.nekotech.item.ModItems;
 import com.nekotech.item.api.chargeable_item.AbstractChargeableItem;
 import com.nekotech.network.payload.s2c.OpenCatCameraListPayload;
 import com.nekotech.network.payload.s2c.OpenCatCameraNamePayload;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.CatEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -45,22 +42,14 @@ public class CatCameraTerminalItem extends AbstractChargeableItem {
 
         CatCameraChannelAccess access = (CatCameraChannelAccess) cat;
         if (access.neko_technology$isCatCameraChannelActive()) {
-            ItemStack headStack = cat.getEquippedStack(EquipmentSlot.HEAD);
-            if (headStack.getItem() == ModItems.NEKO_CAT_CAMERA) {
-                cat.dropStack(headStack);
-                cat.equipStack(EquipmentSlot.HEAD, ItemStack.EMPTY);
-            }
             CatCameraViewManager.exitWatchers(player.getServer(), cat.getUuid());
             CatCameraChannelService.delete(cat);
             player.sendMessage(Text.translatable("message.neko-technology.cat_camera.removed"), true);
         } else {
-            ItemStack cameraStack = findCameraInInventory(player);
-            if (cameraStack.isEmpty()) {
+            if (!CatCameraChannelService.hasCamera(player)) {
                 player.sendMessage(Text.translatable("message.neko-technology.cat_camera.no_camera"), true);
                 return ActionResult.FAIL;
             }
-            cameraStack.decrement(1);
-            cat.equipStack(EquipmentSlot.HEAD, new ItemStack(ModItems.NEKO_CAT_CAMERA));
             ServerPlayNetworking.send(player, new OpenCatCameraNamePayload(cat.getUuid()));
         }
         return ActionResult.SUCCESS;
@@ -77,16 +66,6 @@ public class CatCameraTerminalItem extends AbstractChargeableItem {
             ServerPlayNetworking.send(player, new OpenCatCameraListPayload(channels));
         }
         return TypedActionResult.success(stack, world.isClient());
-    }
-
-    private ItemStack findCameraInInventory(PlayerEntity player) {
-        for (int i = 0; i < player.getInventory().size(); i++) {
-            ItemStack s = player.getInventory().getStack(i);
-            if (s.getItem() == ModItems.NEKO_CAT_CAMERA) {
-                return s;
-            }
-        }
-        return ItemStack.EMPTY;
     }
 
     @Override
